@@ -7,7 +7,7 @@ Features:
 
 N/A
 
-Planned Features:
+Planned Versioning:
 
 0.0.1: Mod Creation
 
