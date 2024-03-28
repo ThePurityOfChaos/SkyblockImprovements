@@ -19,7 +19,7 @@
 			"com.example.ExampleMod"
 		],
 		"client": [
-			"com.example.ExampleModClient"
+			"com.example.SkyblockImprovements"
 		]
 	},
 	"mixins": [
