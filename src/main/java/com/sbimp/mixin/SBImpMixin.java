@@ -1,4 +1,4 @@
-package com.sbimp.mixin.client;
+package com.sbimp.mixin;
 
 import net.minecraft.client.MinecraftClient;
 import org.spongepowered.asm.mixin.Mixin;

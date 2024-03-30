@@ -2,6 +2,7 @@ package com.sbimp;
 
 import net.fabricmc.api.ClientModInitializer;
 
+
 public class SkyblockImprovements implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
