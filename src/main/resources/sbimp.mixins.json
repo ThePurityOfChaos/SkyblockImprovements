@@ -3,7 +3,9 @@
 	"package": "com.sbimp.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"SBImpMixin"
+		"SBImpMixin",
+		"CommandsMetaMixin",
+		"SackListenerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
