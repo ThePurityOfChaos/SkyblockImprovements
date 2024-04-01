@@ -5,7 +5,7 @@
 	"mixins": [
 		"SBImpMixin",
 		"CommandsMetaMixin",
-		"SackListenerMixin"
+		"ChatListenerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

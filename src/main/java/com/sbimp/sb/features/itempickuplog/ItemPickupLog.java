@@ -4,19 +4,19 @@ import net.minecraft.text.Text;
 import com.sbimp.sb.utils.gui.GUIElement;
 
 public class ItemPickupLog {
-    private GUIElement IPLVisual;
+    private static GUIElement IPLVisual;
 
     public ItemPickupLog createLog(){
-        this.IPLVisual = new GUIElement(64,64,64,64);
+        IPLVisual = new GUIElement(64,64,64,64);
         return new ItemPickupLog();
     }
     public GUIElement getIPLVisual(){
-        return this.IPLVisual;
+        return IPLVisual;
     }
     
 
-    public boolean addSackText(Text message){
-        this.IPLVisual.setMessage(message);
+    public static boolean addSackText(Text message){
+        IPLVisual.setMessage(message);
         return true;
     }
 }

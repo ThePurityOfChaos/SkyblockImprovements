@@ -8,6 +8,7 @@ public class GUIElement {
     protected ButtonWidget widget;
     private int defaultPosX;
     private int defaultPosY;
+    
     public GUIElement(int defaultPosX, int defaultPosY, int sizeX, int sizeY){
         this.defaultPosX = defaultPosX;
         this.defaultPosY = defaultPosY;
