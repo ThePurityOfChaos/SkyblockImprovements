@@ -1,4 +1,4 @@
-package com.github.sbimp.utils.gui;
+package com.github.thepurityofchaos.sbimp.utils.gui;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -6,10 +6,12 @@ import java.util.Map;
 
 import org.jetbrains.annotations.Nullable;
 
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import net.minecraft.client.gui.screen.*;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
 
@@ -30,15 +32,27 @@ public class GUIScreen extends Screen {
     
     public void init(@Nullable Screen parent){
         this.parent = parent;
-        Collection<GUIElement> elements = allElements.values();
-        for(GUIElement element: elements){
+        allElements.forEach((key,element)->{
             addDrawableChild(element.getWidget());
-        }
+        });
         super.init();
     }
     @Override
     public void close(){
+        allElements.forEach((key,element)->{
+            element.notDragging();
+        });
         this.client.setScreen(this.parent);
+    }
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY){
+        allElements.forEach((key,element) -> {
+            if(element.isDragging()){
+                ButtonWidget w = element.getWidget();
+                w.setPosition((int)(mouseX - w.getWidth()/2), (int)(mouseY - w.getHeight()/2));
+            }
+        });
+        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 }
     

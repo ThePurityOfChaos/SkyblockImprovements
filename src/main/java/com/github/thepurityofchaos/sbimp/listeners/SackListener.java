@@ -1,6 +1,6 @@
-package com.github.sbimp.listeners;
+package com.github.thepurityofchaos.sbimp.listeners;
 
-import net.minecraft.client.MinecraftClient;
+
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -9,8 +9,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.config.ConfigScreen;
-import com.github.sbimp.interfaces.Listener;
+import com.github.thepurityofchaos.sbimp.interfaces.Listener;
 
 public class SackListener implements Listener{
 

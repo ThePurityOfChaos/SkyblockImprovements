@@ -1,9 +1,9 @@
-package com.github;
+package com.github.thepurityofchaos;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.sbimp.features.itempickuplog.ItemPickupLog;
+import com.github.thepurityofchaos.sbimp.features.itempickuplog.ItemPickupLog;
 
 import net.fabricmc.api.ClientModInitializer;
 

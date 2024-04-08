@@ -1,4 +1,4 @@
-package com.github.sbimp.features.itempickuplog;
+package com.github.thepurityofchaos.sbimp.features.itempickuplog;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -10,12 +10,12 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Set;
 
+import com.github.thepurityofchaos.sbimp.interfaces.Feature;
+import com.github.thepurityofchaos.sbimp.utils.gui.GUIElement;
+import com.github.thepurityofchaos.sbimp.utils.inventory.ChangeInstance;
+import com.github.thepurityofchaos.sbimp.utils.inventory.InventoryProcessor;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.github.sbimp.interfaces.Feature;
-import com.github.sbimp.utils.gui.GUIElement;
-import com.github.sbimp.utils.inventory.ChangeInstance;
-import com.github.sbimp.utils.inventory.InventoryProcessor;
 
 import net.minecraft.text.Text;
 import net.minecraft.item.ItemStack;
@@ -28,6 +28,7 @@ public class ItemPickupLog implements Feature {
     private static Multimap<String,ChangeInstance> log = ArrayListMultimap.create();
     public static void init(){
         IPLVisual = new GUIElement(64,64,128,32,null);
+        IPLVisual.setMessage(Text.of("Item Pickup Log"));
     }
     public static GUIElement getFeatureVisual(){
         return IPLVisual;

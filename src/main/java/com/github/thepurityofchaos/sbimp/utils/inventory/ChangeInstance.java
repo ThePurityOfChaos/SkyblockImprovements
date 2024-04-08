@@ -1,4 +1,4 @@
-package com.github.sbimp.utils.inventory;
+package com.github.thepurityofchaos.sbimp.utils.inventory;
 
 import org.jetbrains.annotations.Nullable;
 

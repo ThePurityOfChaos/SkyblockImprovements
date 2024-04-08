@@ -1,4 +1,4 @@
-package com.github.mixin;
+package com.github.thepurityofchaos.mixin;
 
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -14,9 +14,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.github.SkyblockImprovements;
-import com.github.sbimp.features.itempickuplog.ItemPickupLog;
-import com.github.sbimp.utils.gui.GUIElement;
+import com.github.thepurityofchaos.SkyblockImprovements;
+import com.github.thepurityofchaos.sbimp.features.itempickuplog.ItemPickupLog;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 //https://fabric.moddedmc.wiki/rendering/ helps here
@@ -27,6 +26,11 @@ public class RenderMetaMixin {
     //Inject into the mod's initializer
     @Inject(at = @At("TAIL"), method = "onInitializeClient", remap = false)
     private void onInitializeClient(CallbackInfo info){
+
+
+
+
+        //Item Pickup Log
         HudRenderCallback.EVENT.register((drawContext, tickDelta)->{
 			Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder buffer = tessellator.getBuffer();
@@ -47,8 +51,10 @@ public class RenderMetaMixin {
             buffer.vertex(positionMatrix, pos[0]+pos[2], pos[1], 0).color(0f, 0f, 0f, 1f).next();
 
             RenderSystem.setShader(GameRenderer::getPositionProgram);
-            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+            RenderSystem.setShaderColor(0f, 0f, 0f, 0f);
             tessellator.draw();
+            RenderSystem.setShaderColor(1f,1f,1f,1f);
         });
+
     }   
 }

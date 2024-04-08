@@ -1,9 +1,7 @@
-package com.github.mixin;
+package com.github.thepurityofchaos.mixin;
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.github.SkyblockImprovements;
-import com.github.config.ConfigScreen;
+import com.github.thepurityofchaos.SkyblockImprovements;
+import com.github.thepurityofchaos.config.ConfigScreen;
 
 @Mixin(SkyblockImprovements.class)
 public class CommandsMetaMixin {

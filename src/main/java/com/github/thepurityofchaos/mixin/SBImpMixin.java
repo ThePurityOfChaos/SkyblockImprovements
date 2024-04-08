@@ -1,4 +1,4 @@
-package com.github.mixin;
+package com.github.thepurityofchaos.mixin;
 
 import net.minecraft.client.MinecraftClient;
 import org.spongepowered.asm.mixin.Mixin;
