@@ -1,4 +1,4 @@
-package com.sbimp.sb.interfaces;
+package com.github.sbimp.interfaces;
 
 import net.minecraft.text.Text;
 

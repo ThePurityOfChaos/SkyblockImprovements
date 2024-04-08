@@ -1,12 +1,12 @@
-package com.sbimp.mixin;
+package com.github.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.github.sbimp.listeners.SackListener;
 import com.mojang.authlib.GameProfile;
-import com.sbimp.sb.features.listeners.SackListener;
 
 import net.minecraft.client.network.message.MessageHandler;
 import net.minecraft.network.message.MessageType;
@@ -21,7 +21,7 @@ public class ChatListenerMixin {
         parseMessage(message.getContent());
     }
 
-    public void init(){}
+
     //here for later, found while reasearching.
     //Removes all color codes
     //Formatting.strip(message);
@@ -32,11 +32,18 @@ public class ChatListenerMixin {
     //Used to parse ALL messages. 
     
     private void parseMessage(Text message) {
-        //Generic Parse Check. Should be ordered by probability of appearance.    
-        /*Is this a [X] message? If so, hand it off to XListener.
-        **  if(XListener.isXMessage(message))
-        **      return;
+        if(message == null)
+            return;
+
+        //Generic Parse Checks. Should be ordered by probability of appearance.  
+
+        /*Is this a(n) [X] message? If so, hand it off to XListener. 
+        This assumes that each message has only one valid listener, 
+        so if you need some check in multiple listeners send it to an intermediary class.
+        **  if(XListener.isMyMessage(message))
+        **      return; 
         */    
+
         //Is this a [Sacks] message? If so, hand it off to the SackListener.
         if(SackListener.isMyMessage(message))
             return;

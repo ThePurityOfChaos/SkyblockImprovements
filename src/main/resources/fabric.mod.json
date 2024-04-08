@@ -16,7 +16,7 @@
 	"environment": "client",
 	"entrypoints": {
 		"client": [
-			"com.sbimp.SkyblockImprovements"
+			"com.github.SkyblockImprovements"
 		]
 	},
 	"mixins": [

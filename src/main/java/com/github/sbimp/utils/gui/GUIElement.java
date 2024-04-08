@@ -1,4 +1,4 @@
-package com.sbimp.sb.utils.gui;
+package com.github.sbimp.utils.gui;
 
 import net.minecraft.client.gui.widget.*;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -8,15 +8,16 @@ public class GUIElement {
     protected ButtonWidget widget;
     private int defaultPosX;
     private int defaultPosY;
-    
-    public GUIElement(int defaultPosX, int defaultPosY, int sizeX, int sizeY){
+
+    public GUIElement(int defaultPosX, int defaultPosY, int sizeX, int sizeY, ButtonWidget.PressAction onPress){
         this.defaultPosX = defaultPosX;
         this.defaultPosY = defaultPosY;
-        this.widget = ButtonWidget.builder(Text.literal(""), button -> {
-            //should be cursor pos
-        this.widget.setPosition(100,100);
-    })
-        .dimensions(0, 0, sizeX, sizeY)
+        this.widget = ButtonWidget.builder(Text.literal(""), onPress==null?
+        //default functionality, this should change to follow the mouse
+        button -> {this.widget.setPosition(100,100);}
+        :onPress)
+        //dimensions should have a transform of some kind based on the current GUI scale, but that is not implemented at this time.
+        .dimensions(defaultPosX, defaultPosY, sizeX, sizeY)
         .tooltip(Tooltip.of(Text.literal("")))
         .build();
     }
