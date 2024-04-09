@@ -5,10 +5,9 @@ Current Version: 0.1.0
 
 Features:
 
-N/A
+Item Pickup Log
 
-Planned Versioning:
-
+Past Versioning:
 0.0.1: Mod Creation
 
 0.0.2: GUI Integration
@@ -19,9 +18,11 @@ Planned Versioning:
 
 0.0.5: Sack Integration for Item Pickup Log
 
-0.1.0: Item Pickup Log Complete 
+0.1.0: Item Pickup Log Complete
 
-0.1.1: Tab Detection & Scoreboard Detection for Area Detection & 
+Planned Versioning:
+
+0.1.1: Tab Detection & Scoreboard Detection for Area Detection & Config Save/Restore
 
 0.1.2: Resource Pack Design
 
