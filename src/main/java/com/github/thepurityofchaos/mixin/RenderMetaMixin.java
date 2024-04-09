@@ -18,14 +18,18 @@ import com.github.thepurityofchaos.utils.render.IPLRender;
 public class RenderMetaMixin {
     
     //Inject into the mod's initializer
-    @SuppressWarnings("resource")
     @Inject(at = @At("TAIL"), method = "onInitializeClient", remap = false)
     private void onInitializeClient(CallbackInfo info){
+        //Render all
 
         //Item Pickup Log
         HudRenderCallback.EVENT.register((drawContext, tickDelta)->{
-            IPLRender.render(drawContext,tickDelta);
+            if(SkyblockImprovements.logEnabled())
+                IPLRender.render(drawContext,tickDelta);
         });
+        
+        //Econ
 
+        //HRet
     }   
 }

@@ -48,7 +48,10 @@ public class CommandsMetaMixin {
                             ChangeInstance.setColorCode(StringArgumentType.getString(context, "color_code_char").charAt(0));
                             return 1;
                         }
-                )))
+                ))).executes(context ->{
+                    SkyblockImprovements.toggleLog();
+                    return 1;
+                })
             )
 
 

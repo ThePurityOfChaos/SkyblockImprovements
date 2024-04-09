@@ -12,9 +12,15 @@ import net.minecraft.text.Text;
 public class ConfigScreen extends GUIScreen {
 
     public void init(@Nullable Screen parent){
+        //Restore Config Settings from config.json
+
+        //done restoring config settings
+
         //Item Pickup Log
         this.addElement("ItemPickupLog",ItemPickupLog.getFeatureVisual());
 
+
+        //generic
         //this.addElement("name"),Feature.getFeatureVisual();
 
 
@@ -23,8 +29,17 @@ public class ConfigScreen extends GUIScreen {
         closeButton.setMessage(Text.of("Close Screen"));
         this.addElement("Close Button",closeButton);
 
-        //do the rest
+        
         super.init(parent);
+    }
+    
+    public void close(){
+        //Save settings to config.json
+
+        //done saving config settings
+
+        
+        super.close();
     }
 
 }

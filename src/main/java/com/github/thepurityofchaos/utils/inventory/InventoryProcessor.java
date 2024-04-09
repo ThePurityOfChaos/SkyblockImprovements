@@ -15,7 +15,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 
-//Some assistance from https://github.com/BiscuitDevelopment/SkyblockAddons/blob/main/src/main/java/codes/biscuit/skyblockaddons/utils/InventoryUtils.java#L141, though quite a bit of it was limited due to being based on 1.8.9.
+//Some assistance from https://github.com/BiscuitDevelopment/SkyblockAddons/blob/main/src/main/java/codes/biscuit/skyblockaddons/utils/InventoryUtils.java#L141, 
+//though quite a bit of it was limited due to being based on 1.8.9- it was based on Strings, while Minecraft has moved on to Text.
 public class InventoryProcessor {
     
     public static PlayerInventory getPlayerInventory(){
