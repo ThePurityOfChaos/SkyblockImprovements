@@ -1,8 +1,8 @@
-package com.github.thepurityofchaos.sbimp.utils.gui;
+package com.github.thepurityofchaos.utils.gui;
 
 import net.minecraft.client.gui.widget.*;
 
-import org.jetbrains.annotations.ApiStatus.OverrideOnly;
+
 
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.Text;

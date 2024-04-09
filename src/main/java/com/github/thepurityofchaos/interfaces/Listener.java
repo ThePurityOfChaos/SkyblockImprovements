@@ -1,4 +1,4 @@
-package com.github.thepurityofchaos.sbimp.interfaces;
+package com.github.thepurityofchaos.interfaces;
 
 import net.minecraft.text.Text;
 

@@ -2,9 +2,9 @@ package com.github.thepurityofchaos.config;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.github.thepurityofchaos.sbimp.features.itempickuplog.ItemPickupLog;
-import com.github.thepurityofchaos.sbimp.utils.gui.GUIElement;
-import com.github.thepurityofchaos.sbimp.utils.gui.GUIScreen;
+import com.github.thepurityofchaos.features.itempickuplog.ItemPickupLog;
+import com.github.thepurityofchaos.utils.gui.GUIElement;
+import com.github.thepurityofchaos.utils.gui.GUIScreen;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -12,9 +12,15 @@ import net.minecraft.text.Text;
 public class ConfigScreen extends GUIScreen {
 
     public void init(@Nullable Screen parent){
+        //Restore Config Settings from config.json
+
+        //done restoring config settings
+
         //Item Pickup Log
         this.addElement("ItemPickupLog",ItemPickupLog.getFeatureVisual());
 
+
+        //generic
         //this.addElement("name"),Feature.getFeatureVisual();
 
 
@@ -23,8 +29,17 @@ public class ConfigScreen extends GUIScreen {
         closeButton.setMessage(Text.of("Close Screen"));
         this.addElement("Close Button",closeButton);
 
-        //do the rest
+        
         super.init(parent);
+    }
+    
+    public void close(){
+        //Save settings to config.json
+
+        //done saving config settings
+
+        
+        super.close();
     }
 
 }

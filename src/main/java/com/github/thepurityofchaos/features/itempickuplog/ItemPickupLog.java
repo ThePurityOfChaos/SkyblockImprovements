@@ -1,4 +1,4 @@
-package com.github.thepurityofchaos.sbimp.features.itempickuplog;
+package com.github.thepurityofchaos.features.itempickuplog;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -10,10 +10,10 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Set;
 
-import com.github.thepurityofchaos.sbimp.interfaces.Feature;
-import com.github.thepurityofchaos.sbimp.utils.gui.GUIElement;
-import com.github.thepurityofchaos.sbimp.utils.inventory.ChangeInstance;
-import com.github.thepurityofchaos.sbimp.utils.inventory.InventoryProcessor;
+import com.github.thepurityofchaos.interfaces.Feature;
+import com.github.thepurityofchaos.utils.gui.GUIElement;
+import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
+import com.github.thepurityofchaos.utils.inventory.InventoryProcessor;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
@@ -25,7 +25,7 @@ public class ItemPickupLog implements Feature {
     //There is only ever ONE Item Pickup Log, so it's safe for every member of the class to be static.
     private static GUIElement IPLVisual;
     private static List<ItemStack> formerInventory;
-    private static Multimap<String,ChangeInstance> log = ArrayListMultimap.create();
+    private static Multimap<Text,ChangeInstance> log = ArrayListMultimap.create();
     public static void init(){
         IPLVisual = new GUIElement(64,64,128,32,null);
         IPLVisual.setMessage(Text.of("Item Pickup Log"));
@@ -39,11 +39,11 @@ public class ItemPickupLog implements Feature {
             int changeAmount = intParser.nextInt();
             //if there's an actual change
             if(changeAmount!=0)
-                log.put(message.getString(),new ChangeInstance(message.getString(), changeAmount, null));
+                log.put(message,new ChangeInstance(message, changeAmount, null,true));
             
             intParser.close();
             //it's expected that NoSuchElementException is thrown, since it's guaranteed to include the phrases "Added items:" and "This message can be disabled in the settings."
-        }catch(NoSuchElementException e){}
+        }catch(NoSuchElementException e){return false;}
         return true;
     }
     //this will run many, many times.
@@ -53,13 +53,13 @@ public class ItemPickupLog implements Feature {
 
         if(formerInventory!=null){
             //map out the inventories from list form.
-            Map<String, AbstractMap.SimpleEntry<Integer,NbtCompound>> formerInventoryMap = InventoryProcessor.processListToMap(formerInventory);
-            Map<String, AbstractMap.SimpleEntry<Integer,NbtCompound>> currentInventoryMap = InventoryProcessor.processListToMap(inventory);
+            Map<Text, AbstractMap.SimpleEntry<Integer,NbtCompound>> formerInventoryMap = InventoryProcessor.processListToMap(formerInventory);
+            Map<Text, AbstractMap.SimpleEntry<Integer,NbtCompound>> currentInventoryMap = InventoryProcessor.processListToMap(inventory);
             //recorder for change instances
             List<ChangeInstance> allChangeInstances = new ArrayList<>();
 
             //all keys in the former (and current) maps
-            Set<String> keys = new HashSet<>(formerInventoryMap.keySet());
+            Set<Text> keys = new HashSet<>(formerInventoryMap.keySet());
             keys.addAll(currentInventoryMap.keySet());
             // -> is the lambda expression, which folds a Predicate() to make functions far smaller & potentially easier to read (with the knowledge of what -> does, of course).
             keys.forEach(key -> {
@@ -83,7 +83,7 @@ public class ItemPickupLog implements Feature {
                             currentInventoryMap.getOrDefault(
                                 key, 
                                 formerInventoryMap.get(key)).getValue()
-                            ));
+                            ,false));
                 }
             });
             //Now that we have all the change instances defined
