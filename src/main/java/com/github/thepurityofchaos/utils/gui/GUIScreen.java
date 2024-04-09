@@ -1,6 +1,6 @@
-package com.github.thepurityofchaos.sbimp.utils.gui;
+package com.github.thepurityofchaos.utils.gui;
 
-import java.util.Collection;
+
 import java.util.HashMap;
 import java.util.Map;
 

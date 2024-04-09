@@ -1,7 +1,7 @@
 # SkyblockImprovements
 Hypixel Skyblock Quality-of-Life Mod for 1.20.4
 
-Current Version: 0.0.3
+Current Version: 0.1.0
 
 Features:
 
@@ -19,11 +19,11 @@ Planned Versioning:
 
 0.0.5: Sack Integration for Item Pickup Log
 
-0.1.0: Item Pickup Log Complete
+0.1.0: Item Pickup Log Complete 
 
-0.1.1: Resource Pack Design
+0.1.1: Tab Detection & Scoreboard Detection for Area Detection & 
 
-0.1.2: Tab Detection & Scoreboard Detection for Area Detection
+0.1.2: Resource Pack Design
 
 0.2.0: Resource Pack Automation
 

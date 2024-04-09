@@ -1,4 +1,4 @@
-package com.github.thepurityofchaos.sbimp.utils.inventory;
+package com.github.thepurityofchaos.utils.inventory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +13,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.text.Text;
 
 //Some assistance from https://github.com/BiscuitDevelopment/SkyblockAddons/blob/main/src/main/java/codes/biscuit/skyblockaddons/utils/InventoryUtils.java#L141, though quite a bit of it was limited due to being based on 1.8.9.
 public class InventoryProcessor {
@@ -40,20 +41,20 @@ public class InventoryProcessor {
         }
         return result;
     }
-    public static Map<String,AbstractMap.SimpleEntry<Integer,NbtCompound>>processListToMap(List<ItemStack> list){
-        Map<String,AbstractMap.SimpleEntry<Integer,NbtCompound>> map = new HashMap<>();
+    public static Map<Text,AbstractMap.SimpleEntry<Integer,NbtCompound>>processListToMap(List<ItemStack> list){
+        Map<Text,AbstractMap.SimpleEntry<Integer,NbtCompound>> map = new HashMap<>();
         for(int i=0; i<list.size(); i++){
             ItemStack item = null;
             try{
                 item = list.get(i);
                 if(item!=null){
                     int count;
-                    count = (map.containsKey(item.getName().getString()))?map.get(item.getName().getString()).getKey() + item.getCount():item.getCount();
+                    count = (map.containsKey(item.getName()))?map.get(item.getName()).getKey() + item.getCount():item.getCount();
                     NbtCompound data = item.getNbt();
                     if(data!=null){
                         data = data.copy();
                     }
-                    map.put(item.getName().getString(),new AbstractMap.SimpleEntry<Integer,NbtCompound>(count,data));
+                    map.put(item.getName(),new AbstractMap.SimpleEntry<Integer,NbtCompound>(count,data));
                 }
             } catch(Exception e){
                 

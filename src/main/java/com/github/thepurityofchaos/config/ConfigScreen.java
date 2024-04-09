@@ -2,9 +2,9 @@ package com.github.thepurityofchaos.config;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.github.thepurityofchaos.sbimp.features.itempickuplog.ItemPickupLog;
-import com.github.thepurityofchaos.sbimp.utils.gui.GUIElement;
-import com.github.thepurityofchaos.sbimp.utils.gui.GUIScreen;
+import com.github.thepurityofchaos.features.itempickuplog.ItemPickupLog;
+import com.github.thepurityofchaos.utils.gui.GUIElement;
+import com.github.thepurityofchaos.utils.gui.GUIScreen;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
