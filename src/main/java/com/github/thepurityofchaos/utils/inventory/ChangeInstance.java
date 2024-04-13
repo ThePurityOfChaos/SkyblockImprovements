@@ -1,8 +1,5 @@
 package com.github.thepurityofchaos.utils.inventory;
 
-import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
     //https://github.com/BiscuitDevelopment/SkyblockAddons/blob/main/src/main/java/codes/biscuit/skyblockaddons/features/ItemDiff.java#L8 
     //assisted with this class. Most of it is similar, but NBTTagCompound no longer exists in 1.20.4. 
@@ -10,11 +7,9 @@ import net.minecraft.text.Text;
 public class ChangeInstance {
     
     //Duration of the item (ms)
-    public static long maxLifespan = 3000;
+    private static long maxLifespan = 3000;
 
     private Text name;
-
-    private NbtCompound data;
 
     private long currTime;
 
@@ -25,14 +20,9 @@ public class ChangeInstance {
     private static char colorCode = 'e';
 
     private static int distance = 8;
-
-    public static void setLifespan(int newLifespan){
-        maxLifespan = newLifespan;
-    }
     
-    public ChangeInstance(Text name, int count, @Nullable NbtCompound data, boolean fromSacks){
+    public ChangeInstance(Text name, int count, boolean fromSacks){
         this.name = name;
-        this.data = data;
         this.addToInstance(count);
         this.fromSacks = fromSacks;
 
@@ -49,9 +39,6 @@ public class ChangeInstance {
 
     public Text getName(){
         return name;
-    }
-    public NbtCompound getData(){
-        return data;
     }
     public int getCount(){
         return count;
@@ -71,9 +58,10 @@ public class ChangeInstance {
     public static int getDistance(){
         return distance;
     }
-
-
-
-
-
+    public static long getMaxLifespan(){
+        return maxLifespan;
+    }
+    public static void setLifespan(int newLifespan){
+        maxLifespan = newLifespan*1000;
+    }
 }

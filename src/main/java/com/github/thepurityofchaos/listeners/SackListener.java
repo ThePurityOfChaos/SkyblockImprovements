@@ -32,22 +32,21 @@ public class SackListener implements Listener{
     }
 
     private static void parseMessage(Text message){
-        //why, oh why doesn't message?.getSiblings() work? and why is Hypixel's placement of its hover events so... strange? Whi isn't it just 0 and 1?
-        //this could have been two lines: parseHoverEvent(message?.getSiblings()?.get(0)?.getStyle()?.getHoverEvent()); and the same with get(3).
+        //why, oh why doesn't message?.getSiblings() work? and why is Hypixel's placement of its hover events so... strange?
+        //this could have been two lines.
 
-        if(message!=null)
-            if(message.getSiblings()!=null){
-                //positives, generally
-                if(message.getSiblings().get(0)!=null&&
-                message.getSiblings().get(0).getStyle()!=null&&
-                message.getSiblings().get(0).getStyle().getHoverEvent()!=null)
-                    parseHoverEvent(message.getSiblings().get(0).getStyle().getHoverEvent());      
+        if(message!=null&& message.getSiblings()!=null){
+            //positives, generally
+            if(message.getSiblings().get(0)!=null&&
+            message.getSiblings().get(0).getStyle()!=null&&
+            message.getSiblings().get(0).getStyle().getHoverEvent()!=null)
+                parseHoverEvent(message.getSiblings().get(0).getStyle().getHoverEvent());      
                             
-                //negatives, generally        
-                if(message.getSiblings().get(3)!=null&&
-                message.getSiblings().get(3).getStyle()!=null&&
-                message.getSiblings().get(0).getStyle().getHoverEvent()!=null)
-                    parseHoverEvent(message.getSiblings().get(3).getStyle().getHoverEvent());
-            }
+            //negatives, generally        
+            if(message.getSiblings().get(3)!=null&&
+            message.getSiblings().get(3).getStyle()!=null&&
+            message.getSiblings().get(3).getStyle().getHoverEvent()!=null)
+                parseHoverEvent(message.getSiblings().get(3).getStyle().getHoverEvent());
+        }
     }
 }

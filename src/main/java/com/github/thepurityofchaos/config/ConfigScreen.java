@@ -3,43 +3,47 @@ package com.github.thepurityofchaos.config;
 import org.jetbrains.annotations.Nullable;
 
 import com.github.thepurityofchaos.features.itempickuplog.ItemPickupLog;
+import com.github.thepurityofchaos.features.packswapper.PackSwapper;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
 import com.github.thepurityofchaos.utils.gui.GUIScreen;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
+/*
+ * Config for the mod's systems. 
+ */
 public class ConfigScreen extends GUIScreen {
-
+        
     public void init(@Nullable Screen parent){
-        //Restore Config Settings from config.json
-
-        //done restoring config settings
 
         //Item Pickup Log
         this.addElement("ItemPickupLog",ItemPickupLog.getFeatureVisual());
 
+        //Pack Swapper
+        this.addElement("PackSwapper",PackSwapper.getFeatureVisual());
 
         //generic
         //this.addElement("name"),Feature.getFeatureVisual();
 
 
         //Close Button
-        GUIElement closeButton = new GUIElement(420,480,80,32,button ->{this.close();});
-        closeButton.setMessage(Text.of("Close Screen"));
-        this.addElement("Close Button",closeButton);
-
+        this.addElement("CloseButton",new GUIElement(420,480,80,32,button ->{this.close();}));
+        this.getElement("CloseButton").setMessage(Text.of("Close Screen"));
         
         super.init(parent);
     }
-    
+    public void modifyElementLocation(String element, int[] location){
+        this.getElement(element).setPosition(location[0], location[1]);
+    }
+
     public void close(){
-        //Save settings to config.json
+        // only call saveSettings when the config screen closes, to minimize writing needed
+        Config.saveSettings();
 
-        //done saving config settings
-
-        
         super.close();
     }
+
+    
 
 }

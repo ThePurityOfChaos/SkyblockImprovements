@@ -11,7 +11,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import net.minecraft.client.gui.screen.*;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
 
@@ -33,7 +32,7 @@ public class GUIScreen extends Screen {
     public void init(@Nullable Screen parent){
         this.parent = parent;
         allElements.forEach((key,element)->{
-            addDrawableChild(element.getWidget());
+            addDrawableChild(element);
         });
         super.init();
     }
@@ -48,8 +47,7 @@ public class GUIScreen extends Screen {
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY){
         allElements.forEach((key,element) -> {
             if(element.isDragging()){
-                ButtonWidget w = element.getWidget();
-                w.setPosition((int)(mouseX - w.getWidth()/2), (int)(mouseY - w.getHeight()/2));
+                element.setPosition((int)(mouseX - element.getWidth()/2), (int)(mouseY - element.getHeight()/2));
             }
         });
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
