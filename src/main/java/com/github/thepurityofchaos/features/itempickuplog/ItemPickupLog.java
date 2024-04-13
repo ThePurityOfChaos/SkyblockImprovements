@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Set;
 
+
 import com.github.thepurityofchaos.interfaces.Feature;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
@@ -20,7 +21,16 @@ import com.google.common.collect.Multimap;
 import net.minecraft.text.Text;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-//Heavily modified from https://github.com/BiscuitDevelopment/SkyblockAddons/blob/main/src/main/java/codes/biscuit/skyblockaddons/utils/InventoryUtils.java#L303. 
+//I looked at https://github.com/BiscuitDevelopment/SkyblockAddons/blob/main/src/main/java/codes/biscuit/skyblockaddons/utils/InventoryUtils.java#L303 while making this,
+//but it was pretty far apart from what I actually wanted to do considering its version difference, incompatibility, etc. so I ended up doing something rather different, 
+//though the idea of using Maps & a Multimap I definitely agreed with there.
+
+
+/*
+ * 
+ * 
+ * 
+ */
 public class ItemPickupLog implements Feature {
     //There is only ever ONE Item Pickup Log, so it's safe for every member of the class to be static.
     private static GUIElement IPLVisual;
@@ -28,7 +38,6 @@ public class ItemPickupLog implements Feature {
     private static Multimap<Text,ChangeInstance> log = ArrayListMultimap.create();
     public static void init(){
         IPLVisual = new GUIElement(64,64,128,32,null);
-        IPLVisual.setMessage(Text.of("Item Pickup Log"));
     }
     public static GUIElement getFeatureVisual(){
         return IPLVisual;
@@ -38,20 +47,32 @@ public class ItemPickupLog implements Feature {
         try (Scanner intParser = new Scanner(message.getString())) {
             int changeAmount = intParser.nextInt();
             //if there's an actual change
-            if(changeAmount!=0)
-                log.put(message,new ChangeInstance(message, changeAmount, null,true));
-            
+            if(changeAmount!=0){
+                log.put(message,new ChangeInstance(Text.of(message.getString()
+                //remove line feed character
+                .replace("\n","")
+                //remove extraneous count
+                .replace(Integer.toString(changeAmount),"")
+                //remove extraneous + if it exists
+                .replace("+","")
+                //darken (Sack Type) portion of message
+                .replace("(","§8(")
+                //remove extraneous spaces
+                .replace("   ","")), 
+                changeAmount, true));
+            }
             intParser.close();
             //it's expected that NoSuchElementException is thrown, since it's guaranteed to include the phrases "Added items:" and "This message can be disabled in the settings."
         }catch(NoSuchElementException e){return false;}
         return true;
     }
-    //this will run many, many times.
+
+
     public static void determineChanges(){
         //this is what formerInventory will be defined as at the end of each determination.
         List<ItemStack> inventory = InventoryProcessor.processInventoryToList(InventoryProcessor.getPlayerInventory(), true);
 
-        if(formerInventory!=null){
+        if(formerInventory!=null && inventory!=null){
             //map out the inventories from list form.
             Map<Text, AbstractMap.SimpleEntry<Integer,NbtCompound>> formerInventoryMap = InventoryProcessor.processListToMap(formerInventory);
             Map<Text, AbstractMap.SimpleEntry<Integer,NbtCompound>> currentInventoryMap = InventoryProcessor.processListToMap(inventory);
@@ -79,11 +100,7 @@ public class ItemPickupLog implements Feature {
                             key, 
                             //change amount
                             currentCount-formerCount, 
-                            //get the NBT data associated with the current key, if it exists in the currentInventoryMap. Otherwise, add it from the formerInventoryMap.
-                            currentInventoryMap.getOrDefault(
-                                key, 
-                                formerInventoryMap.get(key)).getValue()
-                            ,false));
+                            false));
                 }
             });
             //Now that we have all the change instances defined
@@ -117,7 +134,11 @@ public class ItemPickupLog implements Feature {
     }
 
     public static void cleanLog(){
-        log.entries().removeIf(entry -> entry.getValue().getCurrentLifespan() > ChangeInstance.maxLifespan);
+        log.entries().removeIf(entry -> entry.getValue().getCurrentLifespan() > ChangeInstance.getMaxLifespan());
+    }
+    public static void resetLog(){
+        formerInventory = null;
+        log.clear();
     }
     public static Collection<ChangeInstance> getLog(){
         return log.values();

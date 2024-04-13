@@ -40,6 +40,9 @@ dependencies {
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 
 	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
+
+	//Hypixel's API
+	//implementation 'net.hypixel:mod-api:0.3.1'
 }
 
 processResources {
@@ -84,5 +87,6 @@ publishing {
 		// Notice: This block does NOT have the same function as the block in the top level.
 		// The repositories here will be used for publishing your artifact, not for
 		// retrieving dependencies.
+		//maven { url 'https://repo.hypixel.net/repository/Hypixel/' }
 	}
 }
