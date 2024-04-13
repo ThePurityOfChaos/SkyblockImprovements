@@ -20,9 +20,9 @@ Past Versioning:
 
 0.1.0: Item Pickup Log Complete
 
-Planned Versioning:
-
 0.1.1: Tab Detection & Scoreboard Detection for Area Detection & Config Save/Restore
+
+Planned Versioning:
 
 0.1.2: Resource Pack Design
 
