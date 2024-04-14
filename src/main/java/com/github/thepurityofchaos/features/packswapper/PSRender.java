@@ -30,8 +30,8 @@ public class PSRender {
             PackSwapper.testForValidManipulation(tempArea,tempRegion);
             if(PackSwapper.isRendering()){
                 //cut out unneeded portions of the string
-                String tempAreaString = tempArea.getString().replace("Area:","").replace(" ","");
-                String tempRegionString = tempRegion.getString().replace("ф","").replace("⏣","").replace(" ","");
+                String tempAreaString = tempArea.getString().replace("Area:","").replace(" ","").replace("§c","");
+                String tempRegionString = tempRegion.getString().replace("ф","").replace("⏣","").replace(" ","").replace("§c","");
 
                 //EXPERIMENTAL FEATURES
                 if(PackSwapper.experimental_useShortArea())
