@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.github.thepurityofchaos.interfaces.Feature;
+import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
 
 import net.minecraft.client.MinecraftClient;
@@ -17,11 +18,14 @@ public class PackSwapper implements Feature {
     //Used to show current Region and number of Packs associated with it. if desired.
     private static GUIElement PSVisual;
     private static char regionColor = 'e';
-    private static boolean packHelper = true;;
+    private static boolean packHelper = true;
     private static boolean renderComponent = true;
     private static boolean sendDebugInfo = true;
+    private static boolean experimental_useShortRegion = false;
+    private static boolean experimental_useShortArea = false;
     private static String previousArea;
     private static String previousRegion;
+    
 
     public static void init(){
         //default location
@@ -37,10 +41,10 @@ public class PackSwapper implements Feature {
         Collection<ResourcePackProfile> currentlyEnabledPacks = manager.getEnabledProfiles();
         Collection<String> packsToActivate = new ArrayList<>();
         Collection<String> packsToRemove = new ArrayList<>();
-    
+        Collection<String> modifiedPacks = new ArrayList<>();
         for(ResourcePackProfile pack:packs){
             //ignore all packs not directly relevant
-            if(!pack.getName().startsWith("file/SBIMP_")){
+            if(!pack.getName().startsWith("file/_")){
                 if(currentlyEnabledPacks.contains(pack))
                     packsToActivate.add(pack.getName());
                 continue;
@@ -50,7 +54,7 @@ public class PackSwapper implements Feature {
             if(splitPackName.length==2){
                 if(splitPackName[1].contains(sRegion)){
                     if(splitPackName[0].contains(sArea)){
-                        packsToActivate.add(pack.getName());
+                        modifiedPacks.add(pack.getName());
                         continue;
                     }else{
                         packsToRemove.add(pack.getName());
@@ -59,16 +63,17 @@ public class PackSwapper implements Feature {
                     packsToRemove.add(pack.getName());
                 }
             }else if(splitPackName[0].contains(sArea)){
-                packsToActivate.add(pack.getName());
+                modifiedPacks.add(pack.getName());
                 continue;
             }
             else{
                 packsToRemove.add(pack.getName());
             }
         }
-        //only make changes if the packs change. 
-        //This should be called RARELY.
+        //this is done to prioritize the packs in the hierarchy. The last ones added have the highest priority.
         Collection<String> currentPacks = manager.getEnabledNames();
+        packsToActivate.addAll(modifiedPacks);
+
         boolean hasChanged = false;
         for(String pack :packsToActivate){
             if(!currentPacks.contains(pack)){
@@ -84,6 +89,8 @@ public class PackSwapper implements Feature {
                 hasChanged = true;
             }
         }
+        //only make changes if the packs change. 
+        //These should be called RARELY.
         if(hasChanged){
             if(sendDebugInfo)
                 MinecraftClient.getInstance().player.sendMessage(Text.of("§"+PackSwapper.getRegionColor()+"[SkyblockImprovements] Region change detected. Reloading Resources."));
@@ -96,20 +103,23 @@ public class PackSwapper implements Feature {
     public static void testForValidManipulation(Text currentArea,Text currentRegion){
         String sArea = currentArea.getString().replace("Area:","").replace(" ","");
         String sRegion = currentRegion.getString().replace("ф","").replace("⏣","").replace(" ","");
+
         //only manipulate packs if area changes and not in no area
         if(!sArea.equals(previousArea)||!sRegion.equals(previousRegion)||!sArea.equals("NoAreaFound!")){
-            manipulatePacks(sArea,sRegion);
+            //use experimental settings?
+            String sAreaMod = sArea;
+            String sRegionMod = sRegion;
+            if(experimental_useShortArea)
+                sAreaMod = Utils.removeLowerCase(sAreaMod);
+            if(experimental_useShortRegion)
+                sRegionMod = Utils.removeLowerCase(sRegionMod);
+            manipulatePacks(sAreaMod,sRegionMod);
         }
         previousArea = sArea;
         previousRegion = sRegion;
     }
 
-
-
-
-
-
-
+    //feature toggles & getters
 
     public static GUIElement getFeatureVisual(){
         return PSVisual;
@@ -129,7 +139,25 @@ public class PackSwapper implements Feature {
     public static void toggleRenderComponent(){
         renderComponent = !renderComponent;
     }
+    public static void toggleDebugInfo(){
+        sendDebugInfo = !sendDebugInfo;
+    }
+    public static boolean sendDebugInfo(){
+        return sendDebugInfo;
+    }
     public static boolean isRendering(){
         return renderComponent;
+    }
+    public static void toggleExperimentalArea(){
+        experimental_useShortArea = !experimental_useShortArea;
+    }
+    public static boolean experimental_useShortArea(){
+        return experimental_useShortArea;
+    }
+    public static void toggleExperimentalRegion(){
+        experimental_useShortRegion = !experimental_useShortRegion;
+    }
+    public static boolean experimental_useShortRegion(){
+        return experimental_useShortRegion;
     }
 }

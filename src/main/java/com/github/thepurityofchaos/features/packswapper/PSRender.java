@@ -1,5 +1,6 @@
 package com.github.thepurityofchaos.features.packswapper;
 
+import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.scoreboard.ScoreboardProcessor;
 import com.github.thepurityofchaos.utils.scoreboard.TabListProcessor;
 
@@ -28,9 +29,17 @@ public class PSRender {
             currentArea.append(tempArea);
             PackSwapper.testForValidManipulation(tempArea,tempRegion);
             if(PackSwapper.isRendering()){
-                Text validResourcePackName = Text.of("§"+PackSwapper.getRegionColor()+"Expected Pack Name: SBIMP_"+
-                tempArea.getString().replace("Area:","").replace(" ","")+
-                "-"+tempRegion.getString().replace("ф","").replace("⏣","").replace(" ",""));
+                //cut out unneeded portions of the string
+                String tempAreaString = tempArea.getString().replace("Area:","").replace(" ","");
+                String tempRegionString = tempRegion.getString().replace("ф","").replace("⏣","").replace(" ","");
+
+                //EXPERIMENTAL FEATURES
+                if(PackSwapper.experimental_useShortArea())
+                    tempAreaString = Utils.removeLowerCase(tempAreaString);
+                if(PackSwapper.experimental_useShortRegion())
+                    tempRegionString = Utils.removeLowerCase(tempRegionString);
+                //show the expected name of the pack
+                Text validResourcePackName = Text.of("§"+PackSwapper.getRegionColor()+"Expected Pack Name: _"+tempAreaString+"-"+tempRegionString);
                 //draw the text if the region exists
                 if(currentRegion!=null)
                     drawContext.drawText(renderer, currentRegion, pos[0], pos[1], 1, true);
@@ -43,7 +52,8 @@ public class PSRender {
                     drawContext.drawText(renderer, Text.of("§8§ocan make the pack work in multiple areas and regions! "), pos[0], pos[1]+32, 1, true);
                     drawContext.drawText(renderer, Text.of("§8§oThis works both before and after the -. You can also  "), pos[0], pos[1]+40, 1, true);
                     drawContext.drawText(renderer, Text.of("§8§onot include - to make a pack that works in a full area."), pos[0], pos[1]+48, 1, true);
-                    drawContext.drawText(renderer, Text.of("§8§oPack Names must start with SBIMP_ to be valid, otherwise they will be ignored."), pos[0], pos[1]+56, 1, true);
+                    drawContext.drawText(renderer, Text.of("§8§oPack Names must start with _ to be placed into "), pos[0], pos[1]+56, 1, true);
+                    drawContext.drawText(renderer, Text.of("§8§othe automatic swapper, otherwise they will be ignored."), pos[0], pos[1]+64, 1, true);
                 }
             }
             

@@ -9,8 +9,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.config.Config;
 import com.github.thepurityofchaos.config.ConfigScreen;
+import com.github.thepurityofchaos.config.IPLConfig;
+import com.github.thepurityofchaos.config.PSConfig;
 import com.github.thepurityofchaos.features.packswapper.PackSwapper;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -34,7 +35,7 @@ public class CommandsMetaMixin {
                     .then(ClientCommandManager.argument("distance_between_instances",IntegerArgumentType.integer())
                         .executes(context ->{
                             ChangeInstance.setDistance(IntegerArgumentType.getInteger(context,"distance_between_instances"));
-                            Config.saveSettings();
+                            IPLConfig.saveSettings();
                             return 1;
                         }
                 )))
@@ -42,7 +43,7 @@ public class CommandsMetaMixin {
                     .then(ClientCommandManager.argument("value_in_seconds",IntegerArgumentType.integer())
                         .executes(context ->{
                             ChangeInstance.setLifespan((int)(1000*IntegerArgumentType.getInteger(context, "value_in_seconds")));
-                            Config.saveSettings();
+                            IPLConfig.saveSettings();
                             return 1;
                         }
                 )))
@@ -50,12 +51,12 @@ public class CommandsMetaMixin {
                     .then(ClientCommandManager.argument("color_code_char",StringArgumentType.word())
                         .executes(context ->{
                             ChangeInstance.setColorCode(StringArgumentType.getString(context, "color_code_char").charAt(0));
-                            Config.saveSettings();
+                            IPLConfig.saveSettings();
                             return 1;
                         }
                 ))).executes(context ->{
-                    Config.toggleFeature("ItemPickupLog");
-                    Config.saveSettings();
+                    IPLConfig.toggleFeature();
+                    IPLConfig.saveSettings();
                     return 1;
                 }
             ))
@@ -64,20 +65,48 @@ public class CommandsMetaMixin {
                     .then(ClientCommandManager.argument("color_code_char", StringArgumentType.word())
                         .executes(context ->{
                             PackSwapper.setRegionColor(StringArgumentType.getString(context, "color_code_char").charAt(0));
-                            Config.saveSettings();
+                            PSConfig.saveSettings();
                             return 1;
                         }   
                 )))
                 .then(ClientCommandManager.literal("toggleRPHelper")
                     .executes(context ->{
                         PackSwapper.togglePackHelper();
-                        Config.saveSettings();
+                        PSConfig.saveSettings();
+                        return 1;
+                    }
+                ))
+                .then(ClientCommandManager.literal("toggleRender")
+                    .executes(context ->{
+                        PackSwapper.toggleRenderComponent();
+                        PSConfig.saveSettings();
+                        return 1;
+                    }
+                ))
+                .then(ClientCommandManager.literal("toggleDebugInfo")
+                    .executes(context ->{
+                        PackSwapper.toggleDebugInfo();
+                        PSConfig.saveSettings();
+                        return 1;
+                    }
+                ))
+                .then(ClientCommandManager.literal("EXPERIMENTAL_TOGGLE_SHORT_AREA")
+                    .executes(context ->{
+                        PackSwapper.toggleExperimentalArea();
+                        PSConfig.saveSettings();
+                        return 1;
+                    }
+                ))
+                .then(ClientCommandManager.literal("EXPERIMENTAL_TOGGLE_SHORT_REGION")
+                    .executes(context ->{
+                        PackSwapper.toggleExperimentalRegion();
+                        PSConfig.saveSettings();
                         return 1;
                     }
                 ))
                 .executes(context ->{
-                    Config.toggleFeature("PackSwapper");
-                    Config.saveSettings();
+                    PSConfig.toggleFeature();
+                    PSConfig.saveSettings();
                     return 1;
                 }
             ))

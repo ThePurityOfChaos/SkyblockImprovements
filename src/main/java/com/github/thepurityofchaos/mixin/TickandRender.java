@@ -8,7 +8,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.config.Config;
+import com.github.thepurityofchaos.config.IPLConfig;
+import com.github.thepurityofchaos.config.PSConfig;
 import com.github.thepurityofchaos.features.itempickuplog.IPLRender;
 import com.github.thepurityofchaos.features.packswapper.PSRender;
 import com.github.thepurityofchaos.utils.scoreboard.ScoreboardProcessor;
@@ -32,11 +33,11 @@ public class TickandRender {
             TabListProcessor.processTabList();
             
             //Item Pickup Log
-            if(Config.getFeatureEnabled("ItemPickupLog"))
+            if(IPLConfig.getFeatureEnabled())
                 IPLRender.render(drawContext,tickDelta);
 
             //Pack Swapper
-            if(Config.getFeatureEnabled("PackSwapper"))
+            if(PSConfig.getFeatureEnabled())
                     PSRender.render(drawContext, tickDelta);
         });
         
