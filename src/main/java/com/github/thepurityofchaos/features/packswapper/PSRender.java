@@ -26,25 +26,26 @@ public class PSRender {
             Text tempArea = TabListProcessor.getArea();
             currentRegion.append(tempRegion);
             currentArea.append(tempArea);
-
-            Text validResourcePackName = Text.of("§"+PackSwapper.getRegionColor()+"Expected Pack Name: "+
-            tempArea.getString().replace("Area:","").replace(" ","")+
-            ":"+tempRegion.getString().replace("ф","").replace("⏣","").replace(" ",""));
-            //draw the text if the region exists
-            if(currentRegion!=null)
-                drawContext.drawText(renderer, currentRegion, pos[0], pos[1], 1, true);
-            if(currentArea!=null)
-                drawContext.drawText(renderer, currentArea, pos[0], pos[1]-8, 1, true);
-            if(validResourcePackName!=null)
-                drawContext.drawText(renderer, validResourcePackName, pos[0], pos[1]+8, 1, true);
-            if(PackSwapper.showPackHelper()){
-                drawContext.drawText(renderer, Text.of("§8§oPack Name can ignore anything after the : character."), pos[0], pos[1]+16, 1, true);
-                drawContext.drawText(renderer, Text.of("§8§oBy adding on a /[other region] to the pack name, you "), pos[0], pos[1]+24, 1, true);
-                drawContext.drawText(renderer, Text.of("§8§ocan make the pack work in multiple areas and regions! "), pos[0], pos[1]+32, 1, true);
-                drawContext.drawText(renderer, Text.of("§8§oThis works both before and after the :. You can also  "), pos[0], pos[1]+40, 1, true);
-                drawContext.drawText(renderer, Text.of("§8§onot include : to make a pack that works in the full area."), pos[0], pos[1]+48, 1, true);
+            PackSwapper.testForValidManipulation(tempArea,tempRegion);
+            if(PackSwapper.isRendering()){
+                Text validResourcePackName = Text.of("§"+PackSwapper.getRegionColor()+"Expected Pack Name: SBIMP_"+
+                tempArea.getString().replace("Area:","").replace(" ","")+
+                "-"+tempRegion.getString().replace("ф","").replace("⏣","").replace(" ",""));
+                //draw the text if the region exists
+                if(currentRegion!=null)
+                    drawContext.drawText(renderer, currentRegion, pos[0], pos[1], 1, true);
+                if(currentArea!=null)
+                    drawContext.drawText(renderer, currentArea, pos[0], pos[1]-8, 1, true);
+                if(PackSwapper.showPackHelper()){
+                    drawContext.drawText(renderer, validResourcePackName, pos[0], pos[1]+8, 1, true);
+                    drawContext.drawText(renderer, Text.of("§8§oPack Name can ignore anything after the - character."), pos[0], pos[1]+16, 1, true);
+                    drawContext.drawText(renderer, Text.of("§8§oBy adding on an [other region] to the pack name, you "), pos[0], pos[1]+24, 1, true);
+                    drawContext.drawText(renderer, Text.of("§8§ocan make the pack work in multiple areas and regions! "), pos[0], pos[1]+32, 1, true);
+                    drawContext.drawText(renderer, Text.of("§8§oThis works both before and after the -. You can also  "), pos[0], pos[1]+40, 1, true);
+                    drawContext.drawText(renderer, Text.of("§8§onot include - to make a pack that works in a full area."), pos[0], pos[1]+48, 1, true);
+                    drawContext.drawText(renderer, Text.of("§8§oPack Names must start with SBIMP_ to be valid, otherwise they will be ignored."), pos[0], pos[1]+56, 1, true);
+                }
             }
-            
             
         }
 

@@ -37,7 +37,7 @@ public class TickandRender {
 
             //Pack Swapper
             if(Config.getFeatureEnabled("PackSwapper"))
-                PSRender.render(drawContext, tickDelta);
+                    PSRender.render(drawContext, tickDelta);
         });
         
         //Econ

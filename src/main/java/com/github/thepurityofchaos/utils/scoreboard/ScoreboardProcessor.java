@@ -7,7 +7,8 @@ import java.util.Iterator;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.scoreboard.ScoreHolder;
 import net.minecraft.scoreboard.Scoreboard;
-
+import net.minecraft.scoreboard.ScoreboardDisplaySlot;
+import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -45,10 +46,13 @@ public class ScoreboardProcessor {
             //the current scoreboard
             Scoreboard scoreboard = MinecraftClient.getInstance().player.getScoreboard();
             List<Text> newScoreboard = new ArrayList<>();
+            ScoreboardObjective sidebar = scoreboard.getObjectiveForSlot(ScoreboardDisplaySlot.SIDEBAR);
             for(ScoreHolder h : scoreboard.getKnownScoreHolders()){
-                Team team = scoreboard.getScoreHolderTeam(h.getNameForScoreboard());
-                if(team!=null){
-                    newScoreboard.add(Text.of(team.getPrefix().copy().append(team.getSuffix().copy())));
+                if(scoreboard.getScoreHolderObjectives(h).containsKey(sidebar)){
+                    Team team = scoreboard.getScoreHolderTeam(h.getNameForScoreboard());
+                    if(team!=null){
+                        newScoreboard.add(Text.of(team.getPrefix().copy().append(team.getSuffix().copy())));
+                    }
                 }
             }
             currentScoreboard = new ArrayList<>();

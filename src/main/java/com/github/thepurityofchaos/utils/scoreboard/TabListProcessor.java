@@ -30,4 +30,15 @@ public class TabListProcessor {
         }
         return Text.of("No Area Found!");
     }
+    /* generic getter for tab list
+     * public static Text getSomething(){
+        for(Text listEntry : tabList){
+            if(listEntry!=null)
+                if(listEntry.getString().contains(Something)){
+                    return listEntry;
+            }
+        }
+        return Text.of("Nothing Found!");
+    }
+     */
 }
