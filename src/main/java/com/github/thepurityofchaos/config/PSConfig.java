@@ -49,6 +49,12 @@ public class PSConfig implements Filer {
                         PackSwapper.toggleRenderComponent();
                     if(!advanced.get("debugInfo").getAsBoolean())
                         PackSwapper.toggleDebugInfo();
+                    JsonObject experimental = advanced.getAsJsonObject("experimental");
+
+                    if(experimental.get("experimental_area").getAsBoolean())
+                        PackSwapper.toggleExperimentalArea();
+                    if(experimental.get("experimental_region").getAsBoolean())
+                        PackSwapper.toggleExperimentalRegion();
                     isEnabled = parser.get("enabled").getAsBoolean();
             LOGGER.info("[SkyblockImprovements] Pack Swapper Config Imported.");
             updateFeatureVisuals();
@@ -69,6 +75,10 @@ public class PSConfig implements Filer {
                     advanced.put("showPackName",PackSwapper.showPackHelper());
                     advanced.put("renderComponent",PackSwapper.isRendering());
                     advanced.put("debugInfo",PackSwapper.sendDebugInfo());
+                    Map<String,Object> experimental = new HashMap<>();
+                        experimental.put("experimental_area",PackSwapper.experimental_useShortArea());
+                        experimental.put("experimental_region",PackSwapper.experimental_useShortRegion());
+                    advanced.put("experimental",experimental);
                 //save all button locations here
                    
                 ButtonWidget button = PackSwapper.getFeatureVisual(); 
