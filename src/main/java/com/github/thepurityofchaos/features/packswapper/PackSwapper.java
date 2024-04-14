@@ -93,7 +93,7 @@ public class PackSwapper implements Feature {
         //These should be called RARELY.
         if(hasChanged){
             if(sendDebugInfo)
-                MinecraftClient.getInstance().player.sendMessage(Text.of("§"+PackSwapper.getRegionColor()+"[SkyblockImprovements] Region change detected. Reloading Resources."));
+                MinecraftClient.getInstance().player.sendMessage(Text.of("§"+PackSwapper.getRegionColor()+"[§7SkyblockImprovements§"+PackSwapper.getRegionColor()+"]"+" §7Region change detected."),false);
             MinecraftClient.getInstance().reloadResources();
         }
         
