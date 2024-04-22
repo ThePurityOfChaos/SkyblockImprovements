@@ -1,7 +1,7 @@
 # SkyblockImprovements
 Hypixel Skyblock Quality-of-Life Mod for 1.20.4
 
-Current Version: 0.1.0
+Current Version: 0.2.0
 
 Features:
 
@@ -27,6 +27,8 @@ Planned Versioning:
 0.1.2: Resource Pack Design
 
 0.2.0: Resource Pack Automation
+
+Planned Versioning:
 
 0.2.1: Economic Analyses
 

@@ -30,30 +30,24 @@ public class PSRender {
             PackSwapper.testForValidManipulation(tempArea,tempRegion);
             if(PackSwapper.isRendering()){
                 //cut out unneeded portions of the string
-                String tempAreaString = tempArea.getString().replace("Area:","").replace(" ","").replace("§c","");
-                String tempRegionString = tempRegion.getString().replace("ф","").replace("⏣","").replace(" ","").replace("§c","");
+                String tempAreaString = Utils.clearArea(tempArea.getString()).replace("§c","");
+                String tempRegionString = Utils.clearRegion(tempRegion.getString()).replace("§c","");
 
                 //EXPERIMENTAL FEATURES
                 if(PackSwapper.experimental_useShortArea())
                     tempAreaString = Utils.removeLowerCase(tempAreaString);
                 if(PackSwapper.experimental_useShortRegion())
                     tempRegionString = Utils.removeLowerCase(tempRegionString);
-                //show the expected name of the pack
-                Text validResourcePackName = Text.of("§"+PackSwapper.getRegionColor()+"Expected Pack Name: _"+tempAreaString+"-"+tempRegionString);
                 //draw the text if the region exists
                 if(currentRegion!=null)
                     drawContext.drawText(renderer, currentRegion, pos[0], pos[1], 1, true);
                 if(currentArea!=null)
                     drawContext.drawText(renderer, currentArea, pos[0], pos[1]-8, 1, true);
                 if(PackSwapper.showPackHelper()){
-                    drawContext.drawText(renderer, validResourcePackName, pos[0], pos[1]+8, 1, true);
-                    drawContext.drawText(renderer, Text.of("§8§oPack Name can ignore anything after the - character."), pos[0], pos[1]+16, 1, true);
-                    drawContext.drawText(renderer, Text.of("§8§oBy adding on an [other region] to the pack name, you "), pos[0], pos[1]+24, 1, true);
-                    drawContext.drawText(renderer, Text.of("§8§ocan make the pack work in multiple areas and regions! "), pos[0], pos[1]+32, 1, true);
-                    drawContext.drawText(renderer, Text.of("§8§oThis works both before and after the -. You can also  "), pos[0], pos[1]+40, 1, true);
-                    drawContext.drawText(renderer, Text.of("§8§onot include - to make a pack that works in a full area."), pos[0], pos[1]+48, 1, true);
-                    drawContext.drawText(renderer, Text.of("§8§oPack Names must start with _ to be placed into "), pos[0], pos[1]+56, 1, true);
-                    drawContext.drawText(renderer, Text.of("§8§othe automatic swapper, otherwise they will be ignored."), pos[0], pos[1]+64, 1, true);
+                    drawContext.drawText(renderer, Text.of("§8§oIf you want to add a resource pack to automation, "), pos[0], pos[1]+8, 1, true);
+                    drawContext.drawText(renderer, Text.of("§8§oadd a _ at the start! Then, simply type "), pos[0], pos[1]+16, 1, true);
+                    drawContext.drawText(renderer, Text.of("§8§o/sbi PackSwapper config and choose where you want "), pos[0], pos[1]+24, 1, true);
+                    drawContext.drawText(renderer, Text.of("§8§othe pack to be active! "), pos[0], pos[1]+32, 1, true);
                 }
             }
             

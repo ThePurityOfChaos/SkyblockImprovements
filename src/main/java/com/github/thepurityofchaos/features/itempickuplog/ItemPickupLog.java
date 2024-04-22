@@ -12,6 +12,7 @@ import java.util.Set;
 
 
 import com.github.thepurityofchaos.interfaces.Feature;
+import com.github.thepurityofchaos.storage.Sacks;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
 import com.github.thepurityofchaos.utils.inventory.InventoryProcessor;
@@ -48,9 +49,12 @@ public class ItemPickupLog implements Feature {
             int changeAmount = intParser.nextInt();
             //if there's an actual change
             if(changeAmount!=0){
-                log.put(message,new ChangeInstance(Text.of(message.getString()
+                String strippedMessage = 
+                message.getString()
                 //remove line feed character
                 .replace("\n","")
+                //remove thousands marker
+                .replace(",","")
                 //remove extraneous count
                 .replace(Integer.toString(changeAmount),"")
                 //remove extraneous + if it exists
@@ -58,7 +62,9 @@ public class ItemPickupLog implements Feature {
                 //darken (Sack Type) portion of message
                 .replace("(","§8(")
                 //remove extraneous spaces
-                .replace("   ","")), 
+                .replace("   ","");
+                Sacks.update(strippedMessage,changeAmount);
+                log.put(message,new ChangeInstance(Text.of(strippedMessage+(Sacks.getFeatureEnabled()?Sacks.get(strippedMessage):"")), 
                 changeAmount, true));
             }
             intParser.close();

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.features.itempickuplog.ItemPickupLog;
 import com.github.thepurityofchaos.interfaces.Filer;
+import com.github.thepurityofchaos.storage.Sacks;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
 import com.google.gson.Gson;
@@ -48,6 +49,9 @@ public class IPLConfig implements Filer{
                     ChangeInstance.setColorCode(advanced.get("colorCode").getAsString().charAt(0));
                     ChangeInstance.setDistance(advanced.get("distance").getAsInt());
                     ChangeInstance.setLifespan(advanced.get("duration").getAsInt());
+                    if(advanced.get("showSacks").getAsBoolean()){
+                        Sacks.toggleFeature();
+                    }
             isEnabled = parser.get("enabled").getAsBoolean();
             LOGGER.info("[SkyblockImprovements] Item Pickup Log Config Imported.");
             updateFeatureVisuals();
@@ -66,6 +70,7 @@ public class IPLConfig implements Filer{
                     advanced.put("colorCode",ChangeInstance.getColorCode());
                     advanced.put("duration",(int)ChangeInstance.getMaxLifespan()/1000);
                     advanced.put("distance",ChangeInstance.getDistance());
+                    advanced.put("showSacks",Sacks.getFeatureEnabled());
                 //save button location here
                 ButtonWidget IPLWidget = ItemPickupLog.getFeatureVisual();
                 int[] IPLButtonLocations = {IPLWidget.getX(),IPLWidget.getY(),IPLWidget.getWidth(),IPLWidget.getHeight()}; 
