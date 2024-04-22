@@ -71,7 +71,6 @@ public class Sacks implements Filer{
         allSackContents.put(splitMessage,allSackContents.getOrDefault(splitMessage, 0)+input);
     }
     public static void put(String type, int amount){
-        System.out.println(type+" x"+amount);
         allSackContents.put(type,amount);
     }
     public static String get(String strippedMessage){
