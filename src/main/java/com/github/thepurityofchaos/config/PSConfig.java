@@ -20,19 +20,24 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
 public class PSConfig implements Filer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
     private static boolean isEnabled = true;
+    
+
     public static void init(){
         createFile();
         try{
             //create parser based on the client
             BufferedReader reader = Files.newBufferedReader(SkyblockImprovements.FILE_LOCATION.resolve("ps.json"));
             JsonObject parser = JsonParser.parseReader(reader).getAsJsonObject();
-
+            Gson gson = new Gson();
+                //button
                 JsonArray dimArray = parser.getAsJsonArray("button");
                     PackSwapper.getFeatureVisual().setDimensionsAndPosition(
                         dimArray.get(2).getAsInt(),
@@ -41,6 +46,7 @@ public class PSConfig implements Filer {
                         dimArray.get(1).getAsInt()
                     );
                     
+                //advanced settings    
                 JsonObject advanced = parser.getAsJsonObject("advanced");
                     PackSwapper.setRegionColor(advanced.get("colorCode").getAsString().charAt(0));
                     if(!advanced.get("showPackName").getAsBoolean())
@@ -56,10 +62,16 @@ public class PSConfig implements Filer {
                     if(experimental.get("experimental_region").getAsBoolean())
                         PackSwapper.toggleExperimentalRegion();
                     isEnabled = parser.get("enabled").getAsBoolean();
+                
+                //customizeable map for areas & regions
+                Type type = new TypeToken<Map<String,Map<String,Map<String,Boolean>>>>(){}.getType();
+                if(parser.getAsJsonObject("allRegions")==null) throw new Exception();
+                PackSwapper.loadPackAreaRegionToggles(gson.fromJson(parser.getAsJsonObject("allRegions"),type));
             LOGGER.info("[SkyblockImprovements] Pack Swapper Config Imported.");
             updateFeatureVisuals();
         }catch(Exception e){
             LOGGER.error("[SkyblockImprovements] Pack Swapper's Config failed to load! Did a name change, or was it just created?"); 
+            PackSwapper.loadPackAreaRegionToggles(loadDefaultMap());
             updateFeatureVisuals();
         }
     }
@@ -88,6 +100,7 @@ public class PSConfig implements Filer {
             configOptions.put("button",PSButtonLocations);
             configOptions.put("advanced",advanced);
             configOptions.put("enabled",isEnabled);
+            configOptions.put("allRegions",PackSwapper.getFullRegionMap());
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             
             writer.write(gson.toJson(configOptions));
@@ -98,7 +111,7 @@ public class PSConfig implements Filer {
             saveSettings();
         }
         catch(Exception e){
-            LOGGER.error("[SkyblockImprovements] TPLConfig failed to save!");
+            LOGGER.error("[SkyblockImprovements] IPLConfig failed to save!");
             e.printStackTrace();
         }
     }
@@ -122,5 +135,8 @@ public class PSConfig implements Filer {
     }
     private static void updateFeatureVisuals(){
         PackSwapper.getFeatureVisual().setMessage(Text.of("Pack Swapper"+Utils.getStringFromBoolean(isEnabled)));
+    }
+    private static Map<String,Map<String,Map<String,Boolean>>> loadDefaultMap(){
+        return new HashMap<>();
     }
 }

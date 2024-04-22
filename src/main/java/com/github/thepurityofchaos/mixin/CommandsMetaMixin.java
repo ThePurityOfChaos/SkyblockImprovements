@@ -12,7 +12,9 @@ import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.config.ConfigScreen;
 import com.github.thepurityofchaos.config.IPLConfig;
 import com.github.thepurityofchaos.config.PSConfig;
+import com.github.thepurityofchaos.features.packswapper.PackScreen;
 import com.github.thepurityofchaos.features.packswapper.PackSwapper;
+import com.github.thepurityofchaos.storage.Sacks;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -54,7 +56,15 @@ public class CommandsMetaMixin {
                             IPLConfig.saveSettings();
                             return 1;
                         }
-                ))).executes(context ->{
+                )))
+                .then(ClientCommandManager.literal("showSackAmounts")
+                        .executes(context ->{
+                            Sacks.toggleFeature();
+                            IPLConfig.saveSettings();
+                            return 1;
+                        }
+                ))
+                .executes(context ->{
                     IPLConfig.toggleFeature();
                     IPLConfig.saveSettings();
                     return 1;
@@ -90,16 +100,11 @@ public class CommandsMetaMixin {
                         return 1;
                     }
                 ))
-                .then(ClientCommandManager.literal("EXPERIMENTAL_TOGGLE_SHORT_AREA")
+                .then(ClientCommandManager.literal("config")
                     .executes(context ->{
-                        PackSwapper.toggleExperimentalArea();
-                        PSConfig.saveSettings();
-                        return 1;
-                    }
-                ))
-                .then(ClientCommandManager.literal("EXPERIMENTAL_TOGGLE_SHORT_REGION")
-                    .executes(context ->{
-                        PackSwapper.toggleExperimentalRegion();
+                        context.getSource().getClient().send(() -> context.getSource().getClient().setScreen(
+                            new PackScreen().initAsPackMap(null,PackSwapper.getFullRegionMap())
+                            ));
                         PSConfig.saveSettings();
                         return 1;
                     }

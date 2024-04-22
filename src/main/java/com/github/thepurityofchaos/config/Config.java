@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
+import com.github.thepurityofchaos.storage.Sacks;
+
 import java.nio.file.Files;
 /*
  * The Config holds all of the mod's data currently. Ideally, it should be split up into multiple files in the future.
@@ -17,6 +19,7 @@ public class Config {
         try{
                 IPLConfig.init();
                 PSConfig.init();
+                Sacks.init();
         }catch(Exception e){
             LOGGER.error("[SkyblockImprovements] Config failed to load! Did a name change, or was it just created?");
         }
@@ -25,6 +28,7 @@ public class Config {
     public static void saveSettings(){
         IPLConfig.saveSettings();
         PSConfig.saveSettings();
+        Sacks.saveSettings();
     }
 
     public static void createFiles(){

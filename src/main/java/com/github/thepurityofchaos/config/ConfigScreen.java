@@ -4,11 +4,9 @@ import org.jetbrains.annotations.Nullable;
 
 import com.github.thepurityofchaos.features.itempickuplog.ItemPickupLog;
 import com.github.thepurityofchaos.features.packswapper.PackSwapper;
-import com.github.thepurityofchaos.utils.gui.GUIElement;
 import com.github.thepurityofchaos.utils.gui.GUIScreen;
 
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
 
 /*
  * Config for the mod's systems. 
@@ -27,9 +25,7 @@ public class ConfigScreen extends GUIScreen {
         //this.addElement("name"),Feature.getFeatureVisual();
 
 
-        //Close Button
-        this.addElement("CloseButton",new GUIElement(420,480,80,32,button ->{this.close();}));
-        this.getElement("CloseButton").setMessage(Text.of("Close Screen"));
+        
         
         super.init(parent);
     }
@@ -40,7 +36,6 @@ public class ConfigScreen extends GUIScreen {
     public void close(){
         // only call saveSettings when the config screen closes, to minimize writing needed
         Config.saveSettings();
-
         super.close();
     }
 
