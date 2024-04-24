@@ -51,7 +51,7 @@ public class IPLRender {
                         if(!log[i].isFromSacks() && log[i].getName().getStyle()!=null)
                             temp.append(log[i].getName());
                         //finally, draw the text.
-                        drawContext.drawText(renderer,temp,pos[0],pos[1]-i*ChangeInstance.getDistance(),1,true);
+                        drawContext.drawCenteredTextWithShadow(renderer,temp,pos[0],pos[1]-i*ChangeInstance.getDistance(),1);
                     }
             //to prevent some issues
             }else { ItemPickupLog.resetLog(); }

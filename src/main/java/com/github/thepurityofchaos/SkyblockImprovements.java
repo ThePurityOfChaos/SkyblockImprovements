@@ -13,7 +13,6 @@ import com.github.thepurityofchaos.listeners.ScreenListener;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 /*
  * The main class of the mod, through which the rest of the system functions.
  */

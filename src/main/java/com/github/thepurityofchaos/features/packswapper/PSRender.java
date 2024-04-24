@@ -1,6 +1,5 @@
 package com.github.thepurityofchaos.features.packswapper;
 
-import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.processors.ScoreboardProcessor;
 import com.github.thepurityofchaos.utils.processors.TabListProcessor;
 

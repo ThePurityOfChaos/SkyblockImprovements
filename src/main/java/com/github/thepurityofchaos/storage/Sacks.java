@@ -38,11 +38,11 @@ public class Sacks implements Filer{
         createFile();
         try{
             BufferedReader reader = Files.newBufferedReader(SkyblockImprovements.FILE_LOCATION.resolve("sacks.json"));
-            JsonObject parser = JsonParser.parseReader(reader).getAsJsonObject();
+            JsonObject storedSackContents = JsonParser.parseReader(reader).getAsJsonObject();
             Gson gson = new Gson();
             Type type = new TypeToken<Map<String,Integer>>(){}.getType();
-            if(parser.getAsJsonObject("allRegions")==null) throw new Exception();
-            allSackContents = gson.fromJson(parser.getAsJsonObject("allSackContents"),type);
+            if(storedSackContents==null) throw new Exception();
+            allSackContents = gson.fromJson(storedSackContents,type);
         }catch(Exception e){
             allSackContents = new HashMap<>();
         }
