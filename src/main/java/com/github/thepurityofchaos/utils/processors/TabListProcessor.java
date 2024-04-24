@@ -1,4 +1,4 @@
-package com.github.thepurityofchaos.utils.scoreboard;
+package com.github.thepurityofchaos.utils.processors;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,8 +24,9 @@ public class TabListProcessor {
     public static Text getArea(){
         for(Text listEntry : tabList){
             if(listEntry!=null)
-                if(listEntry.getString().contains("Area:")){
+                if(listEntry.getString().contains("Area:")||listEntry.getString().contains("Dungeon:")){
                     return listEntry;
+                
             }
         }
         return Text.of(" §cNo Area Found!");

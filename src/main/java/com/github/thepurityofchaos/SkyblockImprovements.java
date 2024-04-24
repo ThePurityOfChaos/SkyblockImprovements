@@ -6,12 +6,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.thepurityofchaos.config.Config;
+import com.github.thepurityofchaos.features.economic.ChocolateFactory;
 import com.github.thepurityofchaos.features.itempickuplog.ItemPickupLog;
 import com.github.thepurityofchaos.features.packswapper.PackSwapper;
-import com.github.thepurityofchaos.utils.inventory.InventoryProcessor;
+import com.github.thepurityofchaos.listeners.ScreenListener;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 /*
  * The main class of the mod, through which the rest of the system functions.
  */
@@ -26,7 +28,8 @@ public class SkyblockImprovements implements ClientModInitializer {
 		
 		ItemPickupLog.init();
 		PackSwapper.init();
-		InventoryProcessor.init();
+		ScreenListener.init();
+		ChocolateFactory.init();
 		//call this last, since it changes the settings from defaults.
 		Config.init();
 	}

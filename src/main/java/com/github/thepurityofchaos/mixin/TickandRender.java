@@ -8,12 +8,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
+import com.github.thepurityofchaos.config.EcoConfig;
 import com.github.thepurityofchaos.config.IPLConfig;
 import com.github.thepurityofchaos.config.PSConfig;
+import com.github.thepurityofchaos.features.economic.EcoRender;
 import com.github.thepurityofchaos.features.itempickuplog.IPLRender;
 import com.github.thepurityofchaos.features.packswapper.PSRender;
-import com.github.thepurityofchaos.utils.scoreboard.ScoreboardProcessor;
-import com.github.thepurityofchaos.utils.scoreboard.TabListProcessor;
+import com.github.thepurityofchaos.utils.processors.ScoreboardProcessor;
+import com.github.thepurityofchaos.utils.processors.TabListProcessor;
 
 
 
@@ -38,7 +40,11 @@ public class TickandRender {
 
             //Pack Swapper
             if(PSConfig.getFeatureEnabled())
-                    PSRender.render(drawContext, tickDelta);
+                PSRender.render(drawContext, tickDelta);
+            //Economic Features
+            if(EcoConfig.getFeatureEnabled()){
+                EcoRender.render(drawContext, tickDelta);
+            }
         });
         
         //Econ

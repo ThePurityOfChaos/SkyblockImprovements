@@ -1,7 +1,10 @@
 package com.github.thepurityofchaos.features.packswapper;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -10,11 +13,17 @@ import java.util.Map;
 import com.github.thepurityofchaos.interfaces.Feature;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourcePackManager;
 import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 
 
@@ -25,44 +34,22 @@ public class PackSwapper implements Feature {
     private static boolean packHelper = true;
     private static boolean renderComponent = true;
     private static boolean sendDebugInfo = true;
-    private static boolean experimental_useShortRegion = false;
-    private static boolean experimental_useShortArea = false;
+    private static boolean undefinedRegions = true;
     private static String previousArea;
     private static String previousRegion;
     private static Map<String,Map<String,Map<String,Boolean>>> packAreaRegionToggles = null;
     
     //defines ALL default regions
     private static Map<String,List<String>> allDefaultRegions = new HashMap<>();
-    static{
-        //allRegions.put("areaName",Arrays.asList("",""});
-        allDefaultRegions.put("DwarvenMines",Arrays.asList("","DwarvenMines","Rampart'sQuarry","UpperMines","DwarvenVillage","PalaceBridge","RoyalPalace","RoyalQuarters","HangingCourt"));
-        allDefaultRegions.put("CrystalHollows",Arrays.asList(""));
-        allDefaultRegions.put("Rift",Arrays.asList(""));
-        allDefaultRegions.put("Hub",Arrays.asList("","Village","CommunityCenter","Colosseum","Wilderness","Fisherman'sHut","Unincorporated","Mountain"));
-        allDefaultRegions.put("PrivateIsland",Arrays.asList("","YourIsland"));
-        allDefaultRegions.put("Garden",Arrays.asList(""));
-        allDefaultRegions.put("DungeonHub",Arrays.asList(""));
-        allDefaultRegions.put("TheFarmingIslands",Arrays.asList(""));
-        allDefaultRegions.put("ThePark",Arrays.asList(""));
-        allDefaultRegions.put("GoldMine",Arrays.asList(""));
-        allDefaultRegions.put("DeepCaverns",Arrays.asList(""));
-        allDefaultRegions.put("CrystalHollows",Arrays.asList(""));
-        allDefaultRegions.put("Spider'sDen",Arrays.asList(""));
-        allDefaultRegions.put("TheEnd",Arrays.asList(""));
-        allDefaultRegions.put("CrimsonIsle",Arrays.asList(""));
-    }
 
-    public static void init(){
-        //default location
-        PSVisual = new GUIElement(64,96,128,32,null);
-    }
+    public static void init(){PSVisual = new GUIElement(64,96,128,32,null);}
     @SuppressWarnings("resource")
     public static void manipulatePacks(String eArea, String eRegion){
         String sArea = Utils.clearArea(eArea);
         String sRegion = Utils.clearRegion(eRegion);
         if(sArea.equals("NoAreaFound!")||sRegion.equals("§cNotonSkyblock!"))
             return;
-
+        //DEBUG_ADDREGION(sArea, sRegion);
         ResourcePackManager manager = MinecraftClient.getInstance().getResourcePackManager();
         Collection<ResourcePackProfile> packs = manager.getProfiles();
         Collection<ResourcePackProfile> currentlyEnabledPacks = manager.getEnabledProfiles();
@@ -83,6 +70,10 @@ public class PackSwapper implements Feature {
             }
             //if the pack is new, add it to the main pack map.
             if(!packAreaRegionToggles.containsKey(name)){
+                //only load the default packs if a new pack is needed
+                if(undefinedRegions){
+                    defineDefaultRegions();
+                }
                 packAreaRegionToggles.put(name,loadDefaultAreas());
             }
             //add modified packs
@@ -103,28 +94,6 @@ public class PackSwapper implements Feature {
                     }
                 }
             }
-
-            //OLD
-            /*
-            String[] splitPackName = name.split("-");
-            if(splitPackName.length==2){
-                if(splitPackName[1].contains(sRegion)){
-                    if(splitPackName[0].contains(sArea)){
-                        modifiedPacks.add(name);
-                        continue;
-                    }else{
-                        packsToRemove.add(name);
-                    }
-                }else{
-                    packsToRemove.add(name);
-                }
-            }else if(splitPackName[0].contains(sArea)){
-                modifiedPacks.add(name);
-                continue;
-            }
-            else{
-                packsToRemove.add(name);
-            }*/
         }
 
         //this is done to prioritize the packs in the hierarchy. The last ones added have the highest priority.
@@ -165,14 +134,7 @@ public class PackSwapper implements Feature {
 
         //only manipulate packs if area changes and not in no area
         if(!sArea.equals(previousArea)||!sRegion.equals(previousRegion)||!sArea.equals("NoAreaFound!")){
-            //use experimental settings?
-            String sAreaMod = sArea;
-            String sRegionMod = sRegion;
-            if(experimental_useShortArea)
-                sAreaMod = Utils.removeLowerCase(sAreaMod);
-            if(experimental_useShortRegion)
-                sRegionMod = Utils.removeLowerCase(sRegionMod);
-            manipulatePacks(sAreaMod,sRegionMod);
+            manipulatePacks(sArea,sRegion);
         }
         previousArea = sArea;
         previousRegion = sRegion;
@@ -208,18 +170,6 @@ public class PackSwapper implements Feature {
     public static boolean isRendering(){
         return renderComponent;
     }
-    public static void toggleExperimentalArea(){
-        experimental_useShortArea = !experimental_useShortArea;
-    }
-    public static boolean experimental_useShortArea(){
-        return experimental_useShortArea;
-    }
-    public static void toggleExperimentalRegion(){
-        experimental_useShortRegion = !experimental_useShortRegion;
-    }
-    public static boolean experimental_useShortRegion(){
-        return experimental_useShortRegion;
-    }
 
     /*
      * Methods relating to the Pack Swapper's Config Map
@@ -252,10 +202,40 @@ public class PackSwapper implements Feature {
     public static Map<String,Map<String,Map<String,Boolean>>> getFullRegionMap(){
         return packAreaRegionToggles;
     }
+    public static void setDefaultRegions(Map<String,List<String>> map){
+        allDefaultRegions = map;
+    }
+    /*
     public static void DEBUG_ADDREGION(String area, String region){
-        if(!allDefaultRegions.containsKey(area))
-            allDefaultRegions.put(area,new ArrayList<>());
-        if(!allDefaultRegions.get(area).contains(region))
-            allDefaultRegions.get(area).add(region);
+        if(!area.equals("§cNoAreaFound!")){
+            if(!allDefaultRegions.containsKey(area)){
+                allDefaultRegions.put(area,new ArrayList<>());
+            }
+            if(!(allDefaultRegions.get(area).contains(region))){
+                allDefaultRegions.get(area).add(region);
+            }
+        }
+    }
+    public static Map<String,List<String>> DEBUG_GETALLREGIONS(){
+        return allDefaultRegions;
+    }*/
+    public static void defineDefaultRegions(){
+        //load default regions
+        try{
+            Type smallMap = new TypeToken<Map<String,List<String>>>(){}.getType();
+            Identifier allDefaultRegions = new Identifier("sbimp","info/defaultar.json");
+            ResourceManager source = MinecraftClient.getInstance().getResourceManager();
+            if(source!=null){
+            Gson gson = new Gson();
+            InputStream stream = source.getResource(allDefaultRegions).get().getInputStream();
+            BufferedReader r = new BufferedReader(new InputStreamReader(stream));
+            JsonObject defaultParser = JsonParser.parseReader(r).getAsJsonObject();
+            setDefaultRegions(gson.fromJson(defaultParser, smallMap));
+            r.close();
+            undefinedRegions=false;
+            }
+        }catch(Exception x){
+            x.printStackTrace();
+        }
     }
 }

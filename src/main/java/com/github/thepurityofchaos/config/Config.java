@@ -20,6 +20,8 @@ public class Config {
                 IPLConfig.init();
                 PSConfig.init();
                 Sacks.init();
+                
+                
         }catch(Exception e){
             LOGGER.error("[SkyblockImprovements] Config failed to load! Did a name change, or was it just created?");
         }

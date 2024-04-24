@@ -1,4 +1,4 @@
-package com.github.thepurityofchaos.utils.scoreboard;
+package com.github.thepurityofchaos.utils.processors;
 
 import java.util.List;
 import java.util.ArrayList;

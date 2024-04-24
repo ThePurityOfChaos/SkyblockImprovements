@@ -3,7 +3,7 @@ package com.github.thepurityofchaos.features.itempickuplog;
 import java.util.Arrays;
 
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
-import com.github.thepurityofchaos.utils.scoreboard.ScoreboardProcessor;
+import com.github.thepurityofchaos.utils.processors.ScoreboardProcessor;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
