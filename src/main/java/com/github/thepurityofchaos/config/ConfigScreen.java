@@ -2,7 +2,6 @@ package com.github.thepurityofchaos.config;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.github.thepurityofchaos.features.economic.ChocolateFactory;
 import com.github.thepurityofchaos.features.itempickuplog.ItemPickupLog;
 import com.github.thepurityofchaos.features.packswapper.PackSwapper;
 import com.github.thepurityofchaos.utils.gui.GUIScreen;
@@ -23,7 +22,7 @@ public class ConfigScreen extends GUIScreen {
         this.addElement("PackSwapper",PackSwapper.getFeatureVisual());
 
         //Chocolate Factory
-        this.addElement("ChocolateFactory",ChocolateFactory.getFeatureVisual());
+        //this.addElement("ChocolateFactory",ChocolateFactory.getFeatureVisual());
 
         //generic
         //this.addElement("name"),Feature.getFeatureVisual();
