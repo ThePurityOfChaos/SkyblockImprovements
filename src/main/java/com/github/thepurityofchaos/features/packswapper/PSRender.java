@@ -1,8 +1,7 @@
 package com.github.thepurityofchaos.features.packswapper;
 
-import com.github.thepurityofchaos.utils.Utils;
-import com.github.thepurityofchaos.utils.scoreboard.ScoreboardProcessor;
-import com.github.thepurityofchaos.utils.scoreboard.TabListProcessor;
+import com.github.thepurityofchaos.utils.processors.ScoreboardProcessor;
+import com.github.thepurityofchaos.utils.processors.TabListProcessor;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -29,15 +28,6 @@ public class PSRender {
             currentArea.append(tempArea);
             PackSwapper.testForValidManipulation(tempArea,tempRegion);
             if(PackSwapper.isRendering()){
-                //cut out unneeded portions of the string
-                String tempAreaString = Utils.clearArea(tempArea.getString()).replace("§c","");
-                String tempRegionString = Utils.clearRegion(tempRegion.getString()).replace("§c","");
-
-                //EXPERIMENTAL FEATURES
-                if(PackSwapper.experimental_useShortArea())
-                    tempAreaString = Utils.removeLowerCase(tempAreaString);
-                if(PackSwapper.experimental_useShortRegion())
-                    tempRegionString = Utils.removeLowerCase(tempRegionString);
                 //draw the text if the region exists
                 if(currentRegion!=null)
                     drawContext.drawText(renderer, currentRegion, pos[0], pos[1], 1, true);

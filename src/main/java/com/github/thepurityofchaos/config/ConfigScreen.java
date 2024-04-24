@@ -21,10 +21,11 @@ public class ConfigScreen extends GUIScreen {
         //Pack Swapper
         this.addElement("PackSwapper",PackSwapper.getFeatureVisual());
 
+        //Chocolate Factory
+        //this.addElement("ChocolateFactory",ChocolateFactory.getFeatureVisual());
+
         //generic
         //this.addElement("name"),Feature.getFeatureVisual();
-
-
         
         
         super.init(parent);

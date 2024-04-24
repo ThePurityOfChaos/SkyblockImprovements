@@ -13,6 +13,7 @@ import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.interfaces.Filer;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
+import com.github.thepurityofchaos.utils.processors.NbtProcessor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -20,10 +21,8 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
+import net.minecraft.text.Text;
+
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -39,11 +38,11 @@ public class Sacks implements Filer{
         createFile();
         try{
             BufferedReader reader = Files.newBufferedReader(SkyblockImprovements.FILE_LOCATION.resolve("sacks.json"));
-            JsonObject parser = JsonParser.parseReader(reader).getAsJsonObject();
+            JsonObject storedSackContents = JsonParser.parseReader(reader).getAsJsonObject();
             Gson gson = new Gson();
             Type type = new TypeToken<Map<String,Integer>>(){}.getType();
-            if(parser.getAsJsonObject("allRegions")==null) throw new Exception();
-            allSackContents = gson.fromJson(parser.getAsJsonObject("allSackContents"),type);
+            if(storedSackContents==null) throw new Exception();
+            allSackContents = gson.fromJson(storedSackContents,type);
         }catch(Exception e){
             allSackContents = new HashMap<>();
         }
@@ -67,7 +66,7 @@ public class Sacks implements Filer{
     }
 
     public static void update(String strippedMessage, int input){ 
-        String splitMessage = strippedMessage.split("§")[0].strip();
+        String splitMessage = Utils.stripSpecial(strippedMessage.split("§")[0]).strip();
         allSackContents.put(splitMessage,allSackContents.getOrDefault(splitMessage, 0)+input);
     }
     public static void put(String type, int amount){
@@ -83,24 +82,42 @@ public class Sacks implements Filer{
     }
     public static boolean processListToSacks(List<ItemStack> list){
         try{
+            //should not go above 54
             for(ItemStack item : list){
                 if(item!=null){
                     try{
-                        NbtList itemLore = (NbtList)((NbtCompound) item.getNbt().get("display")).get("Lore");
-                        NbtString itemName = (NbtString)((NbtCompound) item.getNbt().get("display")).get("Name");
-                        for(NbtElement lore : itemLore){
-                            if(lore.asString().contains("Stored:")){
-                                Scanner intParser = new Scanner(lore.asString());
-                                intParser.useDelimiter("\"");
+                        List<Text> itemLore = NbtProcessor.getLorefromItemStack(item);
+                        boolean isGem = false;
+                        for(Text lore : itemLore){
+                            String loreString = lore.getString();
+                            //don't use Stored: if this is a Gem Sack
+                            if(loreString.contains("Stored:")&& isGem==false){
+                                Scanner intParser = new Scanner(Utils.removeCommas(loreString.replace("/"," ")));
                                 while(intParser.hasNext()){
                                     if(intParser.hasNextInt()){
-                                        put(Utils.removeNbtCharacters(itemName.asString().split("\"text\":\"")[1]),intParser.nextInt());
-                                        break;
+                                        put(NbtProcessor.getNamefromItemStack(item).getString(),intParser.nextInt());
+                                        continue;
                                     }
                                     intParser.next();
                                 }
                                 intParser.close();
                                 break;
+                            }else 
+                            //this can safely be placed after for a very slight performance boost
+                            if(loreString.contains("Rough:")||loreString.contains("Flawed:")||loreString.contains("Fine:")){
+                                isGem=true;
+                                Scanner intParser = new Scanner(Utils.removeCommas(Utils.removeText(loreString.replace(":","").replace("/"," "))));
+                                while(intParser.hasNext()){
+                                    if(intParser.hasNextInt()){
+                                        String temp = NbtProcessor.getNamefromItemStack(item).getString();
+                                        //Gemstones -> Gemstone
+                                        put(loreString.split(":")[0].strip()+" "+(temp.endsWith("s")?temp.substring(0, temp.length()-1):temp),intParser.nextInt());
+                                        continue;
+                                    }
+                                    intParser.next();
+                                }
+                                intParser.close();
+                                continue;
                             }
                         }
                     }catch(NullPointerException e){

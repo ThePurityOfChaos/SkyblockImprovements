@@ -3,6 +3,7 @@ package com.github.thepurityofchaos.config;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
@@ -21,14 +22,19 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+
+
 import java.lang.reflect.Type;
+
+
 import net.minecraft.client.gui.widget.ButtonWidget;
+
 import net.minecraft.text.Text;
+
 
 public class PSConfig implements Filer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
     private static boolean isEnabled = true;
-    
 
     public static void init(){
         createFile();
@@ -55,22 +61,17 @@ public class PSConfig implements Filer {
                         PackSwapper.toggleRenderComponent();
                     if(!advanced.get("debugInfo").getAsBoolean())
                         PackSwapper.toggleDebugInfo();
-                    JsonObject experimental = advanced.getAsJsonObject("experimental");
-
-                    if(experimental.get("experimental_area").getAsBoolean())
-                        PackSwapper.toggleExperimentalArea();
-                    if(experimental.get("experimental_region").getAsBoolean())
-                        PackSwapper.toggleExperimentalRegion();
                     isEnabled = parser.get("enabled").getAsBoolean();
                 
                 //customizeable map for areas & regions
-                Type type = new TypeToken<Map<String,Map<String,Map<String,Boolean>>>>(){}.getType();
+                Type bigMap = new TypeToken<Map<String,Map<String,Map<String,Boolean>>>>(){}.getType();
                 if(parser.getAsJsonObject("allRegions")==null) throw new Exception();
-                PackSwapper.loadPackAreaRegionToggles(gson.fromJson(parser.getAsJsonObject("allRegions"),type));
+                PackSwapper.loadPackAreaRegionToggles(gson.fromJson(parser.getAsJsonObject("allRegions"),bigMap));
             LOGGER.info("[SkyblockImprovements] Pack Swapper Config Imported.");
             updateFeatureVisuals();
         }catch(Exception e){
-            LOGGER.error("[SkyblockImprovements] Pack Swapper's Config failed to load! Did a name change, or was it just created?"); 
+            LOGGER.error("[SkyblockImprovements] Pack Swapper's Config failed to load! Did a name change, or was it just created?");
+
             PackSwapper.loadPackAreaRegionToggles(loadDefaultMap());
             updateFeatureVisuals();
         }
@@ -87,10 +88,6 @@ public class PSConfig implements Filer {
                     advanced.put("showPackName",PackSwapper.showPackHelper());
                     advanced.put("renderComponent",PackSwapper.isRendering());
                     advanced.put("debugInfo",PackSwapper.sendDebugInfo());
-                    Map<String,Object> experimental = new HashMap<>();
-                        experimental.put("experimental_area",PackSwapper.experimental_useShortArea());
-                        experimental.put("experimental_region",PackSwapper.experimental_useShortRegion());
-                    advanced.put("experimental",experimental);
                 //save all button locations here
                    
                 ButtonWidget button = PackSwapper.getFeatureVisual(); 
@@ -102,16 +99,21 @@ public class PSConfig implements Filer {
             configOptions.put("enabled",isEnabled);
             configOptions.put("allRegions",PackSwapper.getFullRegionMap());
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            
             writer.write(gson.toJson(configOptions));
             writer.close();
+            /*
+            BufferedWriter DEBUG_WRITER = Files.newBufferedWriter(SkyblockImprovements.FILE_LOCATION.resolve("TEMP_REGIONS.json"));
+            DEBUG_WRITER.write(gson.toJson(PackSwapper.DEBUG_GETALLREGIONS()));
+            DEBUG_WRITER.close();
+            */
+
         }catch(IOException e){
-            LOGGER.error("[SkyblockImprovements] IPLConfig file may be missing. Attempting to recreate...");
+            LOGGER.error("[SkyblockImprovements] PSConfig file may be missing. Attempting to recreate...");
             createFile();
             saveSettings();
         }
         catch(Exception e){
-            LOGGER.error("[SkyblockImprovements] IPLConfig failed to save!");
+            LOGGER.error("[SkyblockImprovements] PSConfig failed to save!");
             e.printStackTrace();
         }
     }

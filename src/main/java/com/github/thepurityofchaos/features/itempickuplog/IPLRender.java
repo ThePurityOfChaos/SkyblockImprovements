@@ -3,7 +3,7 @@ package com.github.thepurityofchaos.features.itempickuplog;
 import java.util.Arrays;
 
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
-import com.github.thepurityofchaos.utils.scoreboard.ScoreboardProcessor;
+import com.github.thepurityofchaos.utils.processors.ScoreboardProcessor;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -51,7 +51,7 @@ public class IPLRender {
                         if(!log[i].isFromSacks() && log[i].getName().getStyle()!=null)
                             temp.append(log[i].getName());
                         //finally, draw the text.
-                        drawContext.drawText(renderer,temp,pos[0],pos[1]-i*ChangeInstance.getDistance(),1,true);
+                        drawContext.drawCenteredTextWithShadow(renderer,temp,pos[0],pos[1]-i*ChangeInstance.getDistance(),1);
                     }
             //to prevent some issues
             }else { ItemPickupLog.resetLog(); }

@@ -13,9 +13,10 @@ import java.util.Set;
 
 import com.github.thepurityofchaos.interfaces.Feature;
 import com.github.thepurityofchaos.storage.Sacks;
+import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
-import com.github.thepurityofchaos.utils.inventory.InventoryProcessor;
+import com.github.thepurityofchaos.utils.processors.InventoryProcessor;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
@@ -37,12 +38,9 @@ public class ItemPickupLog implements Feature {
     private static GUIElement IPLVisual;
     private static List<ItemStack> formerInventory;
     private static Multimap<Text,ChangeInstance> log = ArrayListMultimap.create();
-    public static void init(){
-        IPLVisual = new GUIElement(64,64,128,32,null);
-    }
-    public static GUIElement getFeatureVisual(){
-        return IPLVisual;
-    }
+    public static void init(){IPLVisual = new GUIElement(64,64,128,32,null);}
+
+    public static GUIElement getFeatureVisual(){return IPLVisual;}
     public static boolean addSackText(Text message){
         //parse out an int from the sack text
         try (Scanner intParser = new Scanner(message.getString())) {
@@ -64,7 +62,7 @@ public class ItemPickupLog implements Feature {
                 //remove extraneous spaces
                 .replace("   ","");
                 Sacks.update(strippedMessage,changeAmount);
-                log.put(message,new ChangeInstance(Text.of(strippedMessage+(Sacks.getFeatureEnabled()?Sacks.get(strippedMessage):"")), 
+                log.put(message,new ChangeInstance(Text.of(strippedMessage+(Sacks.getFeatureEnabled()?Sacks.get(Utils.stripSpecial(strippedMessage.split("§")[0]).strip()):"")), 
                 changeAmount, true));
             }
             intParser.close();

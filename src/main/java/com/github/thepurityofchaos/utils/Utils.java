@@ -1,28 +1,37 @@
 package com.github.thepurityofchaos.utils;
 
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-
 public class Utils {
     
     public static String getStringFromBoolean(boolean b){
         return b?" [ON] ":" [OFF] ";
     }
     public static String removeLowerCase(String s){
-        Pattern p = Pattern.compile("[a-z]");
-        Matcher m = p.matcher(s);
-        return m.replaceAll("");
+        return s.replaceAll("[a-z]","");
+    }
+    public static String removeText(String s){
+        return s.replaceAll("[A-Za-z]","");
     }
     public static String clearArea(String s){
         return s.replace("Area:","").replace(" ","");
     }
     public static String clearRegion(String s){
-        return s.replace("ф","").replace("⏣","").replace(" ","");
+        return s.replaceAll("[ф⏣ ]","");
     }
     public static String getColorString(char c){
         return "§"+c;
     }
-    public static String removeNbtCharacters(String s){
-        return s.replace("{","").replace("}","").replace("\"","").replace("[","").replace("]","").replace(",","");
+    public static String removeCommas(String s){
+        return s.replace(",","");
+    }
+    public static String addCommas(String s){
+        try{
+            Integer i = Integer.parseInt(s);
+            return String.format("%,d",i);
+        }catch(Exception e){
+                return "";
+        }  
+    }
+    public static String stripSpecial(String s){
+        return s.replaceAll("[⸕✧☘✎❈❤❂❁☠α]","");
     }
 }
