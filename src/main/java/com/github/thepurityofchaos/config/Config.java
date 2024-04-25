@@ -51,7 +51,7 @@ public class Config {
         //Create Directory if none exist
 		if(Files.notExists(SkyblockImprovements.FILE_LOCATION)){
 			try{
-			    Files.createDirectory(SkyblockImprovements.FILE_LOCATION.resolve("sbimp"));
+			    Files.createDirectory(SkyblockImprovements.FILE_LOCATION);
 			}catch(Exception e){
 				throw new IOException();
 			}
@@ -70,6 +70,7 @@ public class Config {
         }
         IPLConfig.createFile();
         PSConfig.createFile();
+        Sacks.createFile();
     }
     private static void getVersion(){
         try{

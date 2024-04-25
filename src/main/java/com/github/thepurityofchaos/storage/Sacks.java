@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
+import com.github.thepurityofchaos.config.Config;
 import com.github.thepurityofchaos.interfaces.Filer;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
@@ -56,8 +57,12 @@ public class Sacks implements Filer{
                 writer.close();
             }catch(IOException e){
                 LOGGER.error("[SkyblockImprovements] Sacks file may be missing. Attempting to recreate...");
-                createFile();
-                saveSettings();
+                try{
+                    Config.createFiles();
+                    saveSettings();
+                    }catch(IOException ioE){
+                        LOGGER.error("[SkyblockImprovements] Something went wrong. Sack files may not have permission to save!");
+                }
             }
             catch(Exception e){
                 LOGGER.error("[SkyblockImprovements] Sacks failed to save!");
