@@ -1,7 +1,7 @@
 # SkyblockImprovements
 Hypixel Skyblock Quality-of-Life Mod for 1.20.4
 
-Current Version: 0.2.0
+Current Version: 0.2.1
 
 Features:
 
@@ -28,11 +28,13 @@ Planned Versioning:
 
 0.2.0: Resource Pack Automation
 
+0.2.1: Economic Analysis 1 (Chocolate Factory)
+
 Planned Versioning:
 
-0.2.1: Economic Analyses
+0.2.2 Economic Analysis 2 (???)
 
-???
+0.2.3 Economic Analysis 3 (???)
 
 0.3.0: 3 Economic Analysis Examples & Custom Analysis
 
