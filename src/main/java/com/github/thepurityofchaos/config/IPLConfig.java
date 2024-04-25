@@ -85,8 +85,8 @@ public class IPLConfig implements Filer{
             writer.close();
 
         }catch(IOException e){
-            LOGGER.error("[SkyblockImprovements] IPLConfig file may be missing. Attempting to recreate...");
-            createFile();
+            LOGGER.error("[SkyblockImprovements] Config files may be missing. Attempting to recreate...");
+            Config.createFiles();
             saveSettings();
         }
         catch(Exception e){

@@ -108,8 +108,8 @@ public class PSConfig implements Filer {
             */
 
         }catch(IOException e){
-            LOGGER.error("[SkyblockImprovements] PSConfig file may be missing. Attempting to recreate...");
-            createFile();
+            LOGGER.error("[SkyblockImprovements] Config files may be missing. Attempting to recreate...");
+            Config.createFiles();
             saveSettings();
         }
         catch(Exception e){
