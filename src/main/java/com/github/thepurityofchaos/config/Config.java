@@ -10,6 +10,7 @@ import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 /*
@@ -22,7 +23,11 @@ public class Config {
     private static String currentVersion = "0.2.1";
     public static void init(){
         //Create config files if none exist
-        createFiles();
+        try{
+            createFiles();
+        }catch(IOException e){
+            LOGGER.error("[SkyblockImprovements] Something went wrong. Config files may not have permission to save!");
+        }
         //Restore Config Settings
         try{
                 getVersion();
@@ -42,13 +47,13 @@ public class Config {
         Sacks.saveSettings();
     }
 
-    public static void createFiles(){
+    public static void createFiles() throws IOException{
         //Create Directory if none exist
 		if(Files.notExists(SkyblockImprovements.FILE_LOCATION)){
 			try{
 			    Files.createDirectory(SkyblockImprovements.FILE_LOCATION.resolve("sbimp"));
 			}catch(Exception e){
-				e.printStackTrace();
+				throw new IOException();
 			}
 		}
         //Create Mod Files if none exist
