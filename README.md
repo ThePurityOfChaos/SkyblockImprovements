@@ -26,8 +26,6 @@ Past Versioning:
 
 0.1.1: Tab Detection & Scoreboard Detection for Area Detection & Config Save/Restore
 
-Planned Versioning:
-
 0.1.2: Resource Pack Design
 
 0.2.0: Resource Pack Automation
