@@ -68,7 +68,7 @@ public class IPLConfig implements Filer{
                 //save all advanced options here
                 Map<String,Object> advanced = new HashMap<>();
                     advanced.put("colorCode",ChangeInstance.getColorCode());
-                    advanced.put("duration",(int)ChangeInstance.getMaxLifespan()/1000);
+                    advanced.put("duration",(int)(ChangeInstance.getMaxLifespan()/1000));
                     advanced.put("distance",ChangeInstance.getDistance());
                     advanced.put("showSacks",Sacks.getFeatureEnabled());
                 //save button location here
@@ -90,7 +90,7 @@ public class IPLConfig implements Filer{
             saveSettings();
         }
         catch(Exception e){
-            LOGGER.error("[SkyblockImprovements] TPLConfig failed to save!");
+            LOGGER.error("[SkyblockImprovements] IPLConfig failed to save!");
             e.printStackTrace();
         }
     }
