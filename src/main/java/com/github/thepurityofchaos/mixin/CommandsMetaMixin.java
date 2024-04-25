@@ -44,7 +44,7 @@ public class CommandsMetaMixin {
                 .then(ClientCommandManager.literal("setDuration")
                     .then(ClientCommandManager.argument("value_in_seconds",IntegerArgumentType.integer())
                         .executes(context ->{
-                            ChangeInstance.setLifespan((int)(1000*IntegerArgumentType.getInteger(context, "value_in_seconds")));
+                            ChangeInstance.setLifespan((int)(IntegerArgumentType.getInteger(context, "value_in_seconds")));
                             IPLConfig.saveSettings();
                             return 1;
                         }
