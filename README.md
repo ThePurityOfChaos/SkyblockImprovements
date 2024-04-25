@@ -7,6 +7,10 @@ Features:
 
 Item Pickup Log
 
+Automatic Resource Pack Swapper
+
+Chocolate Factory Helper
+
 Past Versioning:
 0.0.1: Mod Creation
 
