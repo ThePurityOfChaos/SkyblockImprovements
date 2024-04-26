@@ -199,26 +199,29 @@ public class PackSwapper implements Feature {
             }
         return regions;
     }
-    public static Map<String,Map<String,Map<String,Boolean>>> getFullRegionMap(){
-        return packAreaRegionToggles;
+    private static void removeMissing(){
+        //remove any portions of the map that aren't actually in minecraft's pack list.
+        ResourcePackManager manager = MinecraftClient.getInstance().getResourcePackManager();
+        Collection<ResourcePackProfile> packs = manager.getProfiles();
+        List<String> names = new ArrayList<>();
+        packs.forEach(pack ->{
+            names.add(pack.getName());
+        });
+        packAreaRegionToggles.forEach((pack,map) ->{
+            if(!names.contains(pack))
+                packAreaRegionToggles.remove(pack);
+        });
     }
+
+    public static Map<String,Map<String,Map<String,Boolean>>> getFullRegionMap(){
+        removeMissing();
+        return packAreaRegionToggles;
+
+    }
+    
     public static void setDefaultRegions(Map<String,List<String>> map){
         allDefaultRegions = map;
     }
-    /*
-    public static void DEBUG_ADDREGION(String area, String region){
-        if(!area.equals("§cNoAreaFound!")){
-            if(!allDefaultRegions.containsKey(area)){
-                allDefaultRegions.put(area,new ArrayList<>());
-            }
-            if(!(allDefaultRegions.get(area).contains(region))){
-                allDefaultRegions.get(area).add(region);
-            }
-        }
-    }
-    public static Map<String,List<String>> DEBUG_GETALLREGIONS(){
-        return allDefaultRegions;
-    }*/
     public static void defineDefaultRegions(){
         //load default regions
         try{
@@ -238,4 +241,19 @@ public class PackSwapper implements Feature {
             x.printStackTrace();
         }
     }
+
+    /*
+    public static void DEBUG_ADDREGION(String area, String region){
+        if(!area.equals("§cNoAreaFound!")){
+            if(!allDefaultRegions.containsKey(area)){
+                allDefaultRegions.put(area,new ArrayList<>());
+            }
+            if(!(allDefaultRegions.get(area).contains(region))){
+                allDefaultRegions.get(area).add(region);
+            }
+        }
+    }
+    public static Map<String,List<String>> DEBUG_GETALLREGIONS(){
+        return allDefaultRegions;
+    }*/
 }
