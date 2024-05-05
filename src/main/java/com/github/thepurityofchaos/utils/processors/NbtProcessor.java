@@ -39,4 +39,25 @@ public class NbtProcessor {
         }
         return null;
     }
+    public static String getTextureFromSkull(ItemStack stack){
+        if(!stack.hasNbt()){
+            return null;
+        }
+        NbtCompound data = stack.getNbt();
+        if(!data.contains("SkullOwner")){
+            return null;
+        }
+        NbtCompound skullData = (NbtCompound) data.get("SkullOwner");
+        if(!skullData.contains("Properties")){
+            return null;
+        }
+        NbtCompound properties = (NbtCompound) skullData.get("Properties");
+        if(!properties.contains("textures")){
+            return null;
+        }
+        NbtList textures = (NbtList) properties.get("textures");
+        NbtCompound value = (NbtCompound) textures.get(0);
+        return value.getString("Value");
+
+    }
 }

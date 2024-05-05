@@ -34,7 +34,7 @@ public class GUIScreen extends Screen {
     @Override
     public void init(){
         //Close Button
-        this.addElement("CloseButton",new GUIElement(420,480,80,32,button ->{this.close();}));
+        this.addElement("CloseButton",new GUIElement(this.width/2-40,this.height-32,80,32,button ->{this.close();}));
         this.getElement("CloseButton").setMessage(Text.of("Go Back"));
         allElements.forEach((key,element)->{
             addDrawableChild(element);

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.thepurityofchaos.config.PSConfig;
 import com.github.thepurityofchaos.interfaces.Feature;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
@@ -35,9 +36,11 @@ public class PackSwapper implements Feature {
     private static boolean renderComponent = true;
     private static boolean sendDebugInfo = true;
     private static boolean undefinedRegions = true;
+    private static boolean needsUpdate = false;
     private static String previousArea;
     private static String previousRegion;
     private static Map<String,Map<String,Map<String,Boolean>>> packAreaRegionToggles = null;
+    
     
     //defines ALL default regions
     private static Map<String,List<String>> allDefaultRegions = new HashMap<>();
@@ -47,8 +50,20 @@ public class PackSwapper implements Feature {
     public static void manipulatePacks(String eArea, String eRegion){
         String sArea = Utils.clearArea(eArea);
         String sRegion = Utils.clearRegion(eRegion);
-        if(sArea.equals("NoAreaFound!")||sRegion.equals("§cNotonSkyblock!"))
+        if(sArea.equals("NoAreaFound!")||sRegion.equals("§cNotonSkyblock!")){
+            if(needsUpdate){
+                defineDefaultRegions();
+                Map<String,Map<String,Map<String,Boolean>>> newMap = new HashMap<>();
+                getFullRegionMap().forEach((k,v)->{
+                    newMap.put(k,loadDefaultAreas(v));
+                });
+                loadPackAreaRegionToggles(newMap);
+                PSConfig.saveSettings(); 
+                needsUpdate = false;
+            }
             return;
+        }
+
         //DEBUG_ADDREGION(sArea, sRegion);
         ResourcePackManager manager = MinecraftClient.getInstance().getResourcePackManager();
         Collection<ResourcePackProfile> packs = manager.getProfiles();
@@ -74,7 +89,7 @@ public class PackSwapper implements Feature {
                 if(undefinedRegions){
                     defineDefaultRegions();
                 }
-                packAreaRegionToggles.put(name,loadDefaultAreas());
+                packAreaRegionToggles.put(name,loadDefaultAreas(new HashMap<>()));
             }
             //add modified packs
             Map<String,Map<String,Boolean>> areaRegionToggles = packAreaRegionToggles.get(name);
@@ -183,42 +198,52 @@ public class PackSwapper implements Feature {
         packAreaRegionToggles = map;
 
     }
-    private static Map<String,Map<String,Boolean>> loadDefaultAreas(){
-        Map<String,Map<String,Boolean>> areasForThisPack = new HashMap<>();
+    public static Map<String,Map<String,Boolean>> loadDefaultAreas(Map<String,Map<String,Boolean>> areasForThisPack){
         allDefaultRegions.forEach((k,v) -> {
-            areasForThisPack.put(k,loadDefaultRegions(k));
+            if(!areasForThisPack.containsKey(k))
+                areasForThisPack.put(k,loadDefaultRegions(k,new HashMap<String,Boolean>()));
+            else{
+                areasForThisPack.put(k,loadDefaultRegions(k,areasForThisPack.get(k)));
+            }
         });
         return areasForThisPack;
 
     }
-    private static Map<String,Boolean> loadDefaultRegions(String area){
-        Map<String,Boolean> regions = new HashMap<>();
+    private static Map<String,Boolean> loadDefaultRegions(String area, Map<String,Boolean> regions){
         if(allDefaultRegions.containsKey(area))
             for(String region : allDefaultRegions.get(area)){
-                regions.put(region,false);
+                if(!regions.containsKey(region))
+                    regions.put(region,false);
             }
         return regions;
     }
-    public static Map<String,Map<String,Map<String,Boolean>>> getFullRegionMap(){
-        return packAreaRegionToggles;
+    private static void removeMissing(){
+        //remove any portions of the map that aren't actually in minecraft's pack list.
+        ResourcePackManager manager = MinecraftClient.getInstance().getResourcePackManager();
+        Collection<ResourcePackProfile> packs = manager.getProfiles();
+        List<String> names = new ArrayList<>();
+        packs.forEach(pack ->{
+            names.add(pack.getName());
+        });
+        Map<String,Map<String,Map<String,Boolean>>> newMap = new HashMap<>();
+        packAreaRegionToggles.forEach((pack,map) ->{
+            if(names.contains(pack))
+                newMap.put(pack,map);
+        });
+        packAreaRegionToggles = newMap;
     }
+
+    public static Map<String,Map<String,Map<String,Boolean>>> getFullRegionMap(){
+        //prevents issues when unloaded
+        if(MinecraftClient.getInstance().getResourcePackManager().getProfiles().size()!=0)
+            removeMissing();
+        return packAreaRegionToggles;
+
+    }
+    
     public static void setDefaultRegions(Map<String,List<String>> map){
         allDefaultRegions = map;
     }
-    /*
-    public static void DEBUG_ADDREGION(String area, String region){
-        if(!area.equals("§cNoAreaFound!")){
-            if(!allDefaultRegions.containsKey(area)){
-                allDefaultRegions.put(area,new ArrayList<>());
-            }
-            if(!(allDefaultRegions.get(area).contains(region))){
-                allDefaultRegions.get(area).add(region);
-            }
-        }
-    }
-    public static Map<String,List<String>> DEBUG_GETALLREGIONS(){
-        return allDefaultRegions;
-    }*/
     public static void defineDefaultRegions(){
         //load default regions
         try{
@@ -238,4 +263,22 @@ public class PackSwapper implements Feature {
             x.printStackTrace();
         }
     }
+    public static void needsUpdate(){
+        needsUpdate = true;
+    }
+
+    /*
+    public static void DEBUG_ADDREGION(String area, String region){
+        if(!area.equals("§cNoAreaFound!")){
+            if(!allDefaultRegions.containsKey(area)){
+                allDefaultRegions.put(area,new ArrayList<>());
+            }
+            if(!(allDefaultRegions.get(area).contains(region))){
+                allDefaultRegions.get(area).add(region);
+            }
+        }
+    }
+    public static Map<String,List<String>> DEBUG_GETALLREGIONS(){
+        return allDefaultRegions;
+    }*/
 }

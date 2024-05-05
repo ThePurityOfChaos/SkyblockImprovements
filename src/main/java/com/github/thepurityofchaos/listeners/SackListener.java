@@ -22,7 +22,7 @@ public class SackListener implements Listener{
             String temp = "";
             for(Text sibling : tooltip.getSiblings()){
                 temp+=sibling.getString();
-                //somewhat hacky but it works really, really well for this specific instance, and can be easily modified. It's just checking for a new line.
+                //somewhat hacky but it works really, really well for this specific instance, and can be easily modified. It's just checking for a new line without newline characters.
                 if(sibling.getString().contains(")")){
                     ItemPickupLog.addSackText(Text.of(temp));
                     temp = "";

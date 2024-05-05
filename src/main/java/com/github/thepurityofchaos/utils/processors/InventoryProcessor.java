@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.thepurityofchaos.utils.Utils;
+
 import java.util.AbstractMap;
 
 import net.minecraft.client.MinecraftClient;
@@ -16,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
 //Some assistance from https://github.com/BiscuitDevelopment/SkyblockAddons/blob/main/src/main/java/codes/biscuit/skyblockaddons/utils/InventoryUtils.java#L141, 
@@ -31,6 +34,13 @@ public class InventoryProcessor {
             return player.getInventory();
         }
         return null;
+    }
+
+    public static List<ItemStack> getPlayerArmor(){
+        return getPlayerInventory().armor;
+    }
+    public static ItemStack getHelmet(){
+        return getPlayerArmor().get(3);
     }
 
     public static List<ItemStack> processSlotsToList(GenericContainerScreenHandler handler){
@@ -61,6 +71,7 @@ public class InventoryProcessor {
         }
         return result;
     }
+
     public static Map<Text,AbstractMap.SimpleEntry<Integer,NbtCompound>>processListToMap(List<ItemStack> list){
         Map<Text,AbstractMap.SimpleEntry<Integer,NbtCompound>> map = new HashMap<>();
         for(int i=0; i<list.size(); i++){
@@ -74,7 +85,26 @@ public class InventoryProcessor {
                     if(data!=null){
                         data = data.copy();
                     }
-                    map.put(item.getName(),new AbstractMap.SimpleEntry<Integer,NbtCompound>(count,data));
+                    //prevents merchant issues, probably. Very annoying to get right, considering that it needs to interact with a bunch of different conditions.
+                    if(!item.getName().getString().contains(" x"))
+                        map.put(item.getName(), new AbstractMap.SimpleEntry<Integer,NbtCompound>(count,data));
+                    else{
+                        MutableText merchantlessItem = MutableText.of(item.getName().getContent());
+                        merchantlessItem.setStyle(item.getName().getStyle());
+                        List<Text> siblings = item.getName().getSiblings();
+
+                        for(int j=0; j<siblings.size(); j++){
+                            if(j<siblings.size()-2){
+                                merchantlessItem.append(siblings.get(j));
+                            }
+                            else if(!siblings.get(j).getString().contains("x")||!Utils.containsRegex(siblings.get(j).getString(),"[0-9]")){
+                                MutableText strippedSibling = MutableText.of(Text.of(siblings.get(j).getString().stripTrailing()).getContent());
+                                strippedSibling.setStyle(siblings.get(j).getStyle());
+                                merchantlessItem.append(strippedSibling);
+                            }
+                        }
+                        map.put(merchantlessItem, new AbstractMap.SimpleEntry<Integer,NbtCompound>(count,data));
+                    }
                 }
             } catch(Exception e){
                 

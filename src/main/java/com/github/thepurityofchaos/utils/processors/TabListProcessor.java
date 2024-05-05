@@ -31,6 +31,7 @@ public class TabListProcessor {
         }
         return Text.of(" §cNo Area Found!");
     }
+    
     /* generic getter for tab list
      * public static Text getSomething(){
         for(Text listEntry : tabList){

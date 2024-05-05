@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
+import com.github.thepurityofchaos.storage.Bazaar;
 import com.github.thepurityofchaos.storage.Sacks;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
@@ -14,13 +15,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 /*
- * The Config holds the init functionalities for the mod, as well as the mod's Version. 
- * Ideally, the currentVersion should match the version found in gradle.properties, 
- * but this has not yet been researched.
+ *
+ * The Config holds many of the init functionalities for the mod.
+ *  
+ * 
  */
 public class Config {
     private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
-    private static String currentVersion = "0.2.1";
     public static void init(){
         //Create config files if none exist
         try{
@@ -30,11 +31,13 @@ public class Config {
         }
         //Restore Config Settings
         try{
-                getVersion();
                 IPLConfig.init();
                 PSConfig.init();
                 Sacks.init();
-
+                Bazaar.init();
+                EcoConfig.init();
+                RTConfig.init();
+                getVersion();
                 
         }catch(Exception e){
             LOGGER.error("[SkyblockImprovements] Config failed to load! Did a name change, or was it just created?");
@@ -45,13 +48,15 @@ public class Config {
         IPLConfig.saveSettings();
         PSConfig.saveSettings();
         Sacks.saveSettings();
+        Bazaar.saveSettings();
+        RTConfig.saveSettings();
     }
 
     public static void createFiles() throws IOException{
         //Create Directory if none exist
 		if(Files.notExists(SkyblockImprovements.FILE_LOCATION)){
 			try{
-			    Files.createDirectory(SkyblockImprovements.FILE_LOCATION.resolve("sbimp"));
+			    Files.createDirectory(SkyblockImprovements.FILE_LOCATION);
 			}catch(Exception e){
 				throw new IOException();
 			}
@@ -70,6 +75,9 @@ public class Config {
         }
         IPLConfig.createFile();
         PSConfig.createFile();
+        Sacks.createFile();
+        Bazaar.createFile();
+        RTConfig.createFile();
     }
     private static void getVersion(){
         try{
@@ -78,18 +86,17 @@ public class Config {
             boolean hasChanged = false;
             Gson gson = new Gson();
             try{
-                if(!version.equals(currentVersion)) hasChanged = true;
+                if(!version.equals(SkyblockImprovements.VERSION)) hasChanged = true;
             }catch(Exception e){
                 hasChanged = true;
             }
             if(hasChanged){
-            BufferedWriter writer = Files.newBufferedWriter(SkyblockImprovements.FILE_LOCATION.resolve("version.json"));
-            writer.write(gson.toJson(currentVersion));
-            writer.close();
-            Files.deleteIfExists(SkyblockImprovements.FILE_LOCATION.resolve("ps.json"));
-            Files.deleteIfExists(SkyblockImprovements.FILE_LOCATION.resolve("sacks.json"));
+                IPLConfig.updateFile();
+                PSConfig.updateFile();
+                BufferedWriter writer = Files.newBufferedWriter(SkyblockImprovements.FILE_LOCATION.resolve("version.json"));
+                writer.write(gson.toJson(SkyblockImprovements.VERSION));
+                writer.close();
             }
-
         }catch(Exception e){
            e.printStackTrace();
         }
