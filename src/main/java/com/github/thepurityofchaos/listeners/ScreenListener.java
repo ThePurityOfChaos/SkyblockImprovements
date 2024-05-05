@@ -91,7 +91,7 @@ public class ScreenListener {
                         int x = currentScreen.width/2;
                         int xOffset = currentScreen.width/16;
                         int y = currentScreen.height/2;
-                        int yOffset = currentScreen.height/8;
+                        int yOffset = currentScreen.height/9;
                         List<Text> text = new ArrayList<>();
                         text.add(ReforgeHelper.getReforge());
                         ScreenUtils.draw(drawContext, text, x-xOffset, y-yOffset, -1, -1, 1000, -1, -1, -1); 
