@@ -10,8 +10,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.config.ConfigScreen;
+import com.github.thepurityofchaos.config.EcoConfig;
 import com.github.thepurityofchaos.config.IPLConfig;
 import com.github.thepurityofchaos.config.PSConfig;
+import com.github.thepurityofchaos.features.economic.BatFirework;
 import com.github.thepurityofchaos.features.packswapper.PackScreen;
 import com.github.thepurityofchaos.features.packswapper.PackSwapper;
 import com.github.thepurityofchaos.storage.Sacks;
@@ -115,6 +117,44 @@ public class CommandsMetaMixin {
                     return 1;
                 }
             ))
+            .then(ClientCommandManager.literal("EconomicHelpers")
+            
+            .then(ClientCommandManager.literal("setColorCode")
+                .then(ClientCommandManager.argument("color_code_char",StringArgumentType.word())
+                    .executes(context ->{
+                        EcoConfig.setColorCode(StringArgumentType.getString(context, "color_code_char").charAt(0));
+                        EcoConfig.saveSettings();
+                        return 1;
+                    }
+            )))
+            .then(ClientCommandManager.literal("BatFirework")
+                    
+                .then(ClientCommandManager.literal("resetProfit")
+                    .executes(context ->{
+                        BatFirework.resetProfit();
+                        return 1;
+                    }
+                ))            
+                .executes(context ->{
+                    BatFirework.toggleFeature();
+                    EcoConfig.saveSettings();
+                    return 1;
+                }
+            ))
+            .then(ClientCommandManager.literal("toggleMathHelper")
+                    .executes(context ->{
+                        EcoConfig.toggleMath();
+                        return 1;
+                    }
+
+            ))
+            
+            .executes(context ->{
+                EcoConfig.toggleFeature();
+                EcoConfig.saveSettings();
+                return 1;
+            }
+        ))
 
 
 

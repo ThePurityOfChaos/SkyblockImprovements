@@ -17,12 +17,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
 public class ChocolateFactory implements Feature {
-    private static Map<String,Integer> factoryInfo = new HashMap<>();
+    private static Map<String,Long> factoryInfo = new HashMap<>();
     private static int currentBaseProduction = 0;
     private static double currentCPS = 0.0;
     private static GUIElement CFVisual = null;
     private static char colorCode = '6';
-    private static int mEuCost = 0;
+    private static long mEuCost = 0;
     public static void processList(List<ItemStack> list){
         for(ItemStack item : list){
             getDataFromItemStack(item);
@@ -61,7 +61,7 @@ public class ChocolateFactory implements Feature {
                 String s = text.getString();
                 if(s.contains("awesome")){
                     Scanner intScanner = new Scanner(Utils.removeCommas(name.getString()));
-                    int chocolateCount = intScanner.nextInt();
+                    long chocolateCount = intScanner.nextLong();
                     intScanner.close();
                     factoryInfo.put("Chocolate Count",chocolateCount);
                     return;
@@ -75,10 +75,15 @@ public class ChocolateFactory implements Feature {
                 if(willBeCost == true){
                     try{
                         Scanner intScanner = new Scanner(Utils.removeCommas(text.getString()));
-                        int cost = intScanner.nextInt();
+                        long cost = intScanner.nextLong();
                         intScanner.close();
                         factoryInfo.put(processName(name),cost);
+                        return;
                     }catch(Exception e){}
+                }
+                if(s.contains("corporate ladder")){
+                    factoryInfo.put(processName(name),-1L);
+                    return;
                 }
                 
             }
@@ -92,11 +97,14 @@ public class ChocolateFactory implements Feature {
         if(nameString.contains("Time Tower")){
             nameString = "Time Tower";
         }
+        if(nameString.contains("Coach")){
+            nameString = "Coach Jackrabbit";
+        }
         return nameString;
     }
 
     public static Text getChocolateCount(){
-        Integer i = factoryInfo.get("Chocolate Count");
+        Long i = factoryInfo.get("Chocolate Count");
         if(i!=null){
         return Text.of(Utils.getColorString(colorCode)+"Chocolate Count: " + Utils.addCommas(i.toString()));
         }
@@ -109,9 +117,9 @@ public class ChocolateFactory implements Feature {
 
     public static Text getTimeToUpgrade(){
         try{
-        int currentChocolate = factoryInfo.get("Chocolate Count");
+        long currentChocolate = factoryInfo.get("Chocolate Count");
         if(mEuCost < currentChocolate)
-            return Text.of(Utils.getColorString(colorCode)+"Time to Upgrade: 0");
+            return Text.of(Utils.getColorString(colorCode)+"Time to Upgrade: "+Utils.getColorString('a')+"Ready!");
         double timeNeeded = (mEuCost - currentChocolate)/currentCPS;
         return Text.of(Utils.getColorString(colorCode)+"Time to Upgrade: "+
         (timeNeeded>86400?((Double)(timeNeeded/84600)).intValue()+"d ":"")+
@@ -125,15 +133,16 @@ public class ChocolateFactory implements Feature {
 
     public static Text mostEfficientUpgrade(){
         //get all info specific to the upgrades
-        List<AbstractMap.SimpleEntry<String,Integer>> entries = new ArrayList<>();
+        List<AbstractMap.SimpleEntry<String,Long>> entries = new ArrayList<>();
         entries.add(new SimpleEntry<>("Rabbit Bro",factoryInfo.get("Rabbit Bro")));
         entries.add(new SimpleEntry<>("Rabbit Cousin",factoryInfo.get("Rabbit Cousin")));
         entries.add(new SimpleEntry<>("Rabbit Sis",factoryInfo.get("Rabbit Sis")));
         entries.add(new SimpleEntry<>("Rabbit Daddy",factoryInfo.get("Rabbit Daddy")));
         entries.add(new SimpleEntry<>("Rabbit Granny",factoryInfo.get("Rabbit Granny")));
         entries.add(new SimpleEntry<>("Time Tower",factoryInfo.get("Time Tower")));
+        entries.add(new SimpleEntry<>("Coach Jackrabbit",factoryInfo.get("Coach Jackrabbit")));
         //weight the values based on production increases
-        double[] values = new double[6];
+        double[] values = new double[7];
         for(int i=0; i<5; i++){
             if(entries.get(i).getValue()!=null)
                 if(entries.get(i).getValue()!=-1)
@@ -150,9 +159,14 @@ public class ChocolateFactory implements Feature {
         }catch(Exception e){
             values[5] = -1;
         }
+        try{
+            values[6] = (entries.get(6).getValue()/(currentBaseProduction*0.01));
+        }catch(Exception e){
+            values[6] = -1;
+        }
         //find the minimum cost
         try{
-            double currentMin = 2000000000;
+            double currentMin = 25000000000L;
             int minLoc = 0;
             for(int i=0; i<values.length; i++){
                 if(values[i]<currentMin && values[i]!=-1){
@@ -161,7 +175,7 @@ public class ChocolateFactory implements Feature {
                 }
             }
             mEuCost = entries.get(minLoc).getValue();
-            for(int i=0; i<6; i++){
+            for(int i=0; i<entries.size(); i++){
                 try{
                 if(mEuCost == entries.get(i).getValue()){
                     return Text.of(Utils.getColorString(colorCode)+"Most Efficient Upgrade: "+entries.get(i).getKey());

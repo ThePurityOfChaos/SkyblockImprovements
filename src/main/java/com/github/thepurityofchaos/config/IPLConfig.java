@@ -119,5 +119,7 @@ public class IPLConfig implements Filer{
     private static void updateFeatureVisuals(){
         ItemPickupLog.getFeatureVisual().setMessage(Text.of("Item Pickup Log"+Utils.getStringFromBoolean(isEnabled)));
     }
-
+    public static void updateFile(){
+        
+    }
 }

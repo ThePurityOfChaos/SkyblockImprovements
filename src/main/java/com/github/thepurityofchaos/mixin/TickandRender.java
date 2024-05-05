@@ -14,6 +14,7 @@ import com.github.thepurityofchaos.config.PSConfig;
 import com.github.thepurityofchaos.features.economic.EcoRender;
 import com.github.thepurityofchaos.features.itempickuplog.IPLRender;
 import com.github.thepurityofchaos.features.packswapper.PSRender;
+import com.github.thepurityofchaos.features.retexturer.RTRender;
 import com.github.thepurityofchaos.utils.processors.ScoreboardProcessor;
 import com.github.thepurityofchaos.utils.processors.TabListProcessor;
 
@@ -45,10 +46,8 @@ public class TickandRender {
             if(EcoConfig.getFeatureEnabled()){
                 EcoRender.render(drawContext, tickDelta);
             }
+            //Retexturer(s)
+            RTRender.render(drawContext,tickDelta);
         });
-        
-        //Econ
-
-        //HRet
     }   
 }

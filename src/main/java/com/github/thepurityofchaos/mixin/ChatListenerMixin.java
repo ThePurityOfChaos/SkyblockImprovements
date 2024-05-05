@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.github.thepurityofchaos.listeners.ChatListener;
 import com.mojang.authlib.GameProfile;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.message.MessageHandler;
 import net.minecraft.network.message.MessageType;
 import net.minecraft.network.message.SignedMessage;
@@ -19,12 +20,17 @@ public class ChatListenerMixin {
     //Inject into message parsing for generic purposes
     @Inject(at = @At("HEAD"), method = "onChatMessage")
     public void onChatMessage(SignedMessage message, GameProfile sender, MessageType.Parameters params, CallbackInfo info){
-        ChatListener.parseMessage(message.getContent());
-    }
-
-    @Inject(at = @At("HEAD"), method = "onGameMessage")
-    public void onGameMessage(Text message, boolean overlay, CallbackInfo info){
         ChatListener.parseMessage(message);
+    }
+    //
+    @Inject(at = @At("HEAD"), method = "onGameMessage", cancellable = true)
+    public void onGameMessage(Text message, boolean overlay, CallbackInfo info){
+        Text newMessage = ChatListener.parseMessage(message);
+        if(newMessage!=null){
+            info.cancel();
+            MinecraftClient client = MinecraftClient.getInstance();
+            client.inGameHud.getChatHud().addMessage(newMessage);
+        }
     }
 
 

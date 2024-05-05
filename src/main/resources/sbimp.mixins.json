@@ -5,7 +5,8 @@
 	"mixins": [
 		"CommandsMetaMixin",
 		"TickandRender",
-		"ChatListenerMixin"
+		"ChatListenerMixin",
+		"ChatScreenAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1

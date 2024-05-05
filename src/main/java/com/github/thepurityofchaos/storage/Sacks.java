@@ -85,7 +85,7 @@ public class Sacks implements Filer{
             return "";
         }
     }
-    public static boolean processListToSacks(List<ItemStack> list){
+    public static boolean processList(List<ItemStack> list){
         try{
             //should not go above 54
             for(ItemStack item : list){

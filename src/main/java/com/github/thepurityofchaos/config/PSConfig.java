@@ -26,7 +26,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 
-
 import net.minecraft.client.gui.widget.ButtonWidget;
 
 import net.minecraft.text.Text;
@@ -144,5 +143,9 @@ public class PSConfig implements Filer {
     }
     private static Map<String,Map<String,Map<String,Boolean>>> loadDefaultMap(){
         return new HashMap<>();
+    }
+    public static void updateFile(){
+        //I love ConcurrentModificationExceptions :D
+        PackSwapper.needsUpdate(); 
     }
 }

@@ -1,6 +1,8 @@
 package com.github.thepurityofchaos.listeners;
 
-import net.minecraft.text.HoverEvent;
+import com.github.thepurityofchaos.features.economic.BatFirework;
+
+import net.minecraft.network.message.SignedMessage;
 import net.minecraft.text.Text;
 
 public class ChatListener {
@@ -11,16 +13,17 @@ public class ChatListener {
     //Formatting.strip(message);
     //Gets the siblings of a message
     //message.getSiblings();
+    //Used to parse Chat messages specifically, in the event that they need to be removed.
+    public static void parseMessage(SignedMessage message){ 
+        parseMessage(message.getContent());
+    }
 
-
-    //Used to parse ALL messages. 
-    
-    public static void parseMessage(Text message) {
+    //Used to parse ALL messages, including game messages. 
+    public static Text parseMessage(Text message) {
         if(message == null)
-            return;
+            return null;
         if(message.getStyle().getHoverEvent()!=null){
-            System.out.println("HOVER EVENT: "+message.getStyle().getHoverEvent().getValue(HoverEvent.Action.SHOW_TEXT).getString());
-            return;
+            return null;
         }
         //Generic Parse Checks. Should be ordered by probability of appearance.  
 
@@ -33,10 +36,12 @@ public class ChatListener {
 
         //Is this a [Sacks] message? If so, hand it off to the SackListener.
         if(SackListener.isMyMessage(message))
-            return;
-        
+            return null;
+        if(BatFirework.isMyMessage(message)){
+            return null;
+        }
 
-        
+        return SpecialListener.isMyMessage(message);
         
     }
 }
