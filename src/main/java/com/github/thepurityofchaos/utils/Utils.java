@@ -27,9 +27,14 @@ public class Utils {
         try{
             Integer i = Integer.parseInt(s);
             return String.format("%,d",i);
-        }catch(Exception e){
+        }catch(Exception x){
+            try{
+                Double d = Double.parseDouble(s);
+                return String.format("%,.3f",d);
+            }catch(Exception e){
                 return "";
-        }  
+            }
+        }
     }
     //the replacement is ridiculous, this is a horrendous implementation but I'm tired.
     public static boolean containsRegex(String s, String r){
