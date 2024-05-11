@@ -47,9 +47,13 @@ public class ScreenListener {
 
                 //Sack
                 if(screenName.contains("Sack")&&!screenName.contains("Sack of Sacks")){
+                    Sacks.newData();
                     ScreenEvents.afterTick(screen).register(currentScreen -> {
-                        Sacks.processList(InventoryProcessor.processSlotsToList(((GenericContainerScreen)screen).getScreenHandler()));
-                        Sacks.saveSettings();
+                        if(Sacks.ticksSinceData() < 5 ||!Sacks.dataArrived()){
+                            Sacks.processList(InventoryProcessor.processSlotsToList(((GenericContainerScreen)screen).getScreenHandler()));
+                            Sacks.saveSettings();
+                            Sacks.tickData();
+                        }
                     });
                 } 
 

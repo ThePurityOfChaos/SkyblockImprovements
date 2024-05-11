@@ -81,7 +81,7 @@ public class ChocolateFactory implements Feature {
                         return;
                     }catch(Exception e){}
                 }
-                if(s.contains("corporate ladder")){
+                if(s.contains("corporate ladder")||s.contains("maxed")){
                     factoryInfo.put(processName(name),-1L);
                     return;
                 }

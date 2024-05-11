@@ -1,5 +1,10 @@
 package com.github.thepurityofchaos.utils;
 
+import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public class Utils {
     
     public static String getStringFromBoolean(boolean b){
@@ -44,30 +49,29 @@ public class Utils {
     public static String stripSpecial(String s){
         return s.replaceAll("[⸕✧☘✎❈❤❂❁☠α]","");
     }
-    // from ColorHelper, 
-    //a, r, g, and b should be 255 or less, otherwise indeterminate behavior may occur.
-    public static int rGBAToInt(int r, int g, int b, int a){
-        // << is left shift bits, so << 24 shifts left 24 and removes things out of range
-        // | is bitwise or, which says if either this is 1 or the other is 1 accept it, this essentially concatenates an int onto the end if said int is less than 256.
-        return a << 24 | r << 16 | g << 8 | b;
-    }
-    //modified from ColorHelper, it's just some bit shifts
-    public static int[] intToRGBA(int n){
-        int a,r,g,b;
-        //>> is right shift bits, so >> 24 shifts it right 24 and removes everything that goes out of range
-        //& 0xFF is bitwise and, which masks the bits by saying 'only if this bit is 1 and the bits in 0xFF are 1', 
-        //0xFF is 11111111 so only the rightmost 8 bits are correct and will be kept.
-        a = n >> 24 & 0xFF;
-        r = n >> 16 & 0xFF;
-        g = n >> 8 & 0xFF;
-        b = n & 0xFF;
-        return new int[]{r,g,b,a};
-    }
     public static String normalizeDouble(double d){
         if((d==((int)d))){
             return Integer.toString((int)d);
         }
-        return Double.toString(d);
-        
+        return Double.toString(d);    
+    }
+    public static String asciify(String s){
+        //https://stackoverflow.com/questions/8519669/how-can-non-ascii-characters-be-removed-from-a-string
+        s = Normalizer.normalize(s, Normalizer.Form.NFD);
+        return s.replaceAll("[^\\x00-\\x7F]", "");
+    }
+    public static <K,V> List<List<Map.Entry<K,V>>> allPairs(Map<K,V> map, boolean truePairs){
+        List<Map.Entry<K,V>> entries = new ArrayList<>(map.entrySet());
+        List<List<Map.Entry<K,V>>> result = new ArrayList<>();
+        for(int i=0; i<entries.size(); i++){
+            //0 for true pairs
+            for(int j=truePairs?0:i+1; j<entries.size(); j++){
+                List<Map.Entry<K,V>> pair = new ArrayList<>();
+                pair.add(entries.get(i));
+                pair.add(entries.get(j));
+                result.add(pair);
+            }
+        }
+        return result;
     }
 }

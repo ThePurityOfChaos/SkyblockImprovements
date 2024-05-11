@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.github.thepurityofchaos.utils.Utils;
+import com.github.thepurityofchaos.utils.math.ColorUtils;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -59,13 +59,13 @@ public class ScreenUtils {
         // -267386864 default base color, 1347420415 base line start color, 1344798847 base line end color.
         // color is in ARGB
         if(baseColor == -1){
-            baseColor = Utils.rGBAToInt(16, 0, 16,240);
+            baseColor = ColorUtils.rGBAToInt(16, 0, 16,240);
         }
         if(lineStartColor == -1){
-            lineStartColor = Utils.rGBAToInt(80,0,255,80);
+            lineStartColor = ColorUtils.rGBAToInt(80,0,255,80);
         }
         if(lineEndColor == -1){
-            lineEndColor = Utils.rGBAToInt(40,0,127,80);
+            lineEndColor = ColorUtils.rGBAToInt(40,0,127,80);
         }
         drawHorizontalLine(context, i, j - 1, k, z, baseColor);
         drawHorizontalLine(context, i, j + l, k, z, baseColor);

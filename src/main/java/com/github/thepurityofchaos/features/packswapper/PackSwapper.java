@@ -4,25 +4,30 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.config.PSConfig;
 import com.github.thepurityofchaos.interfaces.Feature;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourcePackManager;
 import net.minecraft.resource.ResourcePackProfile;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -72,10 +77,31 @@ public class PackSwapper implements Feature {
         List<String> guaranteedPacks = new ArrayList<>();
         List<String> unmodifiedPacks = new ArrayList<>();
         List<String> modifiedPacks = new ArrayList<>();
+        boolean isValidPack = false;
         for(ResourcePackProfile pack:packs){
             //ignore all packs not directly relevant: guaranteed packs, and unmodified ones.
             String name = pack.getName();
-            if(!name.startsWith("file/_")){
+            ResourcePack metadataHelper = pack.createResourcePack();
+            try{
+                InputStreamReader stream = new InputStreamReader((InputStream)
+                metadataHelper.open(ResourceType.CLIENT_RESOURCES,
+                new Identifier(SkyblockImprovements.RESOURCE_PACK_LOCATION.resolve(name).resolve(ResourcePack.PACK_METADATA_NAME).toString())));
+                    if(stream!=null){
+                        JsonElement json = JsonParser.parseReader(stream);
+                        if(json.isJsonObject()){
+                            JsonObject jsonObject = json.getAsJsonObject();
+                            if(jsonObject.has("sbimp")){
+                                isValidPack = jsonObject.get("sbimp").getAsBoolean();
+                            }else{
+                                isValidPack = false;
+                            }
+                        }
+                    }
+            }catch(Exception e){
+                isValidPack = false;
+            }
+
+            if(!isValidPack&&!name.startsWith("file/_")){
                 if(pack.isAlwaysEnabled()){
                     guaranteedPacks.add(name);
                 }

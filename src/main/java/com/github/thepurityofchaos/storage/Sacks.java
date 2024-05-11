@@ -35,6 +35,8 @@ public class Sacks implements Filer{
     private static final Logger LOGGER = LoggerFactory.getLogger(Sacks.class);
     private static Map<String,Integer> allSackContents = null;
     private static boolean featureEnabled = false;
+    private static boolean dataArrived = false;
+    private static int ticksSinceData = 0;
     public static void init(){
         createFile();
         try{
@@ -97,6 +99,7 @@ public class Sacks implements Filer{
                             String loreString = lore.getString();
                             //don't use Stored: if this is a Gem Sack
                             if(loreString.contains("Stored:")&& isGem==false){
+                                dataArrived = true;
                                 Scanner intParser = new Scanner(Utils.removeCommas(loreString.replace("/"," ")));
                                 while(intParser.hasNext()){
                                     if(intParser.hasNextInt()){
@@ -111,6 +114,7 @@ public class Sacks implements Filer{
                             //this can safely be placed after for a very slight performance boost
                             if(loreString.contains("Rough:")||loreString.contains("Flawed:")||loreString.contains("Fine:")){
                                 isGem=true;
+                                dataArrived = true;
                                 Scanner intParser = new Scanner(Utils.removeCommas(Utils.removeText(loreString.replace(":","").replace("/"," "))));
                                 while(intParser.hasNext()){
                                     if(intParser.hasNextInt()){
@@ -151,6 +155,18 @@ public class Sacks implements Filer{
     }
     public static void toggleFeature(){
         featureEnabled = !featureEnabled;
+    }
+    public static boolean dataArrived(){
+        return dataArrived;
+    }
+    public static void newData(){
+        dataArrived = false;
+    }
+    public static int ticksSinceData(){
+        return ticksSinceData;
+    }
+    public static void tickData(){
+        ticksSinceData++;
     }
     
 

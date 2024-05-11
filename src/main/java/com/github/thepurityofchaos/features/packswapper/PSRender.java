@@ -13,7 +13,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
 public class PSRender {
-    @SuppressWarnings("resource")
+    
     public static void render(DrawContext drawContext, float tickDelta){
         if(PackSwapper.getFeatureVisual()!=null){
             ButtonWidget location = PackSwapper.getFeatureVisual();

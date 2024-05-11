@@ -21,8 +21,10 @@ import net.fabricmc.loader.api.FabricLoader;
 public class SkyblockImprovements implements ClientModInitializer {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SkyblockImprovements.class);
 	public static final Path FILE_LOCATION = FabricLoader.getInstance().getConfigDir().resolve("sbimp");
+	public static final Path RESOURCE_PACK_LOCATION = FabricLoader.getInstance().getGameDir().resolve("resourcepacks");
 	public static final String VERSION = FabricLoader.getInstance().getModContainer("sbimp")
 	.map(modInfo -> modInfo.getMetadata().getVersion().getFriendlyString()).orElse("null");
+	
 	@Override
 	public void onInitializeClient() {
 		LOGGER.info("Entered SkyblockImprovements");

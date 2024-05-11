@@ -16,7 +16,7 @@ import net.minecraft.text.Text;
 
 //https://fabric.moddedmc.wiki/rendering/ helps here
 public class IPLRender {
-    @SuppressWarnings("resource")
+   
     public static void render(DrawContext drawContext, float tickDelta){
         if(ItemPickupLog.getFeatureVisual()!=null){
             ButtonWidget location = ItemPickupLog.getFeatureVisual();
