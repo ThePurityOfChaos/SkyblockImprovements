@@ -68,6 +68,12 @@ public class CommandsMetaMixin {
                             return 1;
                         }
                 ))
+                .then(ClientCommandManager.literal("toggleSackMessage")
+                        .executes(context ->{
+                            IPLConfig.toggleRemoval();
+                            return 1;
+                        }
+                ))
                 .executes(context ->{
                     IPLConfig.toggleFeature();
                     IPLConfig.saveSettings();
