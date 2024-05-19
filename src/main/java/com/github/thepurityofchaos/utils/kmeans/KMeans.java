@@ -11,10 +11,9 @@ import java.util.stream.Collectors;
 // https://www.baeldung.com/java-k-means-clustering-algorithm has this implementation. 
 
 public class KMeans {
-    private static final Random random = new Random();
 
-    public static Map<Centroid,List<Record>> fit(List<Record> records, int k, Distance distanceType, int maxIterations){
-        List<Centroid> centroids = randomCentroids(records, k);
+    public static Map<Centroid,List<Record>> fit(List<Record> records, int k, Distance distanceType, int maxIterations, boolean ppCentroids){
+        List<Centroid> centroids = ppCentroids?ppCentroids(records, k):randomCentroids(records, k);
         Map<Centroid,List<Record>> clusters = new HashMap<>();
         Map<Centroid,List<Record>> lastState = new HashMap<>();
 
@@ -40,10 +39,10 @@ public class KMeans {
         return lastState;
     }
     private static List<Centroid> randomCentroids(List<Record> records, int k){
+        Random random = new Random();
         List<Centroid> centroids = new ArrayList<>();
         Map<String,Double> maxs = new HashMap<>();
         Map<String,Double> mins = new HashMap<>();
-        
         for(Record record : records){
             record.getInfo().forEach((key,value)->{
                 maxs.compute(key, (k1,max) -> max == null || value > max ? value:max );
@@ -64,11 +63,42 @@ public class KMeans {
 
         return centroids;
     }
+    // https://www.geeksforgeeks.org/ml-k-means-algorithm/ was used and translated to Java to help with centroid choices. O(nklog(k)).
+    private static List<Centroid> ppCentroids(List<Record> records, int k){
+        List<Centroid> centroids = new ArrayList<>();
+        EuclideanDistance distanceFunction = new EuclideanDistance();
+        centroids.add(new Centroid(records.get(0)));
+
+        //add the rest of the centroids
+        for(int i=1; i<k; i++){
+            List<Double> distances = new ArrayList<>();
+            for(int j=0; j<records.size(); j++){
+                Record record = records.get(j);
+                Double d = Double.MAX_VALUE;
+                for(int l=0; l<centroids.size(); l++){
+                    Double temp = distanceFunction.calculate(centroids.get(l).getCoordinates(), record.getInfo());
+                    d = Math.min(d,temp);
+                }
+                distances.add(d);
+            }
+            int distIndex = 0;
+            Double dist = Double.MIN_VALUE;
+            for(int j=0; j<distances.size(); j++){
+                if(distances.get(j)>dist){
+                    distIndex = j;
+                    dist = distances.get(j);
+                }
+            }
+            centroids.add(new Centroid(records.get(distIndex)));
+        }
+
+        return centroids;
+    }
     private static Centroid nearestCentroid(Record record, List<Centroid> centroids, Distance distanceType){
         double minDistance = Double.MAX_VALUE;
         Centroid nearest = null;
         for(Centroid centroid : centroids){
-            double currentDistance = distanceType.calculate(record.getInfo(), centroid.getCoordinates());
+            double currentDistance = distanceType.calculate(centroid.getCoordinates(),record.getInfo());
             if(currentDistance<minDistance){
                 minDistance = currentDistance;
                 nearest = centroid;
@@ -99,6 +129,18 @@ public class KMeans {
     }
     private static List<Centroid> relocateCentroids(Map<Centroid,List<Record>> clusters){
         return clusters.entrySet().stream().map(e-> average(e.getKey(), e.getValue())).collect(Collectors.toList());
+    }
+    public static double SSE(Map<Centroid,List<Record>> cluster, Distance distance){
+        if(cluster ==null) return Double.MAX_VALUE;
+        double sum = 0;
+        for(Map.Entry<Centroid,List<Record>> entry : cluster.entrySet()){
+            Centroid centroid = entry.getKey();
+            for(Record record : entry.getValue()){
+                double d = distance.calculate(centroid.getCoordinates(), record.getInfo());
+                sum+=Math.pow(d,2);
+            }
+        }
+        return sum;
     }
     
 }

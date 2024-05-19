@@ -1,5 +1,7 @@
 package com.github.thepurityofchaos.listeners;
 
+import com.github.thepurityofchaos.SkyblockImprovements;
+import com.github.thepurityofchaos.config.IPLConfig;
 import com.github.thepurityofchaos.features.economic.BatFirework;
 
 import net.minecraft.network.message.SignedMessage;
@@ -20,9 +22,13 @@ public class ChatListener {
 
     //Used to parse ALL messages, including game messages. 
     public static Text parseMessage(Text message) {
-        if(message == null)
+        SkyblockImprovements.push("SBI_ChatListener");
+        if(message == null){
+            SkyblockImprovements.pop();
             return null;
+        }
         if(message.getStyle().getHoverEvent()!=null){
+            SkyblockImprovements.pop();
             return null;
         }
         //Generic Parse Checks. Should be ordered by probability of appearance.  
@@ -35,12 +41,20 @@ public class ChatListener {
         */    
 
         //Is this a [Sacks] message? If so, hand it off to the SackListener.
-        if(SackListener.isMyMessage(message))
-            return null;
-        if(BatFirework.isMyMessage(message)){
+        if(SackListener.isMyMessage(message)){
+            if(IPLConfig.removeMessage()){ 
+                SkyblockImprovements.pop();
+                return Text.of("");
+            }
+            SkyblockImprovements.pop();
             return null;
         }
-
+            
+        if(BatFirework.isMyMessage(message)){
+            SkyblockImprovements.pop();
+            return null;
+        }
+        SkyblockImprovements.pop();
         return SpecialListener.isMyMessage(message);
         
     }

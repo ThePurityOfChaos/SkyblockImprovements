@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.utils.Utils;
 
 import java.util.AbstractMap;
@@ -60,6 +61,7 @@ public class InventoryProcessor {
     }
     
     public static List<ItemStack> processInventoryToList(Inventory inventory, boolean isPlayerInventory){
+        SkyblockImprovements.push("SBI_processInventoryToList");
         List<ItemStack> result = new ArrayList<>(inventory.size());
         for(int i=0; i<inventory.size(); i++){
             //if the inventory is a player inventory, it will have a Skyblock Menu. This menu can change, so swapping it is annoying. Skip it.
@@ -69,10 +71,12 @@ public class InventoryProcessor {
             result.add(!inventory.getStack(i).isEmpty()?inventory.getStack(i).copy():null);
             
         }
+        SkyblockImprovements.pop();
         return result;
     }
 
     public static Map<Text,AbstractMap.SimpleEntry<Integer,NbtCompound>>processListToMap(List<ItemStack> list){
+        SkyblockImprovements.push("SBI_processListToMap");
         Map<Text,AbstractMap.SimpleEntry<Integer,NbtCompound>> map = new HashMap<>();
         for(int i=0; i<list.size(); i++){
             ItemStack item = null;
@@ -110,6 +114,7 @@ public class InventoryProcessor {
                 
             }
         }   
+        SkyblockImprovements.pop();
         return map;
     }
 

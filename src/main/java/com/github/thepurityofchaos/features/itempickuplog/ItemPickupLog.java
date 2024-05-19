@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Set;
 
-
+import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.interfaces.Feature;
 import com.github.thepurityofchaos.storage.Sacks;
 import com.github.thepurityofchaos.utils.Utils;
@@ -38,6 +38,7 @@ public class ItemPickupLog implements Feature {
     private static GUIElement IPLVisual;
     private static List<ItemStack> formerInventory;
     private static Multimap<Text,ChangeInstance> log = ArrayListMultimap.create();
+
     public static void init(){IPLVisual = new GUIElement(64,64,128,32,null);}
 
     public static GUIElement getFeatureVisual(){return IPLVisual;}
@@ -73,10 +74,25 @@ public class ItemPickupLog implements Feature {
 
 
     public static void determineChanges(){
+
         //this is what formerInventory will be defined as at the end of each determination.
         List<ItemStack> inventory = InventoryProcessor.processInventoryToList(InventoryProcessor.getPlayerInventory(), true);
 
         if(formerInventory!=null && inventory!=null){
+            boolean equals = true;
+            for(int i=0; i<inventory.size(); i++){
+                try{
+                if(!ItemStack.areEqual(inventory.get(i), formerInventory.get(i))){
+                    equals = false;
+                    break;
+                }
+                }catch(Exception e){
+                    equals = false;
+                    break;
+                }
+            }
+            if(equals) return;
+            SkyblockImprovements.push("SBI_determineChanges");
             //map out the inventories from list form.
             Map<Text, AbstractMap.SimpleEntry<Integer,NbtCompound>> formerInventoryMap = InventoryProcessor.processListToMap(formerInventory);
             Map<Text, AbstractMap.SimpleEntry<Integer,NbtCompound>> currentInventoryMap = InventoryProcessor.processListToMap(inventory);
@@ -132,6 +148,7 @@ public class ItemPickupLog implements Feature {
                     }
                 }
             }
+            SkyblockImprovements.pop();
         }
         formerInventory = inventory;
 

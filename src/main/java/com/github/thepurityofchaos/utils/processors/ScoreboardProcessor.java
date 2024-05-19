@@ -1,6 +1,9 @@
 package com.github.thepurityofchaos.utils.processors;
 
 import java.util.List;
+
+import com.github.thepurityofchaos.SkyblockImprovements;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -42,6 +45,7 @@ public class ScoreboardProcessor {
 
     @SuppressWarnings("resource")
     public static void processScoreboard(){
+        SkyblockImprovements.push("SBI_ScoreboardProcessor");
         try{
             //the current scoreboard
             Scoreboard scoreboard = MinecraftClient.getInstance().player.getScoreboard();
@@ -69,6 +73,7 @@ public class ScoreboardProcessor {
         }
         //fixes an issue with uncertainty in regions.
         getRegion();
+        SkyblockImprovements.pop();
     }
 
 

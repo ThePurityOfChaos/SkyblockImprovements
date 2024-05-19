@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.Scanner;
 
 import com.github.thepurityofchaos.interfaces.Feature;
+import com.github.thepurityofchaos.utils.NbtUtils;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
-import com.github.thepurityofchaos.utils.processors.NbtProcessor;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -30,8 +30,8 @@ public class ChocolateFactory implements Feature {
         factoryInfo.entrySet().removeIf(entry -> entry.getValue()==-1);
     }
     private static void getDataFromItemStack(ItemStack item){
-        List<Text> lore = NbtProcessor.getLorefromItemStack(item);
-        Text name = NbtProcessor.getNamefromItemStack(item);
+        List<Text> lore = NbtUtils.getLorefromItemStack(item);
+        Text name = NbtUtils.getNamefromItemStack(item);
         if(lore==null)
             return;
         boolean willBeCost = false;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
 import com.github.thepurityofchaos.utils.processors.ScoreboardProcessor;
 import com.github.thepurityofchaos.utils.screen.ScreenUtils;
@@ -18,6 +19,7 @@ import net.minecraft.text.Text;
 public class IPLRender {
    
     public static void render(DrawContext drawContext, float tickDelta){
+        SkyblockImprovements.push("SBI_ItemPickupLog");
         if(ItemPickupLog.getFeatureVisual()!=null){
             ButtonWidget location = ItemPickupLog.getFeatureVisual();
             int [] pos = new int[2];
@@ -58,5 +60,6 @@ public class IPLRender {
             //to prevent some issues
             }else { ItemPickupLog.resetLog(); }
         }else {ItemPickupLog.resetLog();}   
+        SkyblockImprovements.pop();
     }
 }

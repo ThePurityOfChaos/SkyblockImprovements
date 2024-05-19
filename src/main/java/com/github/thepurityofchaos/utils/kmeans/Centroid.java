@@ -1,11 +1,12 @@
 package com.github.thepurityofchaos.utils.kmeans;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Centroid {
-    private final Map<String,Double> coordinates;
+    private Map<String,Double> coordinates;
 
     public Centroid(Map<String,Double> coordinates){
         this.coordinates = coordinates;
@@ -19,5 +20,9 @@ public class Centroid {
         retVal.add(coordinates.get("g"));
         retVal.add(coordinates.get("b"));
         return retVal;
+    }
+    public Centroid(Record recordToCopy){
+        this.coordinates = new HashMap<>();
+        this.coordinates.putAll(recordToCopy.getInfo());
     }
 }

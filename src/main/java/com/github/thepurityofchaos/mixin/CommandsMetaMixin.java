@@ -16,8 +16,10 @@ import com.github.thepurityofchaos.config.PSConfig;
 import com.github.thepurityofchaos.features.economic.BatFirework;
 import com.github.thepurityofchaos.features.packswapper.PackScreen;
 import com.github.thepurityofchaos.features.packswapper.PackSwapper;
+import com.github.thepurityofchaos.features.retexturer.HelmetRetexturer;
 import com.github.thepurityofchaos.storage.Sacks;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
+import com.github.thepurityofchaos.utils.math.ColorUtils;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 
@@ -134,7 +136,7 @@ public class CommandsMetaMixin {
                         BatFirework.resetProfit();
                         return 1;
                     }
-                ))            
+            ))            
                 .executes(context ->{
                     BatFirework.toggleFeature();
                     EcoConfig.saveSettings();
@@ -155,6 +157,33 @@ public class CommandsMetaMixin {
                 return 1;
             }
         ))
+        .then(ClientCommandManager.literal("HelmetRetexturer")
+            
+        .then(ClientCommandManager.literal("setColor")
+            .then(ClientCommandManager.argument("Red 0-255",IntegerArgumentType.integer())
+                .then(ClientCommandManager.argument("Green 0-255",IntegerArgumentType.integer())
+                    .then(ClientCommandManager.argument("Blue 0-255",IntegerArgumentType.integer())
+                        .executes(context ->{
+                            HelmetRetexturer.changeColor(ColorUtils.rGBAToInt(
+                            (int)(IntegerArgumentType.getInteger(context, "Red 0-255")), 
+                            (int)(IntegerArgumentType.getInteger(context, "Green 0-255")), 
+                            (int)(IntegerArgumentType.getInteger(context, "Blue 0-255")), 
+                            255));
+                            return 1;
+                        }
+        )))))
+        .then(ClientCommandManager.literal("setK")
+            .then(ClientCommandManager.argument("K 2-16",IntegerArgumentType.integer())
+                .executes(context ->{
+                    HelmetRetexturer.changeK((int)(IntegerArgumentType.getInteger(context, "K 2-16")));
+                    return 1;
+                }
+        )))
+        .executes(context ->{
+            HelmetRetexturer.toggleRecolor();
+            return 1;
+        })
+        )
 
 
 

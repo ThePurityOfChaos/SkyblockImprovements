@@ -27,7 +27,6 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourcePackManager;
 import net.minecraft.resource.ResourcePackProfile;
-import net.minecraft.resource.ResourceType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -51,7 +50,9 @@ public class PackSwapper implements Feature {
     private static Map<String,List<String>> allDefaultRegions = new HashMap<>();
 
     public static void init(){PSVisual = new GUIElement(64,96,128,32,null);}
-    @SuppressWarnings("resource")
+
+
+    
     public static void manipulatePacks(String eArea, String eRegion){
         String sArea = Utils.clearArea(eArea);
         String sRegion = Utils.clearRegion(eRegion);
@@ -84,8 +85,7 @@ public class PackSwapper implements Feature {
             ResourcePack metadataHelper = pack.createResourcePack();
             try{
                 InputStreamReader stream = new InputStreamReader((InputStream)
-                metadataHelper.open(ResourceType.CLIENT_RESOURCES,
-                new Identifier(SkyblockImprovements.RESOURCE_PACK_LOCATION.resolve(name).resolve(ResourcePack.PACK_METADATA_NAME).toString())));
+                metadataHelper.openRoot(SkyblockImprovements.RESOURCE_PACK_LOCATION.resolve(name).resolve(ResourcePack.PACK_METADATA_NAME).toString()));
                     if(stream!=null){
                         JsonElement json = JsonParser.parseReader(stream);
                         if(json.isJsonObject()){
@@ -161,8 +161,10 @@ public class PackSwapper implements Feature {
         //only make changes if the packs change. 
         //These should be called RARELY.
         if(hasChanged){
-            if(sendDebugInfo)
-                MinecraftClient.getInstance().player.sendMessage(Text.of("§"+PackSwapper.getRegionColor()+"[§7SkyblockImprovements§"+PackSwapper.getRegionColor()+"]"+" §7Region change detected."),false);
+            if(sendDebugInfo){
+                MinecraftClient client = MinecraftClient.getInstance();
+                client.player.sendMessage(Text.of("§"+PackSwapper.getRegionColor()+"[§7SkyblockImprovements§"+PackSwapper.getRegionColor()+"]"+" §7Region change detected."),false);
+            }
             MinecraftClient.getInstance().reloadResources();
         }
         
@@ -174,7 +176,7 @@ public class PackSwapper implements Feature {
         String sRegion = Utils.clearRegion(currentRegion.getString());
 
         //only manipulate packs if area changes and not in no area
-        if(!sArea.equals(previousArea)||!sRegion.equals(previousRegion)||!sArea.equals("NoAreaFound!")){
+        if(!sArea.equals("NoAreaFound!")&&(!sArea.equals(previousArea)||!sRegion.equals(previousRegion))){
             manipulatePacks(sArea,sRegion);
         }
         previousArea = sArea;
