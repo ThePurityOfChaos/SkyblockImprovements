@@ -1,7 +1,7 @@
 # SkyblockImprovements
 Hypixel Skyblock Quality-of-Life Mod for 1.20.4
 
-Current Version: 0.2.1
+Current Version: 0.3.0
 
 Features:
 
@@ -11,7 +11,10 @@ Automatic Resource Pack Swapper
 
 Chocolate Factory Helper
 
-Past Versioning:
+Helmet Retexturer
+
+Bat Firework Helper
+
 0.0.1: Mod Creation
 
 0.0.2: GUI Integration
@@ -32,16 +35,12 @@ Past Versioning:
 
 0.2.1: Economic Analysis 1 (Chocolate Factory)
 
-Planned Versioning:
+0.2.2 Economic Analysis 2 (Bat Firework)
 
-0.2.2 Economic Analysis 2 (???)
+0.2.3: Helmet Retexturer Basics
 
-0.2.3 Economic Analysis 3 (???)
+0.3.0: Helmet Retexturer Visual Integration
 
-0.3.0: 3 Economic Analysis Examples & Custom Analysis
+0.3.1: Generic Profit Manager
 
-0.3.1: Helmet Retexturer Basics
-
-0.3.2: Helmet Retexturer Visual Integration
-
-1.0.0: Helmet Retexturer Complete
+1.0.0: First Release
