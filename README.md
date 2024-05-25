@@ -44,3 +44,12 @@ Bat Firework Helper
 0.3.1: Generic Profit Manager
 
 1.0.0: First Release
+
+### Icon Source
+Mod Icon: E8 Petrie Projection
+
+Icon Author: J. Gregory Moxness
+
+https://en.wikipedia.org/wiki/E8_(mathematics)#/media/File:E8Petrie.svg
+
+https://creativecommons.org/licenses/by-sa/3.0/
