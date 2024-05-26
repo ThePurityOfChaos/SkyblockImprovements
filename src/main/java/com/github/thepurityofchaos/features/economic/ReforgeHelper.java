@@ -2,8 +2,8 @@ package com.github.thepurityofchaos.features.economic;
 
 import java.util.List;
 
+import com.github.thepurityofchaos.utils.NbtUtils;
 import com.github.thepurityofchaos.utils.Utils;
-import com.github.thepurityofchaos.utils.processors.NbtProcessor;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -17,8 +17,8 @@ public class ReforgeHelper {
         }
     }
     private static void getDataFromItemStack(ItemStack item){
-        Text name = NbtProcessor.getNamefromItemStack(item);
-        List<Text> lore = NbtProcessor.getLorefromItemStack(item);
+        Text name = NbtUtils.getNamefromItemStack(item);
+        List<Text> lore = NbtUtils.getLorefromItemStack(item);
         if(lore==null)
             return;
         if(!name.getString().contains("Reforge")&&!name.getString().contains("Close")){

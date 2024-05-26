@@ -1,25 +1,46 @@
 package com.github.thepurityofchaos.utils.processors;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
+import com.github.thepurityofchaos.SkyblockImprovements;
+import com.github.thepurityofchaos.listeners.SpecialListener;
+import com.github.thepurityofchaos.mixin.TabListAccessor;
+
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.text.Text;
 
 public class TabListProcessor {
     private static List<Text> tabList = null;
+    private static Set<PlayerListEntry> previousPlayers = new ReferenceOpenHashSet<>();
     public static void processTabList(){
-        tabList = new ArrayList<>();
         MinecraftClient client = MinecraftClient.getInstance();
+        SkyblockImprovements.push("SBI_TabListProcessor");
         if(client.getNetworkHandler()!=null){
             //get a Set of PlayerListEntries. Was previously getPlayerList().
-            Collection<PlayerListEntry> players = client.getNetworkHandler().getListedPlayerListEntries();
-            for(PlayerListEntry player : players){
+            Set<PlayerListEntry> players = ((TabListAccessor)client.getNetworkHandler()).getListedPlayerList();
+            //if nothing has changed, do nothing.
+            if(players.equals(previousPlayers)){
+                SkyblockImprovements.pop();
+                return;
+            } 
+            tabList = new ArrayList<>();
+            players.forEach(player ->{
+                Text temp = SpecialListener.isMyMessage(player.getDisplayName());
+                if(temp!=null)
+                    player.setDisplayName(temp);
                 tabList.add(player.getDisplayName());
-            }
+            });
+            //shallow copy, looks for changes in what's being listed not changes in the currently listed ones
+            previousPlayers.clear();
+            previousPlayers.addAll(players);
+
+            
         }
+        SkyblockImprovements.pop();
     }
     public static Text getArea(){
         for(Text listEntry : tabList){

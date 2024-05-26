@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.interfaces.Listener;
 import com.github.thepurityofchaos.utils.Utils;
 import com.google.gson.Gson;
@@ -46,14 +47,17 @@ public class SpecialListener implements Listener {
     }
 
     public static Text isMyMessage(Text message){
+        if(message==null) return null;
         //if one of the gamertags
+        SkyblockImprovements.push("SBI_SpecialListener");
         for(String name : specialNameMap.keySet()){
             if(message.getString().contains(name)){
+                SkyblockImprovements.pop();
                 return SpecialListener.recolorMessage(message, name, Style.EMPTY.withColor(Formatting.byCode(specialNameMap.get(name))));
             }
         }
         //if something else
-
+        SkyblockImprovements.pop();
         return null;
     }
     public static Text recolorMessage(Text message, String recolorPoint, Style newStyle){
@@ -94,4 +98,5 @@ public class SpecialListener implements Listener {
         newMessage.append(Text.literal(latter).setStyle(currentStyle));
         return true;
     }
+
 }

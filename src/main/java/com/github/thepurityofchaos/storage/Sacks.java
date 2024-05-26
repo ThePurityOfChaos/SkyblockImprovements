@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
 import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.config.Config;
 import com.github.thepurityofchaos.interfaces.Filer;
+import com.github.thepurityofchaos.utils.NbtUtils;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
-import com.github.thepurityofchaos.utils.processors.NbtProcessor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -35,6 +35,8 @@ public class Sacks implements Filer{
     private static final Logger LOGGER = LoggerFactory.getLogger(Sacks.class);
     private static Map<String,Integer> allSackContents = null;
     private static boolean featureEnabled = false;
+    private static boolean dataArrived = false;
+    private static int ticksSinceData = 0;
     public static void init(){
         createFile();
         try{
@@ -67,7 +69,7 @@ public class Sacks implements Filer{
             catch(Exception e){
                 LOGGER.error("[SkyblockImprovements] Sacks failed to save!");
                 e.printStackTrace();
-            }
+        }
     }
 
     public static void update(String strippedMessage, int input){ 
@@ -91,16 +93,17 @@ public class Sacks implements Filer{
             for(ItemStack item : list){
                 if(item!=null){
                     try{
-                        List<Text> itemLore = NbtProcessor.getLorefromItemStack(item);
+                        List<Text> itemLore = NbtUtils.getLorefromItemStack(item);
                         boolean isGem = false;
                         for(Text lore : itemLore){
                             String loreString = lore.getString();
                             //don't use Stored: if this is a Gem Sack
                             if(loreString.contains("Stored:")&& isGem==false){
+                                dataArrived = true;
                                 Scanner intParser = new Scanner(Utils.removeCommas(loreString.replace("/"," ")));
                                 while(intParser.hasNext()){
                                     if(intParser.hasNextInt()){
-                                        put(NbtProcessor.getNamefromItemStack(item).getString(),intParser.nextInt());
+                                        put(NbtUtils.getNamefromItemStack(item).getString(),intParser.nextInt());
                                         continue;
                                     }
                                     intParser.next();
@@ -111,10 +114,11 @@ public class Sacks implements Filer{
                             //this can safely be placed after for a very slight performance boost
                             if(loreString.contains("Rough:")||loreString.contains("Flawed:")||loreString.contains("Fine:")){
                                 isGem=true;
+                                dataArrived = true;
                                 Scanner intParser = new Scanner(Utils.removeCommas(Utils.removeText(loreString.replace(":","").replace("/"," "))));
                                 while(intParser.hasNext()){
                                     if(intParser.hasNextInt()){
-                                        String temp = NbtProcessor.getNamefromItemStack(item).getString();
+                                        String temp = NbtUtils.getNamefromItemStack(item).getString();
                                         //Gemstones -> Gemstone
                                         put(loreString.split(":")[0].strip()+" "+(temp.endsWith("s")?temp.substring(0, temp.length()-1):temp),intParser.nextInt());
                                         continue;
@@ -152,6 +156,17 @@ public class Sacks implements Filer{
     public static void toggleFeature(){
         featureEnabled = !featureEnabled;
     }
-    
+    public static boolean dataArrived(){
+        return dataArrived;
+    }
+    public static void newData(){
+        dataArrived = false;
+    }
+    public static int ticksSinceData(){
+        return ticksSinceData;
+    }
+    public static void tickData(){
+        ticksSinceData++;
+    }
 
 }

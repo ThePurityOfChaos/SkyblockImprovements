@@ -6,7 +6,9 @@
 		"CommandsMetaMixin",
 		"TickandRender",
 		"ChatListenerMixin",
-		"ChatScreenAccessor"
+		"SkullRendererMixin",
+		"ChatScreenAccessor",
+		"TabListAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1

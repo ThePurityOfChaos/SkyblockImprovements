@@ -29,6 +29,6 @@
 		"fabric-api": "*"
 	},
 	"suggests": {
-		"another-mod": "*"
+		"rrls": "https://modrinth.com/mod/rrls"
 	}
 }

@@ -28,6 +28,7 @@ public class ChatListenerMixin {
         Text newMessage = ChatListener.parseMessage(message);
         if(newMessage!=null){
             info.cancel();
+            if(newMessage.equals(Text.of(""))) return;
             MinecraftClient client = MinecraftClient.getInstance();
             client.inGameHud.getChatHud().addMessage(newMessage);
         }

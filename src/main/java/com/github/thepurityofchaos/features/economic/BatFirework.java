@@ -2,6 +2,7 @@ package com.github.thepurityofchaos.features.economic;
 
 import java.util.Scanner;
 
+import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.interfaces.Feature;
 import com.github.thepurityofchaos.interfaces.Listener;
 import com.github.thepurityofchaos.storage.Bazaar;
@@ -19,9 +20,11 @@ public class BatFirework implements Listener,Feature {
     }
 
     public static boolean isMyMessage(Text message){
+        SkyblockImprovements.push("SBI_BatFirework");
         if(message.getString().contains(" Purple Candies")){
             addToProfit(message.getString());
         }
+        SkyblockImprovements.pop();
         return false;
     }
     private static void addToProfit(String message){

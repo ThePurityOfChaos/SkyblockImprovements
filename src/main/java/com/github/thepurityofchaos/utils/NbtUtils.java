@@ -1,7 +1,8 @@
-package com.github.thepurityofchaos.utils.processors;
+package com.github.thepurityofchaos.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -9,7 +10,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.text.Text;
 
-public class NbtProcessor {
+public class NbtUtils {
     public static String removeNbtCharacters(String s){
         return s.replace("{","").replace("}","").replace("\"","").replace("[","").replace("]","").replace(",","");
     }
@@ -58,6 +59,18 @@ public class NbtProcessor {
         NbtList textures = (NbtList) properties.get("textures");
         NbtCompound value = (NbtCompound) textures.get(0);
         return value.getString("Value");
-
+    }
+    public static UUID getUUIDFromSkull(ItemStack stack){
+        if(!stack.hasNbt()){
+            return null;
+        }
+        NbtCompound data = stack.getNbt();
+        if(!data.contains("SkullOwner")){
+            return null;
+        }
+        NbtCompound skullData = (NbtCompound) data.get("SkullOwner");
+        if(skullData.containsUuid("Id"))
+            return skullData.getUuid("Id");
+        return null;
     }
 }

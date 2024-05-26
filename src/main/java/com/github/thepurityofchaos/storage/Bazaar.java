@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
 import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.config.Config;
 import com.github.thepurityofchaos.interfaces.Filer;
+import com.github.thepurityofchaos.utils.NbtUtils;
 import com.github.thepurityofchaos.utils.Utils;
-import com.github.thepurityofchaos.utils.processors.NbtProcessor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -56,14 +56,14 @@ public class Bazaar implements Filer {
             for(ItemStack item : list){
                 if(item!=null){
                     try{
-                        List<Text> itemLore = NbtProcessor.getLorefromItemStack(item);
+                        List<Text> itemLore = NbtUtils.getLorefromItemStack(item);
                         for(Text lore : itemLore){
                             String loreString = lore.getString();
                             if(loreString.contains("Buy price:")){
                                 Scanner doubleParser = new Scanner(Utils.removeCommas(loreString));
                                 while(doubleParser.hasNext()){
                                     if(doubleParser.hasNextDouble()){
-                                        putInBuy(NbtProcessor.getNamefromItemStack(item).getString(),doubleParser.nextDouble());
+                                        putInBuy(NbtUtils.getNamefromItemStack(item).getString(),doubleParser.nextDouble());
                                         continue;
                                     }
                                     doubleParser.next();
@@ -76,7 +76,7 @@ public class Bazaar implements Filer {
                                 Scanner doubleParser = new Scanner(Utils.removeCommas(loreString));
                                 while(doubleParser.hasNext()){
                                     if(doubleParser.hasNextDouble()){
-                                        putInSell(NbtProcessor.getNamefromItemStack(item).getString(),doubleParser.nextDouble());
+                                        putInSell(NbtUtils.getNamefromItemStack(item).getString(),doubleParser.nextDouble());
                                         continue;
                                     }
                                     doubleParser.next();

@@ -29,6 +29,7 @@ import net.minecraft.text.Text;
 public class IPLConfig implements Filer{
     private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
     private static boolean isEnabled = true;
+    private static boolean removeMessage = false;
 
     public static void init(){
         createFile();
@@ -44,6 +45,8 @@ public class IPLConfig implements Filer{
                     dimArray.get(0).getAsInt(),
                     dimArray.get(1).getAsInt()
                 );
+                //enabled or not
+                isEnabled = parser.get("enabled").getAsBoolean();
                 //advanced settings
                 JsonObject advanced = parser.getAsJsonObject("advanced");
                     ChangeInstance.setColorCode(advanced.get("colorCode").getAsString().charAt(0));
@@ -52,11 +55,13 @@ public class IPLConfig implements Filer{
                     if(advanced.get("showSacks").getAsBoolean()){
                         Sacks.toggleFeature();
                     }
-            isEnabled = parser.get("enabled").getAsBoolean();
+                    if(advanced.get("removeMessage").getAsBoolean()){
+                        removeMessage = !removeMessage;
+                    }
             LOGGER.info("[SkyblockImprovements] Item Pickup Log Config Imported.");
             updateFeatureVisuals();
         }catch(Exception e){
-            LOGGER.error("[SkyblockImprovements] Item Pickup Log's Config failed to load! Did a name change, or was it just created?"); 
+            LOGGER.error("[SkyblockImprovements] Item Pickup Log's Config failed to load! Was it updated, or was it just created?"); 
             updateFeatureVisuals();
         }
     }
@@ -71,6 +76,7 @@ public class IPLConfig implements Filer{
                     advanced.put("duration",(int)(ChangeInstance.getMaxLifespan()/1000));
                     advanced.put("distance",ChangeInstance.getDistance());
                     advanced.put("showSacks",Sacks.getFeatureEnabled());
+                    advanced.put("removeMessage",removeMessage);
                 //save button location here
                 ButtonWidget IPLWidget = ItemPickupLog.getFeatureVisual();
                 int[] IPLButtonLocations = {IPLWidget.getX(),IPLWidget.getY(),IPLWidget.getWidth(),IPLWidget.getHeight()}; 
@@ -119,7 +125,10 @@ public class IPLConfig implements Filer{
     private static void updateFeatureVisuals(){
         ItemPickupLog.getFeatureVisual().setMessage(Text.of("Item Pickup Log"+Utils.getStringFromBoolean(isEnabled)));
     }
-    public static void updateFile(){
-        
+    public static boolean removeMessage(){
+        return removeMessage;
+    }
+    public static void toggleRemoval(){
+        removeMessage = !removeMessage;
     }
 }

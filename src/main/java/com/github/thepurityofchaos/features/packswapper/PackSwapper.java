@@ -4,23 +4,27 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.config.PSConfig;
 import com.github.thepurityofchaos.interfaces.Feature;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourcePackManager;
 import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.text.Text;
@@ -46,7 +50,9 @@ public class PackSwapper implements Feature {
     private static Map<String,List<String>> allDefaultRegions = new HashMap<>();
 
     public static void init(){PSVisual = new GUIElement(64,96,128,32,null);}
-    @SuppressWarnings("resource")
+
+
+    
     public static void manipulatePacks(String eArea, String eRegion){
         String sArea = Utils.clearArea(eArea);
         String sRegion = Utils.clearRegion(eRegion);
@@ -72,10 +78,30 @@ public class PackSwapper implements Feature {
         List<String> guaranteedPacks = new ArrayList<>();
         List<String> unmodifiedPacks = new ArrayList<>();
         List<String> modifiedPacks = new ArrayList<>();
+        boolean isValidPack = false;
         for(ResourcePackProfile pack:packs){
             //ignore all packs not directly relevant: guaranteed packs, and unmodified ones.
             String name = pack.getName();
-            if(!name.startsWith("file/_")){
+            ResourcePack metadataHelper = pack.createResourcePack();
+            try{
+                InputStreamReader stream = new InputStreamReader((InputStream)
+                metadataHelper.openRoot(SkyblockImprovements.RESOURCE_PACK_LOCATION.resolve(name).resolve(ResourcePack.PACK_METADATA_NAME).toString()));
+                    if(stream!=null){
+                        JsonElement json = JsonParser.parseReader(stream);
+                        if(json.isJsonObject()){
+                            JsonObject jsonObject = json.getAsJsonObject();
+                            if(jsonObject.has("sbimp")){
+                                isValidPack = jsonObject.get("sbimp").getAsBoolean();
+                            }else{
+                                isValidPack = false;
+                            }
+                        }
+                    }
+            }catch(Exception e){
+                isValidPack = false;
+            }
+
+            if(!isValidPack&&!name.startsWith("file/_")){
                 if(pack.isAlwaysEnabled()){
                     guaranteedPacks.add(name);
                 }
@@ -135,8 +161,10 @@ public class PackSwapper implements Feature {
         //only make changes if the packs change. 
         //These should be called RARELY.
         if(hasChanged){
-            if(sendDebugInfo)
-                MinecraftClient.getInstance().player.sendMessage(Text.of("§"+PackSwapper.getRegionColor()+"[§7SkyblockImprovements§"+PackSwapper.getRegionColor()+"]"+" §7Region change detected."),false);
+            if(sendDebugInfo){
+                MinecraftClient client = MinecraftClient.getInstance();
+                client.player.sendMessage(Text.of("§"+PackSwapper.getRegionColor()+"[§7SkyblockImprovements§"+PackSwapper.getRegionColor()+"]"+" §7Region change detected."),false);
+            }
             MinecraftClient.getInstance().reloadResources();
         }
         
@@ -148,7 +176,7 @@ public class PackSwapper implements Feature {
         String sRegion = Utils.clearRegion(currentRegion.getString());
 
         //only manipulate packs if area changes and not in no area
-        if(!sArea.equals(previousArea)||!sRegion.equals(previousRegion)||!sArea.equals("NoAreaFound!")){
+        if(!sArea.equals("NoAreaFound!")&&(!sArea.equals(previousArea)||!sRegion.equals(previousRegion))){
             manipulatePacks(sArea,sRegion);
         }
         previousArea = sArea;

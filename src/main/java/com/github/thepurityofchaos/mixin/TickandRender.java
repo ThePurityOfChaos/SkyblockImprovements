@@ -47,7 +47,7 @@ public class TickandRender {
                 EcoRender.render(drawContext, tickDelta);
             }
             //Retexturer(s)
-            RTRender.render(drawContext,tickDelta);
+            RTRender.render();
         });
     }   
 }

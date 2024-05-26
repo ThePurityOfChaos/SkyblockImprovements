@@ -38,6 +38,7 @@ public class Config {
                 EcoConfig.init();
                 RTConfig.init();
                 getVersion();
+                getDebug();
                 
         }catch(Exception e){
             LOGGER.error("[SkyblockImprovements] Config failed to load! Did a name change, or was it just created?");
@@ -73,6 +74,13 @@ public class Config {
                 e.printStackTrace();
             }
         }
+        if(Files.notExists(SkyblockImprovements.FILE_LOCATION.resolve("debug.json"))){
+            try{
+                Files.writeString(SkyblockImprovements.FILE_LOCATION.resolve("debug.json"),"false",StandardOpenOption.CREATE);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
         IPLConfig.createFile();
         PSConfig.createFile();
         Sacks.createFile();
@@ -91,7 +99,6 @@ public class Config {
                 hasChanged = true;
             }
             if(hasChanged){
-                IPLConfig.updateFile();
                 PSConfig.updateFile();
                 BufferedWriter writer = Files.newBufferedWriter(SkyblockImprovements.FILE_LOCATION.resolve("version.json"));
                 writer.write(gson.toJson(SkyblockImprovements.VERSION));
@@ -100,5 +107,23 @@ public class Config {
         }catch(Exception e){
            e.printStackTrace();
         }
+    }
+    private static void getDebug(){
+        try{
+            BufferedReader reader = Files.newBufferedReader(SkyblockImprovements.FILE_LOCATION.resolve("debug.json"));
+            if(JsonParser.parseReader(reader).getAsBoolean()) SkyblockImprovements.EXPERIMENTAL_TOGGLE_DEBUG_FEATURES();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    public static void setDebug(){
+        try{
+            BufferedWriter writer = Files.newBufferedWriter(SkyblockImprovements.FILE_LOCATION.resolve("debug.json"));
+            Gson gson = new Gson();
+            writer.write(gson.toJson(SkyblockImprovements.DEBUG()));
+            writer.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }        
     }
 }

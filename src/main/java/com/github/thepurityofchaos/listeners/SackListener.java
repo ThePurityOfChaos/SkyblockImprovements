@@ -34,19 +34,20 @@ public class SackListener implements Listener{
     private static void parseMessage(Text message){
         //why, oh why doesn't message?.getSiblings() work? and why is Hypixel's placement of its hover events so... strange?
         //this could have been two lines.
-
         if(message!=null&& message.getSiblings()!=null){
             //positives, generally
             if(message.getSiblings().get(0)!=null&&
             message.getSiblings().get(0).getStyle()!=null&&
             message.getSiblings().get(0).getStyle().getHoverEvent()!=null)
                 parseHoverEvent(message.getSiblings().get(0).getStyle().getHoverEvent());      
-                            
-            //negatives, generally        
+            try{            
+            //negatives, generally. May cause an ArrayIndexOutOfBounds exception in unintended cases, in which case nothing should happen.
             if(message.getSiblings().get(3)!=null&&
             message.getSiblings().get(3).getStyle()!=null&&
             message.getSiblings().get(3).getStyle().getHoverEvent()!=null)
                 parseHoverEvent(message.getSiblings().get(3).getStyle().getHoverEvent());
+            }catch(Exception e){}
         }
     }
+    
 }
