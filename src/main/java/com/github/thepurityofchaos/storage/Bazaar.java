@@ -17,18 +17,23 @@ import org.slf4j.LoggerFactory;
 import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.config.Config;
 import com.github.thepurityofchaos.interfaces.Filer;
+import com.github.thepurityofchaos.interfaces.ScreenInteractor;
 import com.github.thepurityofchaos.utils.NbtUtils;
 import com.github.thepurityofchaos.utils.Utils;
+import com.github.thepurityofchaos.utils.processors.InventoryProcessor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
-public class Bazaar implements Filer {
+public class Bazaar implements Filer, ScreenInteractor {
     private static final Logger LOGGER = LoggerFactory.getLogger(Bazaar.class);
     private static Map<String,Double> bazaarBuyPrices = null;
     private static Map<String,Double> bazaarSellPrices = null;
@@ -48,7 +53,6 @@ public class Bazaar implements Filer {
             bazaarSellPrices = new HashMap<>();
         }
     }
-    
 
     public static boolean processList(List<ItemStack> list){
         try{
@@ -63,7 +67,7 @@ public class Bazaar implements Filer {
                                 Scanner doubleParser = new Scanner(Utils.removeCommas(loreString));
                                 while(doubleParser.hasNext()){
                                     if(doubleParser.hasNextDouble()){
-                                        putInBuy(NbtUtils.getNamefromItemStack(item).getString(),doubleParser.nextDouble());
+                                        putInBuy(Utils.stripSpecial(NbtUtils.getNamefromItemStack(item).getString()).strip(),doubleParser.nextDouble());
                                         continue;
                                     }
                                     doubleParser.next();
@@ -76,7 +80,7 @@ public class Bazaar implements Filer {
                                 Scanner doubleParser = new Scanner(Utils.removeCommas(loreString));
                                 while(doubleParser.hasNext()){
                                     if(doubleParser.hasNextDouble()){
-                                        putInSell(NbtUtils.getNamefromItemStack(item).getString(),doubleParser.nextDouble());
+                                        putInSell(Utils.stripSpecial(NbtUtils.getNamefromItemStack(item).getString()).strip(),doubleParser.nextDouble());
                                         continue;
                                     }
                                     doubleParser.next();
@@ -139,5 +143,10 @@ public class Bazaar implements Filer {
 				e.printStackTrace();
 			}
 		}
+    }
+    public static void interact(Screen screen){
+        ScreenEvents.afterTick(screen).register(currentScreen ->{
+            Bazaar.processList(InventoryProcessor.processSlotsToList(((GenericContainerScreen)screen).getScreenHandler()));
+        });
     }
 }

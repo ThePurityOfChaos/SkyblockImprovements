@@ -44,12 +44,7 @@ public class PSConfig implements Filer {
             Gson gson = new Gson();
                 //button
                 JsonArray dimArray = parser.getAsJsonArray("button");
-                    PackSwapper.getFeatureVisual().setDimensionsAndPosition(
-                        dimArray.get(2).getAsInt(),
-                        dimArray.get(3).getAsInt(),
-                        dimArray.get(0).getAsInt(),
-                        dimArray.get(1).getAsInt()
-                    );
+                Utils.setDim(PackSwapper.getFeatureVisual(), dimArray);
                     
                 //advanced settings    
                 JsonObject advanced = parser.getAsJsonObject("advanced");
@@ -69,7 +64,7 @@ public class PSConfig implements Filer {
             LOGGER.info("[SkyblockImprovements] Pack Swapper Config Imported.");
             updateFeatureVisuals();
         }catch(Exception e){
-            LOGGER.error("[SkyblockImprovements] Pack Swapper's Config failed to load! Did a name change, or was it just created?");
+            LOGGER.error("[SkyblockImprovements] Pack Swapper's Config failed to load! Was it updated, or was it just created?");
 
             PackSwapper.loadPackAreaRegionToggles(loadDefaultMap());
             updateFeatureVisuals();

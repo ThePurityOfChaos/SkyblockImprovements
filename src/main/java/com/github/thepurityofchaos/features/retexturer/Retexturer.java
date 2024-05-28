@@ -18,13 +18,14 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.file.Files;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.config.RTConfig;
 import com.github.thepurityofchaos.utils.NbtUtils;
 import com.github.thepurityofchaos.utils.Utils;
+import com.github.thepurityofchaos.utils.gui.GUIElement;
 import com.github.thepurityofchaos.utils.math.ColorUtils;
+import com.github.thepurityofchaos.utils.processors.InventoryProcessor;
 import com.github.thepurityofchaos.utils.kmeans.Centroid;
 import com.github.thepurityofchaos.utils.kmeans.EuclideanDistance;
 import com.github.thepurityofchaos.utils.kmeans.KMeans;
@@ -33,18 +34,21 @@ import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 
+import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 
 
-public class HelmetRetexturer {
-        private static boolean recolor = false;
+public class Retexturer {
+        private static boolean isEnabled = false;
         private static Map<String,List<String>> knownHelms = new HashMap<>();
         private static int newColor = -16765017;
         private static int k = 15;
 
         public static void retextureHelm(ItemStack helmet){
-            if(!recolor){
+            if(!isEnabled){
                 return;
             }
             if(MinecraftClient.getInstance()==null) return;
@@ -62,8 +66,21 @@ public class HelmetRetexturer {
                 knownHelms.put(helmetID,new ArrayList<String>());
             }
             //retexture here
-            SkyblockImprovements.push("SBI_HelmetRetexturer");
-            retexture(helmetID,currentTextureURL, 0);
+            SkyblockImprovements.push("SBI_Retexturer_Helmet");
+            try{
+                knownHelms.get(helmetID).add(currentTextureURL);
+                //use indexes to minimize issues with animated helmets
+                int index = knownHelms.get(helmetID).indexOf(currentTextureURL);
+                //get texture from URL (high lag)
+                BufferedImage currentTexture = crop(downloadTexture(helmetID, currentTextureURL, index));
+                storeCurrentTexture(helmetID, uncrop(retexture(helmetID,currentTexture, 0)), index);
+            }catch(Exception e){
+                e.printStackTrace();
+                knownHelms.get(helmetID).remove(currentTextureURL);
+                RTRender.getKnownIdentifiers().remove(currentTextureURL);
+                return;
+            }
+            
             SkyblockImprovements.pop();
         }
 
@@ -103,9 +120,7 @@ public class HelmetRetexturer {
         //Store to File
         private static void storeCurrentTexture(String helmetID, BufferedImage currentTexture, int index){
             try{
-                ImageIO.write(currentTexture, "PNG", SkyblockImprovements.FILE_LOCATION.resolve("helms").resolve(helmetID+index+"mod.png").toFile());
-                //delete unmodified instance
-                Files.deleteIfExists(SkyblockImprovements.FILE_LOCATION.resolve("helms").resolve(helmetID+index+".png"));
+                ImageIO.write(currentTexture, "PNG", SkyblockImprovements.FILE_LOCATION.resolve("helms").resolve(helmetID+index+".png").toFile());
             }catch(Exception e){
                 e.printStackTrace();
                 return;
@@ -137,16 +152,8 @@ public class HelmetRetexturer {
             }
             return currentTexture;
         }
-        private static void retexture(String helmetID, String currentTextureURL, int attemptNumber){
-            knownHelms.get(helmetID).add(currentTextureURL);
-            //use indexes to minimize issues with animated helmets
-            int index = knownHelms.get(helmetID).indexOf(currentTextureURL);
-            //retexture here
-            try{
-                //get texture from URL (high lag)
-                BufferedImage currentTexture = downloadTexture(helmetID, currentTextureURL, index);
-                //modify texture
-                currentTexture = crop(currentTexture);
+        private static BufferedImage retexture(String helmetID, BufferedImage currentTexture, int attemptNumber){
+                //retexture here 
                 int[][] startingImage = getImage(currentTexture);
                 int[] colors = ColorUtils.intToRGBA(newColor);
                 List<Double> newRGB = new ArrayList<>();
@@ -267,16 +274,11 @@ public class HelmetRetexturer {
                 }
                 //store texture, try again up to 3x if nothing was changed
                 if(result.equals(startingImage) && attemptNumber < 3){
-                    retexture(helmetID, currentTextureURL, attemptNumber++);
+                    return retexture(helmetID, currentTexture, attemptNumber++);
                 }
-                setImage(result, currentTexture);
-                storeCurrentTexture(helmetID, uncrop(currentTexture), index);
-            }catch(Exception e){
-                e.printStackTrace();
-                knownHelms.get(helmetID).remove(currentTextureURL);
-                RTRender.getKnownIdentifiers().remove(currentTextureURL);
-                return;
-            }
+                return setImage(result, currentTexture);
+                
+            
         }
 
         //instance modifiers & getters
@@ -290,21 +292,20 @@ public class HelmetRetexturer {
         }
         public static void refresh(ItemStack helmet){
             try{
-            String helmetID = NbtUtils.getUUIDFromSkull(helmet).toString();
-            String textureURL = NbtUtils.getTextureFromSkull(helmet);
-
-            knownHelms.remove(helmetID);
-            RTRender.getKnownIdentifiers().remove(getURL(textureURL));
-            RTConfig.saveSettings();
+                String helmetID = NbtUtils.getUUIDFromSkull(helmet).toString();
+                String textureURL = NbtUtils.getTextureFromSkull(helmet);
+                knownHelms.remove(helmetID);
+                RTRender.getKnownIdentifiers().remove(getURL(textureURL));
+                RTConfig.saveSettings();
             }catch(Exception e){}
             
         }
         public static void toggleRecolor(){
-            recolor = !recolor;
+            isEnabled = !isEnabled;
             RTConfig.saveSettings();
         }
         public static boolean getFeatureEnabled(){
-            return recolor;
+            return isEnabled;
         }
         public static Map<String,List<String>> getKnownHelms(){
             return knownHelms;
@@ -318,7 +319,36 @@ public class HelmetRetexturer {
         public static void setKnownHelms(Map<String,List<String>> map){
             knownHelms = map;
         }
-        
+        public static void interact(Screen screen){
+                int x = screen.width/3+screen.width/12-screen.width/48;
+                int y = screen.height/3+screen.height/48;
+                GUIElement helmRefreshButton = new GUIElement(x, y, 16, 16, button ->{
+                    Retexturer.refresh(InventoryProcessor.getHelmet());
+                    return;
+                });
+                GUIElement helmResetButton = new GUIElement(x-16, y, 16, 16, button ->{
+                    try{
+                    ItemStack helmet = InventoryProcessor.getHelmet();
+                    String helmetTextureURL = NbtUtils.getTextureFromSkull(helmet);
+                    UUID hID = NbtUtils.getUUIDFromSkull(helmet);
+                    if(helmetTextureURL == null|| hID ==null) return;
+                    String helmetID = hID.toString();
+                    String currentTextureURL = getURL(helmetTextureURL);
+                    knownHelms.remove(helmetID);
+                    RTRender.getKnownIdentifiers().remove(getURL(helmetTextureURL));
+                    Retexturer.storeCurrentTexture(helmetID,downloadTexture(helmetID, currentTextureURL, 0),0);
+                    knownHelms.put(helmetID,new ArrayList<String>());
+                    knownHelms.get(helmetID).add(currentTextureURL);
+                    RTConfig.saveSettings();
+                    }catch(Exception e){}
+                });
+                helmRefreshButton.setMessage(Text.of(Utils.getColorString('b')+"⟳"));
+                helmResetButton.setMessage(Text.of(Utils.getColorString('b')+"X"));
+                if(isEnabled){
+                Screens.getButtons(screen).add(helmRefreshButton);
+                Screens.getButtons(screen).add(helmResetButton);    
+                }        
+        }
 
 
         

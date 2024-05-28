@@ -20,9 +20,9 @@ import net.minecraft.text.Text;
 /**
  * The main processor for all Scoreboard operations in the mod.
  * 
- * <p>{@link #getScoreboard getScoreboard()}: Gets a List<Text> containing everything in the current scoreboard. It's suggested to call processScoreboard() before calling this, unless you want the previous instance.
+ * <p> {@link #getScoreboard getScoreboard()}: Gets a List<Text> containing everything in the current scoreboard. It's suggested to call processScoreboard() before calling this, unless you want the previous instance.
  * 
- * <p>{@link #processScoreboard processScoreboard()}: Updates the current state of the Scoreboard.
+ * <p> {@link #processScoreboard processScoreboard()}: Updates the current state of the Scoreboard.
  * 
  * <p> {@link #getRegion getRegion()}: Gets the current region in {@link Text} format. 
  * 

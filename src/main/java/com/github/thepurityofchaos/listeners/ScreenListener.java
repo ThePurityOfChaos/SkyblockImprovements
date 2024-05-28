@@ -8,24 +8,19 @@ import com.github.thepurityofchaos.config.EcoConfig;
 import com.github.thepurityofchaos.features.economic.ChocolateFactory;
 import com.github.thepurityofchaos.features.economic.Refinery;
 import com.github.thepurityofchaos.features.economic.ReforgeHelper;
-import com.github.thepurityofchaos.features.retexturer.HelmetRetexturer;
+import com.github.thepurityofchaos.features.retexturer.Retexturer;
 import com.github.thepurityofchaos.mixin.ChatScreenAccessor;
 import com.github.thepurityofchaos.storage.Bazaar;
 import com.github.thepurityofchaos.storage.Sacks;
 import com.github.thepurityofchaos.utils.Utils;
-import com.github.thepurityofchaos.utils.gui.GUIElement;
 import com.github.thepurityofchaos.utils.math.MathSolutions;
-import com.github.thepurityofchaos.utils.processors.InventoryProcessor;
 import com.github.thepurityofchaos.utils.screen.ScreenUtils;
-
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.gui.screen.ChatScreen;
 
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 public class ScreenListener {
     /*
@@ -48,97 +43,48 @@ public class ScreenListener {
             SkyblockImprovements.push("SBI_ScreenListener");
             if(screen instanceof GenericContainerScreen){
                 
-                
                 //determine type
                 String screenName = screen.getTitle().getString();
 
                 //Sack
                 if(screenName.contains("Sack")&&!screenName.contains("Sack of Sacks")){
                     SkyblockImprovements.push("SBI_Sacks");
-                    Sacks.newData();
-                    ScreenEvents.afterTick(screen).register(currentScreen -> {
-                        if(Sacks.ticksSinceData() < 5 ||!Sacks.dataArrived()){
-                            Sacks.processList(InventoryProcessor.processSlotsToList(((GenericContainerScreen)screen).getScreenHandler()));
-                            Sacks.saveSettings();
-                            Sacks.tickData();
-                        }
-                    });
+                    Sacks.interact(screen);
                     SkyblockImprovements.pop();
                 } 
 
                 //Bazaar, one of the only ones that has the ➜ symbol. I haven't seen any other name with this symbol, so for now it's likely fine.
                 //If not, add in a secondary check for the different parts of the Bazaar, which may be more complex.
                 if(screenName.contains("➜")){
-                    ScreenEvents.afterTick(screen).register(currentScreen ->{
-                        SkyblockImprovements.push("SBI_Bazaar");
-                        Bazaar.processList(InventoryProcessor.processSlotsToList(((GenericContainerScreen)screen).getScreenHandler()));
-                        SkyblockImprovements.pop();
-                    });
+                    SkyblockImprovements.push("SBI_Bazaar");
+                    Bazaar.interact(screen);
+                    SkyblockImprovements.pop();
                 }
 
                 //Chocolate Factory
                 if(screenName.contains("Chocolate Factory")){
                     SkyblockImprovements.push("SBI_ChocolateFactory");
-                    ScreenEvents.afterTick(screen).register(currentScreen -> {
-                        ChocolateFactory.processList(InventoryProcessor.processSlotsToList(((GenericContainerScreen)screen).getScreenHandler()));
-                    });
-                    ScreenEvents.afterRender(screen).register((currentScreen, drawContext, mouseX, mouseY, delta)->{ 
-                        Identifier texture = new Identifier("sbimp","textures/border.png");
-                        int x = currentScreen.width/4;
-                        int y = currentScreen.height/2;
-                        int yOffset = currentScreen.height/4;
-                        List<Text> texts = new ArrayList<>();
-                        texts.add(ChocolateFactory.getChocolateCount());
-                        texts.add(ChocolateFactory.getCPS());
-                        texts.add(ChocolateFactory.mostEfficientUpgrade());
-                        texts.add(ChocolateFactory.getTimeToUpgrade());
-                        ScreenUtils.draw(drawContext, texts, texture, x, y-yOffset,-1,-1,1000,-1,-1,-1);
-                    });
+                    ChocolateFactory.interact(screen);
                     SkyblockImprovements.pop();
                 }
                 //Reforge Station
                 if(screenName.contains("Reforge Item")){
-                    //process inventory
                     SkyblockImprovements.push("SBI_ReforgeHelper");
-                    ScreenEvents.afterTick(screen).register(currentScreen -> {
-                        ReforgeHelper.processList(InventoryProcessor.processSlotsToList(((GenericContainerScreen)screen).getScreenHandler()));
-                    });
-                    //show current reforge
-                    ScreenEvents.afterRender(screen).register((currentScreen, drawContext, mouseX, mouseY, delta)->{ 
-                        int x = currentScreen.width/2;
-                        int xOffset = currentScreen.width/16;
-                        int y = currentScreen.height/2;
-                        int yOffset = currentScreen.height/9;
-                        List<Text> text = new ArrayList<>();
-                        text.add(ReforgeHelper.getReforge());
-                        ScreenUtils.draw(drawContext, text, x-xOffset, y-yOffset, -1, -1, 1000, -1, -1, -1); 
-
-                    });
-                    //remove reforge when screen closes
-                    ScreenEvents.remove(screen).register(currentScreen ->{
-                        ReforgeHelper.setReforge(Text.literal(""));
-                    });
+                    ReforgeHelper.interact(screen);
                     SkyblockImprovements.pop();
                 }
 
                 //Refinery
-                if(screenName.contains("Refine Ores")){
+                if(screenName.contains("Refine")){
                     SkyblockImprovements.push("SBI_Refinery");
-                    ScreenEvents.afterTick(screen).register(currentScreen -> {
-                        Refinery.processList(InventoryProcessor.processSlotsToList(((GenericContainerScreen)screen).getScreenHandler()));
-                    });
+                    Refinery.interact(screen);
                     SkyblockImprovements.pop();
                 }
 
             }
             if(screen instanceof InventoryScreen){
                 SkyblockImprovements.push("SBI_HelmetRetexturerInteractables");
-                GUIElement refreshButton = new GUIElement(screen.width/3, screen.height/3, 16, 16, button ->{
-                    HelmetRetexturer.refresh(InventoryProcessor.getHelmet());
-                    return;
-                });
-                refreshButton.setMessage(Text.of("⟳"));
-                Screens.getButtons(screen).add(refreshButton);
+                Retexturer.interact(screen);
                 SkyblockImprovements.pop();
             }
             if(screen instanceof ChatScreen){

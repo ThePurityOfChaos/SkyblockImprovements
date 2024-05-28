@@ -3,14 +3,19 @@ package com.github.thepurityofchaos.config;
 import org.jetbrains.annotations.Nullable;
 
 import com.github.thepurityofchaos.features.economic.BatFirework;
+import com.github.thepurityofchaos.features.economic.GenericProfit;
 import com.github.thepurityofchaos.features.itempickuplog.ItemPickupLog;
 import com.github.thepurityofchaos.features.packswapper.PackSwapper;
 import com.github.thepurityofchaos.utils.gui.GUIScreen;
 
 import net.minecraft.client.gui.screen.Screen;
 
-/*
- * Config for the mod's systems. 
+/**
+ * The Config Screen allows the player to modify the display location of any feature added to this screen.
+ * 
+ * <p> {@link #init init(@Nullable Screen parent)}: Creates the screen with every included feature's visual component. 
+ * 
+ * <p> {@link #modifyElementLocation modifyElementLocations(String element, int[] location)} : Sets the element's position to the first two integers in location. Expects
  */
 public class ConfigScreen extends GUIScreen {
         
@@ -25,16 +30,26 @@ public class ConfigScreen extends GUIScreen {
         //Bat Firework
         this.addElement("BatFirework",BatFirework.getFeatureVisual());
 
+        this.addElement("GenericProfit", GenericProfit.getFeatureVisual());
+
         //generic
         //this.addElement("name"),Feature.getFeatureVisual();
         
         
         super.init(parent);
     }
-    public void modifyElementLocation(String element, int[] location){
+    /**
+     * Takes in the name of an element and an integer array of at least size 2. Throws an IllegalArgumentException if the integer array contains only a single element.
+     * @param element
+     * @param location
+     * @throws IllegalArgumentException
+     */
+    public void modifyElementLocation(String element, int[] location) throws IllegalArgumentException{
         this.getElement(element).setPosition(location[0], location[1]);
     }
-
+    /**
+     * Closes the Screen, saving the Config's changes.
+     */
     public void close(){
         // only call saveSettings when the config screen closes, to minimize writing needed
         Config.saveSettings();

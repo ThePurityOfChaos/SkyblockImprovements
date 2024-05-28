@@ -38,14 +38,8 @@ public class IPLConfig implements Filer{
             BufferedReader reader = Files.newBufferedReader(SkyblockImprovements.FILE_LOCATION.resolve("ipl.json"));
             JsonObject parser = JsonParser.parseReader(reader).getAsJsonObject();
                 JsonArray dimArray = parser.getAsJsonArray("button");
-                //width, height, x, y (inverted). It's weird. I just store it as x,y,width,height.
-                ItemPickupLog.getFeatureVisual().setDimensionsAndPosition(
-                    dimArray.get(2).getAsInt(),
-                    dimArray.get(3).getAsInt(),
-                    dimArray.get(0).getAsInt(),
-                    dimArray.get(1).getAsInt()
-                );
-                //enabled or not
+                
+                Utils.setDim(ItemPickupLog.getFeatureVisual(), dimArray);
                 isEnabled = parser.get("enabled").getAsBoolean();
                 //advanced settings
                 JsonObject advanced = parser.getAsJsonObject("advanced");

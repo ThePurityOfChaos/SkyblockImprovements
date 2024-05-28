@@ -11,16 +11,22 @@ import org.slf4j.LoggerFactory;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.config.Config;
+import com.github.thepurityofchaos.features.economic.GenericProfit;
 import com.github.thepurityofchaos.interfaces.Filer;
+import com.github.thepurityofchaos.interfaces.ScreenInteractor;
 import com.github.thepurityofchaos.utils.NbtUtils;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
+import com.github.thepurityofchaos.utils.processors.InventoryProcessor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
@@ -31,7 +37,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 
-public class Sacks implements Filer{
+public class Sacks implements Filer, ScreenInteractor{
     private static final Logger LOGGER = LoggerFactory.getLogger(Sacks.class);
     private static Map<String,Integer> allSackContents = null;
     private static boolean featureEnabled = false;
@@ -75,6 +81,7 @@ public class Sacks implements Filer{
     public static void update(String strippedMessage, int input){ 
         String splitMessage = Utils.stripSpecial(strippedMessage.split("§")[0]).strip();
         allSackContents.put(splitMessage,allSackContents.getOrDefault(splitMessage, 0)+input);
+        GenericProfit.add(splitMessage, input);
     }
     public static void put(String type, int amount){
         allSackContents.put(type,amount);
@@ -139,6 +146,16 @@ public class Sacks implements Filer{
         }catch(NullPointerException e){
             return true;
         }
+    }
+    public static void interact(Screen screen){
+        Sacks.newData();
+        ScreenEvents.afterTick(screen).register(currentScreen -> {
+            if(ticksSinceData() < 5 ||!dataArrived){
+                processList(InventoryProcessor.processSlotsToList(((GenericContainerScreen)screen).getScreenHandler()));
+                saveSettings();
+                tickData();
+            }
+        });
     }
 
     public static void createFile(){

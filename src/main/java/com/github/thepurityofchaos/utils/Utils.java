@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.github.thepurityofchaos.utils.gui.GUIElement;
+import com.google.gson.JsonArray;
+
 public class Utils {
     
     public static String getStringFromBoolean(boolean b){
@@ -30,7 +33,7 @@ public class Utils {
     }
     public static String addCommas(String s){
         try{
-            Integer i = Integer.parseInt(s);
+            Long i = Long.parseLong(s);
             return String.format("%,d",i);
         }catch(Exception x){
             try{
@@ -50,8 +53,8 @@ public class Utils {
         return s.replaceAll("[⸕✧☘✎❈❤❂❁☠α]","");
     }
     public static String normalizeDouble(double d){
-        if((d==((int)d))){
-            return Integer.toString((int)d);
+        if((d==((long)d))){
+            return Long.toString((long)d);
         }
         return Double.toString(d);    
     }
@@ -73,5 +76,20 @@ public class Utils {
             }
         }
         return result;
+    }
+    public static void setDim(GUIElement featureVisual, JsonArray dimArray) {
+        //width, height, x, y (inverted). It's weird. I just store it as x,y,width,height.
+        featureVisual.setDimensionsAndPosition(
+        dimArray.get(2).getAsInt(),
+        dimArray.get(3).getAsInt(),
+        dimArray.get(0).getAsInt(),
+        dimArray.get(1).getAsInt()
+        );
+    }
+    public static String getTime(double time){
+        return (time>86400?((Double)(time/84600)).intValue()+"d ":"")+
+        (time>3600?((Double)((time%86400)/3600)).intValue()+"h ":"")+
+        (time>60?((Double)((time%3600)/60)).intValue()+"m ":"")+
+        ((Double)(time%60)).intValue() +"s";
     }
 }

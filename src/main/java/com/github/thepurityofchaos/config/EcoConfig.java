@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.features.economic.BatFirework;
-
+import com.github.thepurityofchaos.features.economic.GenericProfit;
 import com.github.thepurityofchaos.interfaces.Filer;
 import com.github.thepurityofchaos.utils.Utils;
 
@@ -25,38 +25,47 @@ import com.google.gson.JsonParser;
 
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
-
+/**
+ * Config for all Economic Widgets. Currently Bat Firework Helper, Math Helper, and Generic Profit Manager.
+ * 
+ * <p> {@link #init()}: Initializes all settings and subsystems for the Economic Widgets.
+ */
 public class EcoConfig implements Filer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
     private static boolean math = true;
     private static char colorCode = 'e';
     private static boolean isEnabled = false;
+    /**
+     * 
+     */
     public static void init(){
         //init all subsystems
         BatFirework.init();
+        GenericProfit.init();
         try{
             //create parser based on the client
             BufferedReader reader = Files.newBufferedReader(SkyblockImprovements.FILE_LOCATION.resolve("eco.json"));
             JsonObject parser = JsonParser.parseReader(reader).getAsJsonObject();
                 JsonObject buttons = parser.getAsJsonObject("buttons");
-                
                     JsonArray bfDimArray = buttons.getAsJsonArray("Bat");
-                    //width, height, x, y (inverted). It's weird. I just store it as x,y,width,height.
-                    BatFirework.getFeatureVisual().setDimensionsAndPosition(
-                        bfDimArray.get(2).getAsInt(),
-                        bfDimArray.get(3).getAsInt(),
-                        bfDimArray.get(0).getAsInt(),
-                        bfDimArray.get(1).getAsInt()
-                    );
+                    Utils.setDim(BatFirework.getFeatureVisual(),bfDimArray);
+                    JsonArray gpDimArray = buttons.getAsJsonArray("GP");
+                    Utils.setDim(GenericProfit.getFeatureVisual(), gpDimArray);
                 //advanced settings
                 JsonObject advanced = parser.getAsJsonObject("advanced");
                     colorCode = advanced.get("colorCode").getAsString().charAt(0);
+                    math=advanced.get("Math").getAsBoolean();
+                    if(advanced.get("BatFirework").getAsBoolean()) BatFirework.toggleFeature();
+                    if(advanced.get("GenericProfit").getAsBoolean()) GenericProfit.toggleFeature();
+                       
             isEnabled = parser.get("enabled").getAsBoolean();
             LOGGER.info("[SkyblockImprovements] Economic Config Imported.");
             updateFeatureVisuals();
         }catch(Exception e){
-            LOGGER.error("[SkyblockImprovements] Economic Config failed to load! Did a name change, or was it just created?"); 
+            LOGGER.error("[SkyblockImprovements] Economic Config failed to load! Was it updated, or was it just created?"); 
+            //enable all features
             BatFirework.toggleFeature();
+            GenericProfit.toggleFeature();
             EcoConfig.toggleFeature();
             updateFeatureVisuals();
         }
@@ -78,12 +87,17 @@ public class EcoConfig implements Filer {
                 Map<String,Object> advanced = new HashMap<>();
                     advanced.put("colorCode",colorCode);
                     advanced.put("Math",math);
+                    advanced.put("BatFirework",BatFirework.getFeatureEnabled());
+                    advanced.put("GenericProfit",GenericProfit.getFeatureEnabled());
                     
                 //save button locations here
                 ButtonWidget BatWidget = BatFirework.getFeatureVisual();
+                ButtonWidget GPWidget = GenericProfit.getFeatureVisual();
                 Map<String,Integer[]> EcoButtonLocations = new HashMap<>();
                     Integer[] BatButtonLoc = {BatWidget.getX(),BatWidget.getY(),BatWidget.getWidth(),BatWidget.getHeight()}; 
+                    Integer[] GPButtonLoc = {GPWidget.getX(),GPWidget.getY(),GPWidget.getWidth(),GPWidget.getHeight()};
                     EcoButtonLocations.put("Bat",BatButtonLoc);
+                    EcoButtonLocations.put("GP",GPButtonLoc);
             
             //put all completed options into the main Map    
             configOptions.put("buttons",EcoButtonLocations);
@@ -108,6 +122,10 @@ public class EcoConfig implements Filer {
             e.printStackTrace();
         }
     }
+    
+    /** 
+     * @return boolean
+     */
     public static boolean getFeatureEnabled(){
         return isEnabled;
     }
@@ -125,7 +143,8 @@ public class EcoConfig implements Filer {
         return colorCode;
     }
     private static void updateFeatureVisuals(){
-        BatFirework.getFeatureVisual().setMessage(Text.of("Bat Firework Profit"+Utils.getStringFromBoolean(isEnabled)));
+        BatFirework.getFeatureVisual().setMessage(Text.of("Bat Firework Profit"+Utils.getStringFromBoolean(isEnabled&&BatFirework.getFeatureEnabled())));
+        GenericProfit.getFeatureVisual().setMessage(Text.of("Generic Profit"+Utils.getStringFromBoolean(isEnabled&&GenericProfit.getFeatureEnabled())));
     }
     public static void setColorCode(char c) {
         colorCode = c;
