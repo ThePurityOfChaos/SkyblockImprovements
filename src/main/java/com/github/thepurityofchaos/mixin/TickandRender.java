@@ -8,19 +8,21 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.config.EcoConfig;
-import com.github.thepurityofchaos.config.IPLConfig;
-import com.github.thepurityofchaos.config.PSConfig;
 import com.github.thepurityofchaos.features.economic.EcoRender;
 import com.github.thepurityofchaos.features.itempickuplog.IPLRender;
 import com.github.thepurityofchaos.features.packswapper.PSRender;
 import com.github.thepurityofchaos.features.retexturer.RTRender;
+import com.github.thepurityofchaos.storage.config.EcoConfig;
+import com.github.thepurityofchaos.storage.config.IPLConfig;
+import com.github.thepurityofchaos.storage.config.PSConfig;
 import com.github.thepurityofchaos.utils.processors.ScoreboardProcessor;
 import com.github.thepurityofchaos.utils.processors.TabListProcessor;
 
 
 
-
+/**
+ * MIXIN: Injects into the HudRenderCallback to piggyback off of the Scheduler.
+ */
 @Mixin(SkyblockImprovements.class)
 public class TickandRender {
     
@@ -30,7 +32,7 @@ public class TickandRender {
         //Render all
         HudRenderCallback.EVENT.register((drawContext, tickDelta)->{
             //Process Scoreboard & Tab List for this Tick 
-            //(Used for multiple events- piggybacking on HudRenderCallback, 
+            //(Used for multiple events- piggybacking on HudRenderCallback 
             //makes it so that creating a new ticking system is not necessary)
             ScoreboardProcessor.processScoreboard();
             TabListProcessor.processTabList();

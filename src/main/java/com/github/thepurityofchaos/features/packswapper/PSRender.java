@@ -4,24 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
+import com.github.thepurityofchaos.utils.gui.GUIElement;
 import com.github.thepurityofchaos.utils.processors.ScoreboardProcessor;
 import com.github.thepurityofchaos.utils.processors.TabListProcessor;
 import com.github.thepurityofchaos.utils.screen.ScreenUtils;
 
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-
+/**
+ * Rendering functionality of the Pack Swapper.
+ * <p> {@link #render(DrawContext, float)}: Checks for valid manipulations and renders the current Area & Region.
+ */
 public class PSRender {
-    
     public static void render(DrawContext drawContext, float tickDelta){
         if(PackSwapper.getFeatureVisual()!=null){
             SkyblockImprovements.push("SBI_PackSwapper");
-            ButtonWidget location = PackSwapper.getFeatureVisual();
+            GUIElement location = PackSwapper.getFeatureVisual();
             int [] pos = new int[2];
-            pos[0] = location.getX()+location.getWidth()/2;
-            pos[1] = location.getY()+location.getHeight()/2;
+            pos[0] = location.getCenteredX();
+            pos[1] = location.getCenteredY();
 
             
             Text tempRegion = ScoreboardProcessor.getRegion();

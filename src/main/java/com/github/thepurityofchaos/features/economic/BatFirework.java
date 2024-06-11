@@ -4,15 +4,32 @@ import java.util.Scanner;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.interfaces.Feature;
-import com.github.thepurityofchaos.interfaces.Listener;
+import com.github.thepurityofchaos.interfaces.MessageProcessor;
 import com.github.thepurityofchaos.storage.Bazaar;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
 
 import net.minecraft.text.Text;
-
-public class BatFirework implements Listener,Feature {
+/**
+ * Economic Widget for determining the profit of a Bat Firework.
+ * 
+ * <p> {@link #init()}: Initializes the visual component.
+ * 
+ * <p> {@link #isMyMessage(Text)}: Determines whether or not the message is a Bat Firework message.
+ * 
+ * <p> {@link #getProfit()}: Returns the current profit.
+ * 
+ * <p> {@link #resetProfit()}: Resets the current profit back to 0.
+ * 
+ * 
+ */
+public class BatFirework implements MessageProcessor,Feature {
+    //INCLUDED IN: None
     private static double currentProfit = 0.0;
+
+    //INCLUDED IN: EcoConfig -> buttons
     private static GUIElement BatVisual = null;
+
+    //INCLUDED IN: EcoConfig -> advanced
     private static boolean isEnabled = false;
 
     public static void init(){

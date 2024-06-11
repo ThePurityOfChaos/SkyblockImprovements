@@ -9,30 +9,39 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.config.ConfigScreen;
-import com.github.thepurityofchaos.config.EcoConfig;
-import com.github.thepurityofchaos.config.IPLConfig;
-import com.github.thepurityofchaos.config.PSConfig;
 import com.github.thepurityofchaos.features.economic.BatFirework;
+import com.github.thepurityofchaos.features.economic.Bingo;
 import com.github.thepurityofchaos.features.economic.GenericProfit;
 import com.github.thepurityofchaos.features.packswapper.PackScreen;
 import com.github.thepurityofchaos.features.packswapper.PackSwapper;
 import com.github.thepurityofchaos.features.retexturer.Retexturer;
 import com.github.thepurityofchaos.storage.Sacks;
+import com.github.thepurityofchaos.storage.config.ConfigScreen;
+import com.github.thepurityofchaos.storage.config.EcoConfig;
+import com.github.thepurityofchaos.storage.config.IPLConfig;
+import com.github.thepurityofchaos.storage.config.PSConfig;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
 import com.github.thepurityofchaos.utils.math.ColorUtils;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 
-
+/**
+ * A mixin to bind ALL commands related to SkyblockImprovements. 
+ */
 @Mixin(SkyblockImprovements.class)
 public class CommandsMetaMixin {
     //Inject into the mod's initializer. If this isn't done, causes an EXCEPTION_ACCESS_VIOLATION.
-
+    /**
+     * Command registration superstructure.
+     *
+     * @see https://docproject.github.io/fabricmc_fabric/net/fabricmc/fabric/api/client/screen/v1/ScreenEvents.html
+     *    
+     * @param info
+     */
     @SuppressWarnings("resource")
     @Inject(at = @At("HEAD"), method = "onInitializeClient", remap = false)
     private void onInitializeClient(CallbackInfo info){
-        //basic command to access SBI's User Interface 
+        //base command to access SBI's User Interface 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher
         .register(ClientCommandManager.literal("sbi")
 
@@ -81,6 +90,7 @@ public class CommandsMetaMixin {
                     return 1;
                 }
             ))
+            //Pack Swapper
             .then(ClientCommandManager.literal("PackSwapper")
                 .then(ClientCommandManager.literal("setColorCode")
                     .then(ClientCommandManager.argument("color_code_char", StringArgumentType.word())
@@ -126,6 +136,7 @@ public class CommandsMetaMixin {
                     return 1;
                 }
             ))
+            //Economic Helpers
             .then(ClientCommandManager.literal("EconomicHelpers")
             
             .then(ClientCommandManager.literal("setColorCode")
@@ -136,6 +147,7 @@ public class CommandsMetaMixin {
                         return 1;
                     }
             )))
+            //Bat Firework Helper
             .then(ClientCommandManager.literal("BatFirework")
                     
                 .then(ClientCommandManager.literal("resetProfit")
@@ -150,6 +162,7 @@ public class CommandsMetaMixin {
                     return 1;
                 }
             ))
+            //Math Helper
             .then(ClientCommandManager.literal("toggleMathHelper")
                     .executes(context ->{
                         EcoConfig.toggleMath();
@@ -157,6 +170,7 @@ public class CommandsMetaMixin {
                     }
 
             ))
+            //Generic Profit Helper
             .then(ClientCommandManager.literal("resetProfit")
                     .executes(context ->{
                         GenericProfit.resetProfit();
@@ -164,13 +178,28 @@ public class CommandsMetaMixin {
                     }
 
             ))
-            
+            //Bingo
+            .then(ClientCommandManager.literal("Bingo")  
+                .then(ClientCommandManager.literal("showCommunity")
+                    .executes(context ->{
+                        Bingo.toggleCommunity();
+                        return 1;
+                    }
+            ))            
+                .executes(context ->{
+                    Bingo.toggleFeature();
+                    EcoConfig.saveSettings();
+                    return 1;
+                }
+            ))
+            //Toggle all subfeatures
             .executes(context ->{
                 EcoConfig.toggleFeature();
                 EcoConfig.saveSettings();
                 return 1;
             }
         ))
+        //Helmer Retexturer
         .then(ClientCommandManager.literal("HelmetRetexturer")
             
         .then(ClientCommandManager.literal("setColor")
@@ -197,7 +226,7 @@ public class CommandsMetaMixin {
             Retexturer.toggleRecolor();
             return 1;
         }))
-        
+        //Debug Features
         .then(ClientCommandManager.literal("EXPERIMENTAL_TOGGLE_DEBUG_FEATURES")
             .executes(context ->{
                 SkyblockImprovements.EXPERIMENTAL_TOGGLE_DEBUG_FEATURES();
@@ -209,7 +238,7 @@ public class CommandsMetaMixin {
 
         //default execution
         .executes(context -> {
-            //https://docproject.github.io/fabricmc_fabric/net/fabricmc/fabric/api/client/screen/v1/ScreenEvents.html 
+            
 
             //Create and Display Config Screen
             ConfigScreen screen = new ConfigScreen();

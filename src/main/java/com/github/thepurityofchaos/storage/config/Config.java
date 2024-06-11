@@ -1,4 +1,4 @@
-package com.github.thepurityofchaos.config;
+package com.github.thepurityofchaos.storage.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +18,11 @@ import java.nio.file.StandardOpenOption;
  *
  * The Config holds many of the init functionalities for the mod.
  * 
- * <p> {@link #init init()}: Contains all of the init() functions for features and storage modules, as well as checking the version and debug info.
+ * <p> {@link #init()}: Contains all of the init() functions for features and storage modules, as well as checking the version and debug info.
  * 
- * <p> {@link #saveSettings saveSettings()}: Calls every other config's saveSettings() command. 
+ * <p> {@link #saveSettings()}: Calls every other config's saveSettings() command. 
  * 
- * <p> {@link #setDebug setDebug()}: Saves the current debug state.
+ * <p> {@link #saveDebug()}: Saves the current debug state.
  * 
  */
 public class Config {

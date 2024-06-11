@@ -1,4 +1,4 @@
-package com.github.thepurityofchaos.config;
+package com.github.thepurityofchaos.storage.config;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -30,7 +30,21 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 
 import net.minecraft.text.Text;
 
-
+/**
+ * Config for the Pack Swapper.
+ * 
+ * <p> {@link #init()}: Gets all info from ps.json.
+ * 
+ * <p> {@link #saveSettings()}: Saves settings back to ps.json.
+ * 
+ * <p> {@link #createFile()}: Creates ps.json if it does not exist.
+ * 
+ * <p> {@link #getFeatureEnabled()}: Is the Pack Swapper enabled?
+ * 
+ * <p> {@link #toggleFeature()}: Toggles whether it is enabled or not.
+ * 
+ * <p> {@link #updateFile()}: Tells the Pack Swapper to update its areas and regions, something might have changed.
+ */
 public class PSConfig implements Filer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
     private static boolean isEnabled = true;
@@ -70,7 +84,6 @@ public class PSConfig implements Filer {
             updateFeatureVisuals();
         }
     }
-
     public static void saveSettings(){
         try{
         BufferedWriter writer = Files.newBufferedWriter(SkyblockImprovements.FILE_LOCATION.resolve("ps.json"));

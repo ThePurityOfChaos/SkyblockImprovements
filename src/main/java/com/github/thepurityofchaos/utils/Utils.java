@@ -92,4 +92,10 @@ public class Utils {
         (time>60?((Double)((time%3600)/60)).intValue()+"m ":"")+
         ((Double)(time%60)).intValue() +"s";
     }
+    public static boolean containsAny(String string, String[] set){
+        for(String s : set){
+            if(string.contains(s)) return true; 
+        }
+        return false;
+    }
 }

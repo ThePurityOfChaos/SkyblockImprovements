@@ -5,26 +5,30 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
+import com.github.thepurityofchaos.utils.gui.GUIElement;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
 import com.github.thepurityofchaos.utils.processors.ScoreboardProcessor;
 import com.github.thepurityofchaos.utils.screen.ScreenUtils;
 
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
 
 //https://fabric.moddedmc.wiki/rendering/ helps here
+/**
+ * Rendering component for Item Pickup Log.
+ * 
+ * <p> {@link #render(DrawContext, float)}: Renders the current items.
+ */
 public class IPLRender {
-   
     public static void render(DrawContext drawContext, float tickDelta){
         SkyblockImprovements.push("SBI_ItemPickupLog");
         if(ItemPickupLog.getFeatureVisual()!=null){
-            ButtonWidget location = ItemPickupLog.getFeatureVisual();
+            GUIElement location = ItemPickupLog.getFeatureVisual();
             int [] pos = new int[2];
-            pos[0] = location.getX()+location.getWidth()/2;
-            pos[1] = location.getY()+location.getHeight()/2;
+            pos[0] = location.getCenteredX();
+            pos[1] = location.getCenteredY();
             ItemPickupLog.determineChanges();
             ItemPickupLog.cleanLog();
             ChangeInstance[] log =  ItemPickupLog.getLog().toArray(new ChangeInstance[ItemPickupLog.getLog().size()]);

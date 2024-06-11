@@ -1,8 +1,9 @@
-package com.github.thepurityofchaos.config;
+package com.github.thepurityofchaos.storage.config;
 
 import org.jetbrains.annotations.Nullable;
 
 import com.github.thepurityofchaos.features.economic.BatFirework;
+import com.github.thepurityofchaos.features.economic.Bingo;
 import com.github.thepurityofchaos.features.economic.GenericProfit;
 import com.github.thepurityofchaos.features.itempickuplog.ItemPickupLog;
 import com.github.thepurityofchaos.features.packswapper.PackSwapper;
@@ -13,9 +14,9 @@ import net.minecraft.client.gui.screen.Screen;
 /**
  * The Config Screen allows the player to modify the display location of any feature added to this screen.
  * 
- * <p> {@link #init init(@Nullable Screen parent)}: Creates the screen with every included feature's visual component. 
+ * <p> {@link #init(Nullable Screen)}: Creates the screen with every included feature's visual component. 
  * 
- * <p> {@link #modifyElementLocation modifyElementLocations(String element, int[] location)} : Sets the element's position to the first two integers in location. Expects
+ * <p> {@link #modifyElementLocation(String element, int[] location)} : Sets the element's position to the first two integers in location. Expects an int array of size 2.
  */
 public class ConfigScreen extends GUIScreen {
         
@@ -30,11 +31,14 @@ public class ConfigScreen extends GUIScreen {
         //Bat Firework
         this.addElement("BatFirework",BatFirework.getFeatureVisual());
 
+        //Generic Profit
         this.addElement("GenericProfit", GenericProfit.getFeatureVisual());
+
+        //Bingo Tasks
+        this.addElement("Bingo", Bingo.getFeatureVisual());
 
         //generic
         //this.addElement("name"),Feature.getFeatureVisual();
-        
         
         super.init(parent);
     }

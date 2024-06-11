@@ -10,10 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.config.Config;
 import com.github.thepurityofchaos.features.economic.GenericProfit;
 import com.github.thepurityofchaos.interfaces.Filer;
 import com.github.thepurityofchaos.interfaces.ScreenInteractor;
+import com.github.thepurityofchaos.storage.config.Config;
 import com.github.thepurityofchaos.utils.NbtUtils;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
@@ -36,7 +36,36 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-
+/**
+ * Storage module for Sack amounts.
+ * <p> {@link #init()}: Gets the amounts from sacks.json.
+ * 
+ * <p> {@link #saveSettings()}: Writes back the amounts to sacks.json.
+ * 
+ * <p> {@link #update(String, int)}: Safely adds an item to the contents.
+ * 
+ * <p> {@link #put(String, int)}: Directly adds an item to the contents.
+ * 
+ * <p> {@link #get(String)}: Gets an item's amount from the contents.
+ * 
+ * <p> {@link #processList(List)}: Processes a list of itemstacks into sacks.
+ * 
+ * <p> {@link #interact(Screen)}: Determines when to process Sacks.
+ * 
+ * <p> {@link #createFile()}: Creates sacks.json.
+ * 
+ * <p> {@link #getFeatureEnabled()}: Returns whether the feature part is enabled or not.
+ * 
+ * <p> {@link #toggleFeature()}: Do I really need to explain this?
+ * 
+ * <p> {@link #dataArrived()}: Returns if data has arrived or not.
+ * 
+ * <p> {@link #newData()}: dataArrived = false.
+ * 
+ * <p> {@link #ticksSinceData()}: Returns the number of ticks since the data arrived.
+ * 
+ * <p> {@link #tickData()}: ticksSinceData++.
+ */
 public class Sacks implements Filer, ScreenInteractor{
     private static final Logger LOGGER = LoggerFactory.getLogger(Sacks.class);
     private static Map<String,Integer> allSackContents = null;

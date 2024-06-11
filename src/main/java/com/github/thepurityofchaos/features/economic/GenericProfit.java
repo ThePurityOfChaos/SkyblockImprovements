@@ -11,14 +11,43 @@ import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
 
 import net.minecraft.text.Text;
-
+/**
+ * Economic Widget used for all Sack profit in a certain time period.
+ * 
+ * <p> {@link #init()}: Creates the visual element.
+ * 
+ * <p> {@link #add(String, int)}: Adds an amount of an item to be recorded.
+ * 
+ * <p> {@link #getProfit()}: Returns the current profit.
+ * 
+ * <p> {@link #getProfitPerHour()}: Returns the current profit divided by the time taken.
+ * 
+ * <p> {@link #getTime()}: Returns the time taken.
+ * 
+ * <p> {@link #useBuy()}: Whether or not to use the Instant Buy (usually higher) price or the Instant Sell price.
+ * 
+ * <p> {@link #toggleBuy()}: Toggles {@value #useBuy}.
+ * 
+ * <p> {@link #getFeatureVisual()}: Returns the visual element.
+ * 
+ * <p> {@link #getFeatureEnabled()}: Returns isEnabled.
+ * 
+ * <p> {@link #getErrors()}: Returns the list of missing item values, which can be found in the Bazaar.
+ * 
+ * <p> {@link #resetProfit()}: Resets the current profit.
+ * 
+ * <p> {@link #toggleFeature()}: Toggles the feature between on and off. Also resets profit.
+ */
 public class GenericProfit {
+    //INCLUDED IN: EcoConfig -> buttons
+    private static GUIElement GPVisual = null;
+    //INCLUDED IN: EcoConfig -> advanced
+    private static boolean useBuy = false;
+    private static boolean isEnabled = false;
+    //INCLUDED IN: None
     private static Map<String,Integer> currentItems = new HashMap<>();
     private static boolean hasChanged = false;
     private static double currentProfit = 0.0;
-    private static boolean useBuy = false;
-    private static boolean isEnabled = false;
-    private static GUIElement GPVisual = null;
     private static long currentTime = -1;
     private static Set<Text> errors = new HashSet<>();
 
@@ -60,18 +89,17 @@ public class GenericProfit {
     public static void toggleBuy(){useBuy = !useBuy;}
     public static GUIElement getFeatureVisual(){return GPVisual;}
     public static boolean getFeatureEnabled(){return isEnabled;}
+    public static Set<Text> getErrors(){return errors;}
+    public static long getTime(){return currentTime;}
+
     public static void toggleFeature(){ 
         isEnabled = !isEnabled;
         resetProfit();
     }
-    public static long getTime(){return currentTime;}
     public static void resetProfit(){
         currentProfit = 0.0;
         currentTime = -1;
         currentItems.clear();
-    }
-    public static Set<Text> getErrors(){
-        return errors;
     }
 
 }

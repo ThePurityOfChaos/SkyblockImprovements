@@ -7,7 +7,9 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.PlayerListEntry;
-
+/**
+ * MIXIN: Gets the listed entries in the Tab List.
+ */
 @Mixin(ClientPlayNetworkHandler.class)
 public interface TabListAccessor {
     

@@ -23,6 +23,18 @@ import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.util.Identifier;
 
+/**
+ * Rendering component for the Retexturer.
+ * <p> {@link #getModifiedRenderLayer(net.minecraft.block.SkullBlock.SkullType, GameProfile)}: Returns the retextured RenderLayer, if applicable. Otherwise, returns what it would without this.
+ * 
+ * <p> {@link #getKnownIdentifiers()}: Gets the list of known Identifiers.
+ * 
+ * <p> {@link #loadTexture(Path, String)}: Transforms a texture file into a Minecraft-readable Identifier.
+ * 
+ * <p> {@link #render()}: Retextures the current helm.
+ * 
+ * <p> {@link #setKnownIdentifiers()}: Calls loadTexture() for every known helm.
+ */
 public class RTRender {
     private static Map<String, Identifier> knownIdentifiers = new HashMap<>();
     public static RenderLayer getModifiedRenderLayer(SkullBlock.SkullType type, @Nullable GameProfile profile){

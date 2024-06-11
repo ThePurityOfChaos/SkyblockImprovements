@@ -28,9 +28,22 @@ import net.minecraft.nbt.NbtCompound;
 //though the idea of using Maps & a Multimap I definitely agreed with there.
 
 
-/*
+/**
+ * The Item Pickup Log
  * 
+ * <p> {@link #init()}: Initializes the visual component.
  * 
+ * <p> {@link #getFeatureVisual()}: Returns the visual component.
+ * 
+ * <p> {@link #addSackText(Text)}: Parses text from a [Sacks] message and adds it to the system. Returns false if this failed.
+ * 
+ * <p> {@link #determineChanges()}: The core function of the IPL. Determines the current changes in the inventory from a previous state. Memoized.
+ * 
+ * <p> {@link #cleanLog()}: Removes stale entries.
+ * 
+ * <p> {@link #resetLog()}: Removes all entries.
+ * 
+ * <p> {@link #getLog()}: Returns a collection of all the entries.
  * 
  */
 public class ItemPickupLog implements Feature {

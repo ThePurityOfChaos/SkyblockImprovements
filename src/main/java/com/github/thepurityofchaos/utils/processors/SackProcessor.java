@@ -1,13 +1,13 @@
-package com.github.thepurityofchaos.listeners;
+package com.github.thepurityofchaos.utils.processors;
 
 
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
 
 import com.github.thepurityofchaos.features.itempickuplog.ItemPickupLog;
-import com.github.thepurityofchaos.interfaces.Listener;
+import com.github.thepurityofchaos.interfaces.MessageProcessor;
 
-public class SackListener implements Listener{
+public class SackProcessor implements MessageProcessor{
 
     public static boolean isMyMessage(Text message){
         if((message.getString().contains("[Sacks]")&&message.getStyle()!=null)){

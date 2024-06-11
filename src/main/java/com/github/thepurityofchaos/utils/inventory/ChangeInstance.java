@@ -4,6 +4,21 @@ import net.minecraft.text.Text;
     //https://github.com/BiscuitDevelopment/SkyblockAddons/blob/main/src/main/java/codes/biscuit/skyblockaddons/features/ItemDiff.java#L8 
     //assisted with this class. Most of it is similar, but NBTTagCompound no longer exists in 1.20.4. 
     //Additionally, I'm adding a feature to allow the player to customize the duration of the log- something which the original did not have.
+
+    /**
+     * A single instance of a change in an Inventory.
+     * <p> {@link #addToInstance(int)}: Increases the amount changed.
+     * <p> {@link #getCurrentLifespan()}: How long will this live?
+     * <p> {@link #getName()}: What item is this?
+     * <p> {@link #getCount()}: How many items?
+     * <p> {@link #isFromSacks()}: Is this a Sacks item?
+     * <p> {@link #setColorCode(char)}: Sets the color code of all ChangeInstances.
+     * <p> {@link #getColorCode()}: Returns the current color code.
+     * <p> {@link #setDistance(int)}: Sets the distance between each instance. Default 8.
+     * <p> {@link #getDistance()}: Self-explanatory.
+     * <p> {@link #getMaxLifespan()}: Gets the maximum lifespan allowed for an instance.
+     * <p> {@link #setLifespan(int)}: Sets the max lifespan for all instances.
+     */
 public class ChangeInstance {
     
     //Duration of the item (ms)

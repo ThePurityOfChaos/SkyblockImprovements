@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.listeners.SpecialListener;
 import com.github.thepurityofchaos.mixin.TabListAccessor;
 
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
@@ -29,13 +28,12 @@ public class TabListProcessor {
             //if nothing has changed, do nothing.
             if(players.equals(previousPlayers)){
                 hasChanged = false;
-                SkyblockImprovements.pop();
                 return;
             } 
             hasChanged = true;
             tabList = new ArrayList<>();
             players.forEach(player ->{
-                Text temp = SpecialListener.isMyMessage(player.getDisplayName());
+                Text temp = SpecialProcessor.isMyMessage(player.getDisplayName());
                 if(temp!=null)
                     player.setDisplayName(temp);
                 tabList.add(player.getDisplayName());
@@ -43,6 +41,10 @@ public class TabListProcessor {
             //shallow copy, looks for changes in what's being listed not changes in the currently listed ones
             previousPlayers.clear();
             previousPlayers.addAll(players);
+
+            //call all finders
+            getArea();
+            getProfile();
         }
         SkyblockImprovements.pop();
     }
@@ -60,8 +62,21 @@ public class TabListProcessor {
         return Text.of(" §cNo Area Found!");
     }
     
+    public static Text getProfile(){
+        if(!hasChanged) return currentValues.get("Profile");
+        for(Text listEntry : tabList){
+            if(listEntry!=null)
+                if(listEntry.getString().contains("Profile:")){
+                    currentValues.put("Profile",listEntry);
+                    return listEntry;
+            }
+        }
+        currentValues.put("Profile",Text.of("§cNo Profile Found!"));
+        return Text.of("§cNo Profile Found!");
+    }
+
     /* generic getter for tab list
-     * public static Text getSomething(){
+       public static Text getSomething(){
         if(!hasChanged) return currentValues.get("Something");
         for(Text listEntry : tabList){
             if(listEntry!=null)
@@ -70,7 +85,8 @@ public class TabListProcessor {
                     return listEntry;
             }
         }
-        return Text.of("Nothing Found!");
+        currentValues.put("Something",Text.of("§cNothing Found!"));
+        return Text.of("§cNothing Found!");
     }
      */
 }

@@ -7,10 +7,20 @@ import java.util.Map;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
 import com.github.thepurityofchaos.utils.gui.GUIScreen;
+import com.github.thepurityofchaos.utils.processors.ScoreboardProcessor;
+import com.github.thepurityofchaos.utils.processors.TabListProcessor;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
+
+/**
+ * The Config Screen for each Pack.
+ * <p> {@link #initAsPackMap(Screen, Map)}: Initialize a Screen which contains buttons that map to a Pack.
+ * <p> {@link #initAsAreaMap(Screen, Map)}: Area Sub-screen for each Pack in the PackMap.
+ * <p> {@link #initAsRegionMap(Screen, Map)}: Region Sub-screen for each Region in the AreaMap. 
+ * 
+ */
 public class PackScreen extends GUIScreen {
     private static int verticalPerHorizontal = 8;
     private static int buttonWidth = 128;
@@ -73,6 +83,7 @@ public class PackScreen extends GUIScreen {
     }
     
     public void close(){
+        PackSwapper.manipulatePacks(TabListProcessor.getArea().getString(), ScoreboardProcessor.getRegion().getString());
         super.close();
     }
 }

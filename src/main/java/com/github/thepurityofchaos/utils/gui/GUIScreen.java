@@ -12,7 +12,15 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.*;
 import net.minecraft.text.Text;
 
-
+/**
+ * A Screen specifically intended for GUIElements.
+ * <p> {@link #addElement(String, GUIElement)}: Adds an element to the element map.
+ * <p> {@link #getElement(String)}: Gets the element with that name.
+ * <p> {@link #init()}: Initializes the Screen with a close button.
+ * <p> {@link #close()}: Closes the screen and opens its parent.
+ * <p> {@link #mouseDragged(double, double, int, double, double)}: Allows for moving elements around.
+ * <p> {@link #getParent()}: Returns the Screen's parent.
+ */
 @Environment(EnvType.CLIENT)
 public class GUIScreen extends Screen {
     private @Nullable Screen parent;

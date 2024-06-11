@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.config.PSConfig;
 import com.github.thepurityofchaos.interfaces.Feature;
+import com.github.thepurityofchaos.storage.config.PSConfig;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
 import com.google.gson.Gson;
@@ -31,18 +31,61 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 
-
+/**
+ * Automated Resource Pack Swapper.
+ * <p> {@link #init()}: Initialize the visual component.
+ * 
+ * <p> {@link #manipulatePacks(String, String)}: Modifies the active packs. Memoized.
+ * 
+ * <p> {@link #testForValidManipulation(Text, Text)}: Checks whether the input Area and Region are different from the previous.
+ * 
+ * <p> {@link #getFeatureVisual()}: Returns the visual component.
+ * 
+ * <p> {@link #getRegionColor()}: Returns the colorCode corresponding to the PackSwapper.
+ * 
+ * <p> {@link #setRegionColor(char)}: Setter for {@link #getRegionColor()}.
+ * 
+ * <p> {@link #togglePackHelper()}: Toggles whether to show additional text info.
+ * 
+ * <p> {@link #showPackHelper()}: Returns whether to show additional text info.
+ * 
+ * <p> {@link #toggleRenderComponent()}: Toggles whether to show the render component or not.
+ * 
+ * <p> {@link #toggleDebugInfo()}: Toggles whether or not to show that the Pack Swapper detected a region change in chat.
+ * 
+ * <p> {@link #sendDebugInfo()}: Returns whether or not to show that the Pack Swapper detected a region change.
+ * 
+ * <p> {@link #isRendering()}: Returns whether to render the visual component or not.
+ * 
+ * <p> {@link #toggleRegion(String, String, String)}: Toggles the state of a region given Pack|Area|Region.
+ * 
+ * <p> {@link #loadDefaultAreas(Map)}: Updates the Map to be consistent with the default areas.
+ * 
+ * <p> {@link #loadDefaultRegions(String, Map)}: Updates the Map to be consistent with the default regions.
+ * 
+ * <p> {@link #getFullRegionMap()}: Returns the entire Map of Packs|Areas|Regions. 
+ * 
+ * <p> {@link #setDefaultRegions(Map)}: Sets the default region structure to the input Map<String,List<String>>.
+ * 
+ * 
+ * 
+ * <p> {@link #needsUpdate()}: Notifies the system that it needs an update.
+ */
 public class PackSwapper implements Feature {
     //Used to show current Region and number of Packs associated with it. if desired.
+    //INCLUDED IN: PSConfig -> buttons
     private static GUIElement PSVisual;
+    //INCLUDED IN: PSConfig -> advanced
     private static char regionColor = 'e';
     private static boolean packHelper = true;
     private static boolean renderComponent = true;
     private static boolean sendDebugInfo = true;
     private static boolean undefinedRegions = true;
     private static boolean needsUpdate = false;
+    //INCLUDED IN: None
     private static String previousArea;
     private static String previousRegion;
+    //INCLUDED IN: PSConfig -> allRegions
     private static Map<String,Map<String,Map<String,Boolean>>> packAreaRegionToggles = null;
     
     
@@ -50,8 +93,6 @@ public class PackSwapper implements Feature {
     private static Map<String,List<String>> allDefaultRegions = new HashMap<>();
 
     public static void init(){PSVisual = new GUIElement(64,96,128,32,null);}
-
-
     
     public static void manipulatePacks(String eArea, String eRegion){
         String sArea = Utils.clearArea(eArea);
@@ -126,6 +167,10 @@ public class PackSwapper implements Feature {
                     modifiedPacks.add(name);
                     continue;
                 }
+                else if(areaRegionToggles.get(sArea).size()==1){
+                    packsToRemove.add(name);
+                    continue;
+                }
                 //if not, go to specific regions
                 if(areaRegionToggles.get(sArea).containsKey(sRegion)){
                     if(areaRegionToggles.get(sArea).get(sRegion).booleanValue()){
@@ -145,7 +190,7 @@ public class PackSwapper implements Feature {
         
         Collection<String> currentPacks = manager.getEnabledNames();
         boolean hasChanged = false;
-        for(String pack :packsToActivate){
+        for(String pack : packsToActivate){
             if(!currentPacks.contains(pack)){
                 manager.setEnabledProfiles(packsToActivate);
                 hasChanged = true;
@@ -186,38 +231,19 @@ public class PackSwapper implements Feature {
     /*
      * feature toggles & getters
      */
-    public static GUIElement getFeatureVisual(){
-        return PSVisual;
-    }
-    public static char getRegionColor(){
-        return regionColor;
-    }
-    public static void setRegionColor(char c){
-        regionColor = c;
-    }
-    public static void togglePackHelper(){
-        packHelper = !packHelper;
-    }
-    public static boolean showPackHelper(){
-        return packHelper;
-    }
-    public static void toggleRenderComponent(){
-        renderComponent = !renderComponent;
-    }
-    public static void toggleDebugInfo(){
-        sendDebugInfo = !sendDebugInfo;
-    }
-    public static boolean sendDebugInfo(){
-        return sendDebugInfo;
-    }
-    public static boolean isRendering(){
-        return renderComponent;
-    }
+    public static GUIElement getFeatureVisual(){return PSVisual;}
+    public static char getRegionColor(){return regionColor;}
+    public static void setRegionColor(char c){regionColor = c;}
+    public static void togglePackHelper(){packHelper = !packHelper;}
+    public static boolean showPackHelper(){return packHelper;}
+    public static void toggleRenderComponent(){renderComponent = !renderComponent;}
+    public static void toggleDebugInfo(){sendDebugInfo = !sendDebugInfo;}
+    public static boolean sendDebugInfo(){return sendDebugInfo;}
+    public static boolean isRendering(){return renderComponent;}
 
     /*
      * Methods relating to the Pack Swapper's Config Map
      */
-    
     public static void toggleRegion(String pack, String area, String region){
         Map<String,Boolean> areaMap = packAreaRegionToggles.get(pack).get(area);
         areaMap.put(region,(Boolean)!areaMap.get(region).booleanValue());

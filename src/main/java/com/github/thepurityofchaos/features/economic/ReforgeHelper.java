@@ -15,7 +15,21 @@ import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
+/**
+ * Shows the player the current reforge.
+ * 
+ * <p> {@link #processList(List)}: Determines the current item to reforge.
+ * 
+ * <p> {@link #getReforge()}: Returns the current Reforge.
+ * 
+ * <p> {@link #setReforge(Text)}: Sets the current Reforge to an input value, normally null.
+ * 
+ * <p> {@link #setColorCode(char)}: Sets the color code.
+ * 
+ * <p> {@link #interact(Screen)}: Displays the current Reforge.
+ */
 public class ReforgeHelper implements ScreenInteractor {
+    //INCLUDED IN: None
     private static Text currentReforge = null;
     private static char colorCode = 'e';
     public static void processList(List<ItemStack> inventory){
@@ -54,9 +68,12 @@ public class ReforgeHelper implements ScreenInteractor {
                 int xOffset = currentScreen.width/16;
                 int y = currentScreen.height/2;
                 int yOffset = currentScreen.height/9;
-                List<Text> text = new ArrayList<>();
-                text.add(ReforgeHelper.getReforge());
-                ScreenUtils.draw(drawContext, text, x-xOffset, y-yOffset, -1, -1, 1000, -1, -1, -1); 
+                Text temp = ReforgeHelper.getReforge();
+                if(temp!=null){
+                    List<Text> text = new ArrayList<>();
+                    text.add(temp);
+                    ScreenUtils.draw(drawContext, text, x-xOffset, y-yOffset, -1, -1, 1000, -1, -1, -1); 
+                }
             });
             //remove reforge when screen closes
             ScreenEvents.remove(screen).register(currentScreen ->{

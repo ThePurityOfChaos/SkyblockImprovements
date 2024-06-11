@@ -1,4 +1,4 @@
-package com.github.thepurityofchaos.config;
+package com.github.thepurityofchaos.storage.config;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -25,7 +25,13 @@ import com.google.gson.JsonParser;
 
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
-
+/**
+ * Config for the Item Pickup Log.
+ * 
+ * <p> {@link #init()}: Loads the IPLConfig from file, if it exists.
+ * 
+ * <p> {@link #saveSettings()}: Writes the IPLConfig settings back to the file.
+ */
 public class IPLConfig implements Filer{
     private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
     private static boolean isEnabled = true;

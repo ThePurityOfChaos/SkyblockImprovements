@@ -3,7 +3,18 @@ package com.github.thepurityofchaos.utils.gui;
 import net.minecraft.client.gui.widget.*;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.Text;
-
+/**
+ * One of the main elements for the system.
+ * <p> {@link #GUIElement(int, int, int, int, PressAction)}: Creates a new GUIElement with a default position x,y, a size x,y, and a PressAction. If PressAction is null, pressing will drag the button.
+ * <p> {@link #onPress()}: Performs the press action.
+ * <p> {@link #onRelease(double, double)}: Stops dragging.
+ * <p> {@link #getCenteredX()}: Returns the x position of the center of the button.
+ * <p> {@link #getCenteredY()}: Returns the y position of the center of the button.
+ * <p> {@link #setTooltip(Text)}: Sets the current tooltip to the text.
+ * <p> {@link #reset()}: Changes the position to the default.
+ * <p> {@link #isDragging()}: Is the button being dragged?
+ * <p> {@link #notDragging()}: isDragging = false.
+ */
 public class GUIElement extends ButtonWidget {
     private int defaultPosX;
     private int defaultPosY;
@@ -31,6 +42,12 @@ public class GUIElement extends ButtonWidget {
     public void onRelease(double mouseX, double mouseY){
         this.isDragging = false;
         super.onRelease(mouseX, mouseY);
+    }
+    public int getCenteredX(){
+        return this.getX()+this.getWidth()/2;
+    }
+    public int getCenteredY(){
+        return this.getY()+this.getHeight()/2;
     }
 
     public void setTooltip(Text tooltip){

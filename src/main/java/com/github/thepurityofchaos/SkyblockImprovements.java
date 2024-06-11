@@ -5,21 +5,35 @@ import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.thepurityofchaos.config.Config;
 import com.github.thepurityofchaos.features.economic.ChocolateFactory;
 import com.github.thepurityofchaos.features.itempickuplog.ItemPickupLog;
 import com.github.thepurityofchaos.features.packswapper.PackSwapper;
 import com.github.thepurityofchaos.features.retexturer.RTRender;
 import com.github.thepurityofchaos.listeners.ScreenListener;
-import com.github.thepurityofchaos.listeners.SpecialListener;
+import com.github.thepurityofchaos.storage.config.Config;
+import com.github.thepurityofchaos.utils.processors.SpecialProcessor;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.profiler.Profiler;
-/*
+/**
  * The main class of the mod, through which the rest of the system functions.
+ * 
+ * <p> {@link #onInitializeClient()}: Initializes all features, then initializes the Config to change those features' settings.
+ * 
+ * <p> DEBUG FEATURES:
+ * 
+ * <p> {@link #EXPERIMENTAL_TOGGLE_DEBUG_FEATURES()}: Toggles debug mode.
+ * 
+ * <p> {@link #DEBUG()}: Returns whether debug mode is on or off.
+ * 
+ * <p> {@link #push(String)}: Pushes information to the game profiler.
+ * 
+ * <p> {@link #pop()}: Pops information from the game profiler. MUST be called after {@link #push(String)}.
+ * 
+ * 
  */
 public class SkyblockImprovements implements ClientModInitializer {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SkyblockImprovements.class);
@@ -42,7 +56,7 @@ public class SkyblockImprovements implements ClientModInitializer {
 
 		//this entrypoint is necessary for initializing features that require the player to be in a world
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client)->{
-			SpecialListener.init();
+			SpecialProcessor.init();
 			RTRender.setKnownIdentifiers();
 			GAME_PROFILER = MinecraftClient.getInstance().getProfiler();
 		});

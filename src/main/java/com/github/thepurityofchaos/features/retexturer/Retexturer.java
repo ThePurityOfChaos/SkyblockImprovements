@@ -20,7 +20,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.config.RTConfig;
+import com.github.thepurityofchaos.storage.config.RTConfig;
 import com.github.thepurityofchaos.utils.NbtUtils;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
@@ -40,8 +40,34 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
-
+/**
+ *  The Retexturer for the system. Currently can retexture: Helmets (Skull).
+ *  <p> {@link #retextureHelm(ItemStack)}: Retextures a Helmet.
+ * 
+ *  <p> {@link #getURL(String)}: Returns the URL associated with a base64 string inside of a Helmet's NBT data.
+ * 
+ *  <p> {@link #changeColor(int)}: Changes the color that the Retexturer will change the item to.
+ * 
+ *  <p> {@link #changeK(int)}: Changes the amount of "expected colors" in the texture. 2-16 suggested.
+ * 
+ *  <p> {@link #refresh(ItemStack)}: Removes a Helmet from the list of known helms, essentially "forgetting" that it exists.
+ * 
+ *  <p> {@link #toggleRecolor()}: toggles whether the feature is enabled or not.
+ * 
+ *  <p> {@link #getFeatureEnabled()}: Returns whether the feature is enabled or not.
+ * 
+ *  <p> {@link #getKnownHelms()}: Returns the list of known helms and their alias textures.
+ * 
+ *  <p> {@link #getColorCode()}: Returns the RGBA color associated with the system.
+ * 
+ *  <p> {@link #getK()}: Returns the current K value.
+ * 
+ *  <p> {@link #setKnownHelms(Map)}: Loads the Map into knownHelms.
+ * 
+ *  <p> {@link #interact(Screen)}: Loads the buttons for the system.
+ */
 public class Retexturer {
+        //INCLUDED IN: RTConfig -> enabled
         private static boolean isEnabled = false;
         private static Map<String,List<String>> knownHelms = new HashMap<>();
         private static int newColor = -16765017;
@@ -57,7 +83,9 @@ public class Retexturer {
             if(helmetTextureURL == null|| hID ==null) return;
             String helmetID = hID.toString();
             String currentTextureURL = getURL(helmetTextureURL);
-            
+            //prevents the possibility of a malicious URL from getting in, even though it's saved as a PNG
+            if(!currentTextureURL.contains("://textures.minecraft.net/")) return;
+
             if(knownHelms.containsKey(helmetID)){
                 if(knownHelms.get(helmetID).contains(currentTextureURL)){
                     return;
@@ -157,7 +185,7 @@ public class Retexturer {
                 int[][] startingImage = getImage(currentTexture);
                 int[] colors = ColorUtils.intToRGBA(newColor);
                 List<Double> newRGB = new ArrayList<>();
-                //clamp color to prevent strong colors from overpowering. O(n)
+                //clamp color to prevent strong colors from overpowering. O(1), since colors is constant size.
                 for(int i=0; i<colors.length-1; i++){
                     colors[i] = ColorUtils.clamp(colors[i],10,253);
                     newRGB.add(colors[i]+0.0);
@@ -336,7 +364,7 @@ public class Retexturer {
                     String currentTextureURL = getURL(helmetTextureURL);
                     knownHelms.remove(helmetID);
                     RTRender.getKnownIdentifiers().remove(getURL(helmetTextureURL));
-                    Retexturer.storeCurrentTexture(helmetID,downloadTexture(helmetID, currentTextureURL, 0),0);
+                    Retexturer.storeCurrentTexture(helmetID,uncrop(crop(downloadTexture(helmetID, currentTextureURL, 0))),0);
                     knownHelms.put(helmetID,new ArrayList<String>());
                     knownHelms.get(helmetID).add(currentTextureURL);
                     RTConfig.saveSettings();

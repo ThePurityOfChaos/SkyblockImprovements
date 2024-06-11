@@ -15,9 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.config.Config;
 import com.github.thepurityofchaos.interfaces.Filer;
 import com.github.thepurityofchaos.interfaces.ScreenInteractor;
+import com.github.thepurityofchaos.storage.config.Config;
 import com.github.thepurityofchaos.utils.NbtUtils;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.processors.InventoryProcessor;
@@ -33,6 +33,27 @@ import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
+/**
+ * Storage module for the Bazaar.
+ * 
+ * <p> {@link #init()}: Gets the price maps from bazaar.json.
+ * 
+ * <p> {@link #processList(List)}: Gets prices from the list, if they exist.
+ * 
+ * <p> {@link #putInBuy(String, double)}: Puts a price in the buyPrices list.
+ * 
+ * <p> {@link #putInSell(String, double)}: Puts a price in the sellPrices list.
+ * 
+ * <p> {@link #getBuy(String)}: Gets the price of something from the buyPrices list, or -1.
+ * 
+ * <p> {@link #getSell(String)}: Gets the price of something from the sellPrices list, or -1.
+ * 
+ * <p> {@link #saveSettings()}: Writes back the buy and sell prices to bazaar.json.
+ * 
+ * <p> {@link #createFile()}: Creates bazaar.json.
+ * 
+ * <p> {@link #interact(Screen)}: Lets processList know when to process.
+ */
 public class Bazaar implements Filer, ScreenInteractor {
     private static final Logger LOGGER = LoggerFactory.getLogger(Bazaar.class);
     private static Map<String,Double> bazaarBuyPrices = null;

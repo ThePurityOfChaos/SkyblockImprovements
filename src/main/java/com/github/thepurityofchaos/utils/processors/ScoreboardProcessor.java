@@ -39,17 +39,25 @@ public class ScoreboardProcessor {
     private static boolean isOnSkyblock = false;
     private static boolean wasOnSkyblock = false;
     private static int recentChange = 100;
+    private static int timer = 20;
     private static Text previousRegion;
 
 
 
-    @SuppressWarnings("resource")
+    
     public static void processScoreboard(){
         SkyblockImprovements.push("SBI_ScoreboardProcessor");
         try{
-            //the current scoreboard
-            Scoreboard scoreboard = MinecraftClient.getInstance().player.getScoreboard();
+            //parse the current scoreboard
+
+            //only perform this every second
+            timer--;
+            if(timer>0) return;
+
+            MinecraftClient client = MinecraftClient.getInstance();
+            Scoreboard scoreboard = client.player.getScoreboard();
             List<Text> newScoreboard = new ArrayList<>();
+            //we're only looking for objectives in the sidebar
             ScoreboardObjective sidebar = scoreboard.getObjectiveForSlot(ScoreboardDisplaySlot.SIDEBAR);
             for(ScoreHolder h : scoreboard.getKnownScoreHolders()){
                 if(scoreboard.getScoreHolderObjectives(h).containsKey(sidebar)){
@@ -68,6 +76,7 @@ public class ScoreboardProcessor {
                     temp.append(siblings.next());
                 currentScoreboard.add(Text.of(temp));
             }
+            timer = 20;
         }catch(NullPointerException e){
             //occurs when player is null, such as when in the title screen or loading into a world. This happens sometimes, so it's expected and no action is taken.
         }
@@ -76,12 +85,20 @@ public class ScoreboardProcessor {
         SkyblockImprovements.pop();
     }
 
-
+    /**
+     * 
+     * @return the list of every line on the Sidebar.
+     * 
+     */
     public static List<Text> getScoreboard(){
         return currentScoreboard;
     }
 
-
+    /**
+     * 
+     * @return the Text associated with the current region, or Not On Skyblock if no region is found.
+     * 
+     */
     public static Text getRegion(){
         for(Text scoreboardText : currentScoreboard){
             //Rift

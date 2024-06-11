@@ -22,15 +22,39 @@ import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-
+/**
+ * Contains all the information for the Chocolate Factory.
+ * <p> {@link #init()}: Initializes the visual element.
+ * 
+ * <p> {@link #processList(List)}: Processes the ItemStacks in the Chocolate Factory into valid information.
+ * 
+ * <p> {@link #getChocolateCount()}: Returns the current chocolate that the player has.
+ * 
+ * <p>{@link #getCPS()}: Returns the current chocolate per second.
+ * 
+ * <p> {@link #getColorCode()}: Returns the current color code. Currently does not change.
+ * 
+ * <p> {@link #getFeatureVisual()}: Returns the visual element.
+ * 
+ * <p> {@link #getRank()}: Returns the player's Rank.
+ * 
+ * <p> {@link #getTimeToPrestige()}: Returns the current time to prestige.
+ * 
+ * <p> {@link #mostEfficientUpgrade()}: Returns the most efficient upgrade.
+ * 
+ * <p> {@link #getTimeToUpgrade()}: Returns the most efficient upgrade's time.
+ */
 public class ChocolateFactory implements Feature, ScreenInteractor {
+    //INCLUDED IN: None
     private static Map<String,Long> factoryInfo = new HashMap<>();
     private static int currentBaseProduction = 0;
     private static double currentCPS = 0.0;
     private static GUIElement CFVisual = null;
     private static char colorCode = '6';
     private static long mEuCost = 0;
+
     public static void processList(List<ItemStack> list){
+        if(list==null) return;
         for(ItemStack item : list){
             getDataFromItemStack(item);
         }

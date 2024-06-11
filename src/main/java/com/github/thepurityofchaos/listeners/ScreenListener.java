@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.config.EcoConfig;
+import com.github.thepurityofchaos.features.economic.Bingo;
 import com.github.thepurityofchaos.features.economic.ChocolateFactory;
 import com.github.thepurityofchaos.features.economic.Refinery;
 import com.github.thepurityofchaos.features.economic.ReforgeHelper;
@@ -12,6 +12,7 @@ import com.github.thepurityofchaos.features.retexturer.Retexturer;
 import com.github.thepurityofchaos.mixin.ChatScreenAccessor;
 import com.github.thepurityofchaos.storage.Bazaar;
 import com.github.thepurityofchaos.storage.Sacks;
+import com.github.thepurityofchaos.storage.config.EcoConfig;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.math.MathSolutions;
 import com.github.thepurityofchaos.utils.screen.ScreenUtils;
@@ -21,7 +22,10 @@ import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.text.Text;
-
+/**
+ * Listens to all Screens to determine whether or not it needs to be interacted with in some way.
+ * <p> {@link #init()}: Registeres a method with all ScreenEvents to interact with them upon some condition being true.
+ */
 public class ScreenListener {
     /*
      * INFO:
@@ -78,6 +82,11 @@ public class ScreenListener {
                 if(screenName.contains("Refine")){
                     SkyblockImprovements.push("SBI_Refinery");
                     Refinery.interact(screen);
+                    SkyblockImprovements.pop();
+                }
+                if(screenName.contains("Bingo Card")){
+                    SkyblockImprovements.push("SBI_Bingo");
+                    Bingo.interact(screen);
                     SkyblockImprovements.pop();
                 }
 

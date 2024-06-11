@@ -1,4 +1,4 @@
-package com.github.thepurityofchaos.config;
+package com.github.thepurityofchaos.storage.config;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -21,7 +21,15 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 
-
+/**
+ * Config for the Retexturer.
+ * 
+ * <p> {@link #init()}: Gets settings from rt.json.
+ * 
+ * <p> {@link #createFile()}: Creates rt.json.
+ * 
+ * <p> {@link #saveSettings()}: Writes back settings to rt.json.
+ */
 public class RTConfig {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
     public static void init() {
