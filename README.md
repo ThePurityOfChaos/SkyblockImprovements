@@ -1,7 +1,9 @@
 # SkyblockImprovements
 Hypixel Skyblock Quality-of-Life Mod for 1.20.4
 
-Current Version: 0.3.0
+Discord: https://discord.gg/dyAUSNyhBh
+
+Current Version: 0.3.1
 
 Features:
 
