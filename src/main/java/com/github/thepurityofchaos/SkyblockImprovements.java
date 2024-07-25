@@ -2,6 +2,7 @@ package com.github.thepurityofchaos;
 
 import java.nio.file.Path;
 
+import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,12 +12,18 @@ import com.github.thepurityofchaos.features.packswapper.PackSwapper;
 import com.github.thepurityofchaos.features.retexturer.RTRender;
 import com.github.thepurityofchaos.listeners.ScreenListener;
 import com.github.thepurityofchaos.storage.config.Config;
+import com.github.thepurityofchaos.utils.processors.InventoryProcessor;
 import com.github.thepurityofchaos.utils.processors.SpecialProcessor;
+import com.github.thepurityofchaos.utils.screen.GeneratorScreen;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.profiler.Profiler;
 /**
  * The main class of the mod, through which the rest of the system functions.
@@ -43,16 +50,17 @@ public class SkyblockImprovements implements ClientModInitializer {
 	.map(modInfo -> modInfo.getMetadata().getVersion().getFriendlyString()).orElse("null");
 	private static Profiler GAME_PROFILER = null;
 	private static boolean DEBUG = false;
+	private static KeyBinding openItemGen;
 	
 	@Override
 	public void onInitializeClient() {
 		LOGGER.info("Entered SkyblockImprovements");
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
 
-		ItemPickupLog.init();
-		PackSwapper.init();
+		ItemPickupLog.getInstance().init();
+		PackSwapper.getInstance().init();
 		ScreenListener.init();
-		ChocolateFactory.init();
+		ChocolateFactory.getInstance().init();
 
 		//this entrypoint is necessary for initializing features that require the player to be in a world
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client)->{
@@ -64,9 +72,29 @@ public class SkyblockImprovements implements ClientModInitializer {
 			Config.saveSettings();
 		});
 
+		//entrypoint for keybindings
+		 openItemGen = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+            "key.sbimp.openItemGen", // Translation key
+            InputUtil.Type.KEYSYM, // Key type
+            GLFW.GLFW_KEY_RIGHT_CONTROL, // Default key
+            "category.sbimp.general" // Category
+        ));
+
 		//call this last, since it changes the settings from defaults.
 		Config.init();
 	}
+	public static boolean onScreenKeyPressed(HandledScreen<?> screen, int keyCode, int scanCode, int modifiers) {
+		MinecraftClient client = MinecraftClient.getInstance();
+		if (openItemGen.matchesKey(keyCode, scanCode)) {
+			GeneratorScreen.parseItemToGenerator(InventoryProcessor.getHoveredItem(client));
+			GeneratorScreen newScreen = GeneratorScreen.getInstance();
+			newScreen.init(screen);
+			client.send(() -> client.setScreen(newScreen));
+			return true;
+		}
+		return false;
+	}
+
 	/*
 	 * Pushes debug information to the client's Profiler for debug purposes.
 	 */

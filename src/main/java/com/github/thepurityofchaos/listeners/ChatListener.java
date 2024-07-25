@@ -56,11 +56,11 @@ public class ChatListener {
             return null;
         }
             
-        if(BatFirework.isMyMessage(message)){
+        if(BatFirework.getInstance().isMyMessage(message)){
             SkyblockImprovements.pop();
             return null;
         }
-        if(Bingo.isMyMessage(message)){
+        if(Bingo.getInstance().isMyMessage(message)){
             SkyblockImprovements.pop();
             return null;
         }

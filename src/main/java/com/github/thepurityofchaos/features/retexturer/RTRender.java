@@ -40,14 +40,15 @@ public class RTRender {
     public static RenderLayer getModifiedRenderLayer(SkullBlock.SkullType type, @Nullable GameProfile profile){
         try{
             //if texture contained in the list of textures and festure is enabled
-            if(Retexturer.getFeatureEnabled()&&profile!=null&&Retexturer.getKnownHelms().size()!=0){
+            Retexturer rt = Retexturer.getInstance();
+            if(rt.getFeatureEnabled()&&profile!=null&&rt.getKnownHelms().size()!=0){
                 Map<String,Collection<Property>> profileProperties = profile.getProperties().asMap();
                 Object[] textureProperties = profileProperties.get("textures").toArray();
-                String textureURL = Retexturer.getURL(((Property)textureProperties[0]).value());
+                String textureURL = rt.getURL(((Property)textureProperties[0]).value());
                 if(knownIdentifiers.containsKey(textureURL)){
                     return RenderLayer.getEntityTranslucent(knownIdentifiers.get(textureURL));
                 }
-                for(Entry<String,List<String>> entry : Retexturer.getKnownHelms().entrySet()){
+                for(Entry<String,List<String>> entry : rt.getKnownHelms().entrySet()){
                         int index = entry.getValue().indexOf(textureURL);
                         if(index!=-1){
                             String name = entry.getKey().toString()+index+".png";
@@ -77,10 +78,10 @@ public class RTRender {
         }
     }
     public static void render(){
-        Retexturer.retextureHelm(InventoryProcessor.getHelmet());
+        Retexturer.getInstance().retextureHelm(InventoryProcessor.getHelmet());
     }
     public static void setKnownIdentifiers() {
-        for(Entry<String,List<String>> entry : Retexturer.getKnownHelms().entrySet()){
+        for(Entry<String,List<String>> entry : Retexturer.getInstance().getKnownHelms().entrySet()){
                 for(int i=0; i<entry.getValue().size(); i++){
                 String name = entry.getKey().toString()+i+".png";
                 Identifier ident = loadTexture(SkyblockImprovements.FILE_LOCATION.resolve("helms").resolve(name),name);

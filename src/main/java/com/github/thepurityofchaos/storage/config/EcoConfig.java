@@ -14,10 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
+import com.github.thepurityofchaos.abstract_interfaces.Filer;
 import com.github.thepurityofchaos.features.economic.BatFirework;
 import com.github.thepurityofchaos.features.economic.Bingo;
 import com.github.thepurityofchaos.features.economic.GenericProfit;
-import com.github.thepurityofchaos.interfaces.Filer;
 import com.github.thepurityofchaos.utils.Utils;
 
 import com.google.gson.Gson;
@@ -43,11 +43,11 @@ import net.minecraft.text.Text;
  * 
  * <p> {@link #getColorCode()}: Standard color code char getter.
  * 
- * <p> {@link #getFeatureEnabled()}: Getter for the toggle for all economic features at once.
+ * <p> {@link #isEnabled()}: Getter for the toggle for all economic features at once.
  * 
  * <p> {@link #setColorCode(char)}: Standard color code char setter.
  * 
- * <p> {@link #toggleFeature()}: Flips the return value for {@link #getFeatureEnabled()}.
+ * <p> {@link #toggle()}: Flips the return value for {@link #isEnabled()}.
  * 
  * <p> {@link #toggleMath()}: Toggle for {@link #doMath()}.
  * 
@@ -59,15 +59,17 @@ public class EcoConfig implements Filer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
     private static boolean math = true;
     private static char colorCode = 'e';
-    private static boolean isEnabled = false;
     /**
      * 
      */
     public static void init(){
         //init all subsystems
-        BatFirework.init();
-        GenericProfit.init();
-        Bingo.init();
+        BatFirework bf = BatFirework.getInstance();
+        GenericProfit gp = GenericProfit.getInstance();
+        Bingo bng = Bingo.getInstance();
+        bf.init();
+        gp.init();
+        bng.init();
         try{
             //create parser based on the client
             BufferedReader reader = Files.newBufferedReader(SkyblockImprovements.FILE_LOCATION.resolve("eco.json"));
@@ -75,37 +77,33 @@ public class EcoConfig implements Filer {
                 //buttons
                 JsonObject buttons = parser.getAsJsonObject("buttons");
                     JsonArray bfDimArray = buttons.getAsJsonArray("Bat");
-                    Utils.setDim(BatFirework.getFeatureVisual(),bfDimArray);
+                    Utils.setDim(bf.getFeatureVisual(),bfDimArray);
                     JsonArray gpDimArray = buttons.getAsJsonArray("GP");
-                    Utils.setDim(GenericProfit.getFeatureVisual(), gpDimArray);
+                    Utils.setDim(gp.getFeatureVisual(), gpDimArray);
                     JsonArray bingoDimArray = buttons.getAsJsonArray("Bingo");
-                    Utils.setDim(Bingo.getFeatureVisual(), bingoDimArray);
+                    Utils.setDim(bng.getFeatureVisual(), bingoDimArray);
                 //advanced settings
                 JsonObject advanced = parser.getAsJsonObject("advanced");
                     colorCode = advanced.get("colorCode").getAsString().charAt(0);
                     math=advanced.get("Math").getAsBoolean();
-                    if(advanced.get("Eco").getAsBoolean()) toggleFeature();
-                    if(advanced.get("BatFirework").getAsBoolean()) BatFirework.toggleFeature();
-                    if(advanced.get("GenericProfit").getAsBoolean()) GenericProfit.toggleFeature();
-                    if(advanced.get("Bingo").getAsBoolean()) Bingo.toggleFeature();
-                    if(advanced.get("showCommunity").getAsBoolean()) Bingo.toggleCommunity();
+                    if(advanced.get("BatFirework").getAsBoolean()) bf.toggle();
+                    if(advanced.get("GenericProfit").getAsBoolean()) gp.toggle();
+                    if(advanced.get("Bingo").getAsBoolean()) bng.toggle();
+                    if(advanced.get("showCommunity").getAsBoolean()) bng.toggleCommunity();
                     JsonElement bingoTasks = advanced.get("BingoTasks");
                     Gson gson = new Gson();
                     Type type = new TypeToken<List<Text>>(){}.getType();
                     if(bingoTasks==null) throw new Exception();
-                    Bingo.setTasks(gson.fromJson(bingoTasks,type));
+                    bng.setTasks(gson.fromJson(bingoTasks,type));
                        
-            isEnabled = parser.get("enabled").getAsBoolean();
             LOGGER.info("[SkyblockImprovements] Economic Config Imported.");
             updateFeatureVisuals();
         }catch(Exception e){
             LOGGER.error("[SkyblockImprovements] Economic Config failed to load! Was it updated, or was it just created?"); 
             //enable all features
-            toggleFeature();
-            BatFirework.toggleFeature();
-            GenericProfit.toggleFeature();
-            EcoConfig.toggleFeature();
-            Bingo.toggleFeature();
+            bf.toggle();
+            gp.toggle();
+            bng.toggle();
             updateFeatureVisuals();
         }
     }
@@ -124,19 +122,18 @@ public class EcoConfig implements Filer {
             Map<String,Object> configOptions = new HashMap<>();
                 //save all advanced options here
                 Map<String,Object> advanced = new HashMap<>();
-                    advanced.put("Eco",isEnabled);
                     advanced.put("colorCode",colorCode);
                     advanced.put("Math",math);
-                    advanced.put("BatFirework",BatFirework.getFeatureEnabled());
-                    advanced.put("GenericProfit",GenericProfit.getFeatureEnabled());
-                    advanced.put("Bingo",Bingo.getFeatureEnabled());
-                    advanced.put("showCommunity",Bingo.showCommunity());
-                    advanced.put("BingoTasks",Bingo.getTasks());
+                    advanced.put("BatFirework",BatFirework.getInstance().isEnabled());
+                    advanced.put("GenericProfit",GenericProfit.getInstance().isEnabled());
+                    advanced.put("Bingo",Bingo.getInstance().isEnabled());
+                    advanced.put("showCommunity",Bingo.getInstance().showCommunity());
+                    advanced.put("BingoTasks",Bingo.getInstance().getTasks());
                     
                 //save button locations here
-                ButtonWidget BatWidget = BatFirework.getFeatureVisual();
-                ButtonWidget GPWidget = GenericProfit.getFeatureVisual();
-                ButtonWidget BingoWidget = Bingo.getFeatureVisual();
+                ButtonWidget BatWidget = BatFirework.getInstance().getFeatureVisual();
+                ButtonWidget GPWidget = GenericProfit.getInstance().getFeatureVisual();
+                ButtonWidget BingoWidget = Bingo.getInstance().getFeatureVisual();
                 Map<String,Integer[]> EcoButtonLocations = new HashMap<>();
                     Integer[] BatButtonLoc = {BatWidget.getX(),BatWidget.getY(),BatWidget.getWidth(),BatWidget.getHeight()}; 
                     Integer[] GPButtonLoc = {GPWidget.getX(),GPWidget.getY(),GPWidget.getWidth(),GPWidget.getHeight()};
@@ -148,7 +145,6 @@ public class EcoConfig implements Filer {
             //put all completed options into the main Map    
             configOptions.put("buttons",EcoButtonLocations);
             configOptions.put("advanced",advanced);
-            configOptions.put("enabled",isEnabled);
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             
             writer.write(gson.toJson(configOptions));
@@ -172,12 +168,6 @@ public class EcoConfig implements Filer {
     /** 
      * @return boolean
      */
-    public static boolean getFeatureEnabled(){
-        return isEnabled;
-    }
-    public static void toggleFeature(){
-        isEnabled = !isEnabled;
-    }
 
     public static boolean doMath(){
         return math;
@@ -189,9 +179,8 @@ public class EcoConfig implements Filer {
         return colorCode;
     }
     private static void updateFeatureVisuals(){
-        BatFirework.getFeatureVisual().setMessage(Text.of("Bat Firework Profit"+Utils.getStringFromBoolean(isEnabled&&BatFirework.getFeatureEnabled())));
-        GenericProfit.getFeatureVisual().setMessage(Text.of("Generic Profit"+Utils.getStringFromBoolean(isEnabled&&GenericProfit.getFeatureEnabled())));
-        Bingo.getFeatureVisual().setMessage(Text.of("Bingo Tasks"+Utils.getStringFromBoolean(isEnabled&&Bingo.getFeatureEnabled())));
+        BatFirework.getInstance().getFeatureVisual().setMessage(Text.of("Bat Firework Profit"));
+        Bingo.getInstance().getFeatureVisual().setMessage(Text.of("Bingo Tasks"));
     }
     public static void setColorCode(char c) {
         colorCode = c;

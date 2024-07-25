@@ -24,16 +24,17 @@ import net.minecraft.text.Text;
 public class IPLRender {
     public static void render(DrawContext drawContext, float tickDelta){
         SkyblockImprovements.push("SBI_ItemPickupLog");
-        if(ItemPickupLog.getFeatureVisual()!=null){
-            GUIElement location = ItemPickupLog.getFeatureVisual();
+        ItemPickupLog ipl = ItemPickupLog.getInstance();
+        if(ipl.getFeatureVisual()!=null){
+            GUIElement location = ipl.getFeatureVisual();
             int [] pos = new int[2];
             pos[0] = location.getCenteredX();
             pos[1] = location.getCenteredY();
-            ItemPickupLog.determineChanges();
-            ItemPickupLog.cleanLog();
-            ChangeInstance[] log =  ItemPickupLog.getLog().toArray(new ChangeInstance[ItemPickupLog.getLog().size()]);
+            ipl.determineChanges();
+            ipl.cleanLog();
+            ChangeInstance[] log =  ipl.getLog().toArray(new ChangeInstance[ipl.getLog().size()]);
 
-            //if you're joining or leaving Skyblock or The Rift, reset the log.
+            //if you're joining or leaving Skyblock or The Rift, skip this and reset the log.
             if(Arrays.equals(ScoreboardProcessor.regionChange(), new boolean[2])){
                 List<Text> logText = new ArrayList<>();
                 for(int i=0; i<log.length; i++){
@@ -60,10 +61,10 @@ public class IPLRender {
                     }
                 //finally, draw the text.
                 if(logText.size()>0)
-                    ScreenUtils.draw(drawContext, logText, null, pos[0], pos[1], -1, -1, 10, -ChangeInstance.getDistance(), 1074790416, -1, -1);
+                    ScreenUtils.draw(drawContext, logText, null, pos[0], pos[1], -1, -1, 10, -ChangeInstance.getDistance(), 1074790416, -1, -1, 0, ItemPickupLog.getInstance().centerText());
             //to prevent some issues
-            }else { ItemPickupLog.resetLog(); }
-        }else {ItemPickupLog.resetLog();}   
+            }else { ipl.resetLog(); }
+        }else {ipl.resetLog();}   
         SkyblockImprovements.pop();
     }
 }

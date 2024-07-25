@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.interfaces.MessageProcessor;
+import com.github.thepurityofchaos.abstract_interfaces.MessageProcessor;
 import com.github.thepurityofchaos.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

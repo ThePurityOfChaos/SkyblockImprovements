@@ -12,6 +12,7 @@ import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.features.economic.BatFirework;
 import com.github.thepurityofchaos.features.economic.Bingo;
 import com.github.thepurityofchaos.features.economic.GenericProfit;
+import com.github.thepurityofchaos.features.itempickuplog.ItemPickupLog;
 import com.github.thepurityofchaos.features.packswapper.PackScreen;
 import com.github.thepurityofchaos.features.packswapper.PackSwapper;
 import com.github.thepurityofchaos.features.retexturer.Retexturer;
@@ -22,6 +23,7 @@ import com.github.thepurityofchaos.storage.config.IPLConfig;
 import com.github.thepurityofchaos.storage.config.PSConfig;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
 import com.github.thepurityofchaos.utils.math.ColorUtils;
+import com.github.thepurityofchaos.utils.screen.GeneratorScreen;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 
@@ -38,7 +40,6 @@ public class CommandsMetaMixin {
      *    
      * @param info
      */
-    @SuppressWarnings("resource")
     @Inject(at = @At("HEAD"), method = "onInitializeClient", remap = false)
     private void onInitializeClient(CallbackInfo info){
         //base command to access SBI's User Interface 
@@ -73,7 +74,7 @@ public class CommandsMetaMixin {
                 )))
                 .then(ClientCommandManager.literal("showSackAmounts")
                         .executes(context ->{
-                            Sacks.toggleFeature();
+                            Sacks.getInstance().toggle();
                             IPLConfig.saveSettings();
                             return 1;
                         }
@@ -85,7 +86,7 @@ public class CommandsMetaMixin {
                         }
                 ))
                 .executes(context ->{
-                    IPLConfig.toggleFeature();
+                    ItemPickupLog.getInstance().toggle();
                     IPLConfig.saveSettings();
                     return 1;
                 }
@@ -95,28 +96,28 @@ public class CommandsMetaMixin {
                 .then(ClientCommandManager.literal("setColorCode")
                     .then(ClientCommandManager.argument("color_code_char", StringArgumentType.word())
                         .executes(context ->{
-                            PackSwapper.setRegionColor(StringArgumentType.getString(context, "color_code_char").charAt(0));
+                            PackSwapper.getInstance().setRegionColor(StringArgumentType.getString(context, "color_code_char").charAt(0));
                             PSConfig.saveSettings();
                             return 1;
                         }   
                 )))
                 .then(ClientCommandManager.literal("toggleRPHelper")
                     .executes(context ->{
-                        PackSwapper.togglePackHelper();
+                        PackSwapper.getInstance().togglePackHelper();
                         PSConfig.saveSettings();
                         return 1;
                     }
                 ))
                 .then(ClientCommandManager.literal("toggleRender")
                     .executes(context ->{
-                        PackSwapper.toggleRenderComponent();
+                        PackSwapper.getInstance().toggleRenderComponent();
                         PSConfig.saveSettings();
                         return 1;
                     }
                 ))
                 .then(ClientCommandManager.literal("toggleDebugInfo")
                     .executes(context ->{
-                        PackSwapper.toggleDebugInfo();
+                        PackSwapper.getInstance().toggleDebugInfo();
                         PSConfig.saveSettings();
                         return 1;
                     }
@@ -124,14 +125,14 @@ public class CommandsMetaMixin {
                 .then(ClientCommandManager.literal("config")
                     .executes(context ->{
                         context.getSource().getClient().send(() -> context.getSource().getClient().setScreen(
-                            new PackScreen().initAsPackMap(null,PackSwapper.getFullRegionMap())
+                            new PackScreen().initAsPackMap(null,PackSwapper.getInstance().getFullRegionMap())
                             ));
                         PSConfig.saveSettings();
                         return 1;
                     }
                 ))
                 .executes(context ->{
-                    PSConfig.toggleFeature();
+                    PackSwapper.getInstance().toggle();
                     PSConfig.saveSettings();
                     return 1;
                 }
@@ -152,12 +153,12 @@ public class CommandsMetaMixin {
                     
                 .then(ClientCommandManager.literal("resetProfit")
                     .executes(context ->{
-                        BatFirework.resetProfit();
+                        BatFirework.getInstance().resetProfit();
                         return 1;
                     }
             ))            
                 .executes(context ->{
-                    BatFirework.toggleFeature();
+                    BatFirework.getInstance().toggle();
                     EcoConfig.saveSettings();
                     return 1;
                 }
@@ -173,7 +174,7 @@ public class CommandsMetaMixin {
             //Generic Profit Helper
             .then(ClientCommandManager.literal("resetProfit")
                     .executes(context ->{
-                        GenericProfit.resetProfit();
+                        GenericProfit.getInstance().resetProfit();
                         return 1;
                     }
 
@@ -182,23 +183,17 @@ public class CommandsMetaMixin {
             .then(ClientCommandManager.literal("Bingo")  
                 .then(ClientCommandManager.literal("showCommunity")
                     .executes(context ->{
-                        Bingo.toggleCommunity();
+                        Bingo.getInstance().toggleCommunity();
                         return 1;
                     }
             ))            
                 .executes(context ->{
-                    Bingo.toggleFeature();
+                    Bingo.getInstance().toggle();
                     EcoConfig.saveSettings();
                     return 1;
                 }
             ))
-            //Toggle all subfeatures
-            .executes(context ->{
-                EcoConfig.toggleFeature();
-                EcoConfig.saveSettings();
-                return 1;
-            }
-        ))
+        )
         //Helmer Retexturer
         .then(ClientCommandManager.literal("HelmetRetexturer")
             
@@ -207,7 +202,7 @@ public class CommandsMetaMixin {
                 .then(ClientCommandManager.argument("Green 0-255",IntegerArgumentType.integer())
                     .then(ClientCommandManager.argument("Blue 0-255",IntegerArgumentType.integer())
                         .executes(context ->{
-                            Retexturer.changeColor(ColorUtils.rGBAToInt(
+                            Retexturer.getInstance().changeColor(ColorUtils.rGBAToInt(
                             (int)(IntegerArgumentType.getInteger(context, "Red 0-255")), 
                             (int)(IntegerArgumentType.getInteger(context, "Green 0-255")), 
                             (int)(IntegerArgumentType.getInteger(context, "Blue 0-255")), 
@@ -218,12 +213,12 @@ public class CommandsMetaMixin {
         .then(ClientCommandManager.literal("setK")
             .then(ClientCommandManager.argument("K 2-16",IntegerArgumentType.integer())
                 .executes(context ->{
-                    Retexturer.changeK((int)(IntegerArgumentType.getInteger(context, "K 2-16")));
+                    Retexturer.getInstance().changeK((int)(IntegerArgumentType.getInteger(context, "K 2-16")));
                     return 1;
                 }
         )))
         .executes(context ->{
-            Retexturer.toggleRecolor();
+            Retexturer.getInstance().toggleRecolor();
             return 1;
         }))
         //Debug Features
@@ -238,8 +233,6 @@ public class CommandsMetaMixin {
 
         //default execution
         .executes(context -> {
-            
-
             //Create and Display Config Screen
             ConfigScreen screen = new ConfigScreen();
             screen.init(null);
@@ -248,6 +241,17 @@ public class CommandsMetaMixin {
             context.getSource().getClient().send(() -> context.getSource().getClient().setScreen(screen)); 
             return 1;
         })));
-  
+    ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher
+        .register(ClientCommandManager.literal("gen")
+            .then(ClientCommandManager.literal("item")
+                .executes(context ->{
+                    GeneratorScreen screen = GeneratorScreen.getInstance();
+                    screen.init(null);
+                    context.getSource().getClient().send(() -> context.getSource().getClient().setScreen(screen)); 
+                    return 1;
+                }
+            ))
+        ));
     }
+    
 }

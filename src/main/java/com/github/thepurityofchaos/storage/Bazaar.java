@@ -15,8 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.interfaces.Filer;
-import com.github.thepurityofchaos.interfaces.ScreenInteractor;
+import com.github.thepurityofchaos.abstract_interfaces.Filer;
+import com.github.thepurityofchaos.abstract_interfaces.ScreenInteractor;
 import com.github.thepurityofchaos.storage.config.Config;
 import com.github.thepurityofchaos.utils.NbtUtils;
 import com.github.thepurityofchaos.utils.Utils;
@@ -44,6 +44,8 @@ import net.minecraft.text.Text;
  * 
  * <p> {@link #putInSell(String, double)}: Puts a price in the sellPrices list.
  * 
+ * <p> {@link #putIn7dAvg(String, double)}: Puts a price in the 7dAvgPrices list.
+ * 
  * <p> {@link #getBuy(String)}: Gets the price of something from the buyPrices list, or -1.
  * 
  * <p> {@link #getSell(String)}: Gets the price of something from the sellPrices list, or -1.
@@ -58,6 +60,7 @@ public class Bazaar implements Filer, ScreenInteractor {
     private static final Logger LOGGER = LoggerFactory.getLogger(Bazaar.class);
     private static Map<String,Double> bazaarBuyPrices = null;
     private static Map<String,Double> bazaarSellPrices = null;
+    private static Map<String,Double> bazaar7dAvgPrices = null;
 
     public static void init(){
         createFile();
@@ -69,9 +72,12 @@ public class Bazaar implements Filer, ScreenInteractor {
             if(bazaarPrices==null) throw new Exception();
             bazaarBuyPrices = gson.fromJson(bazaarPrices.get("BuyPrices"),type);
             bazaarSellPrices = gson.fromJson(bazaarPrices.get("SellPrices"),type);
+            bazaar7dAvgPrices = gson.fromJson(bazaarPrices.get("7dAvgPrices"),type);
+            if(bazaar7dAvgPrices==null || bazaarBuyPrices==null || bazaarSellPrices==null) throw new Exception();
         }catch(Exception e){
             bazaarBuyPrices = new HashMap<>();
             bazaarSellPrices = new HashMap<>();
+            bazaar7dAvgPrices = new HashMap<>();
         }
     }
 
@@ -108,6 +114,18 @@ public class Bazaar implements Filer, ScreenInteractor {
                                 }
                                 doubleParser.close();
                                 continue;
+                            }else
+                            if(loreString.contains("7d Avg. price:")){
+                                Scanner doubleParser = new Scanner(Utils.removeCommas(loreString));
+                                while(doubleParser.hasNext()){
+                                    if(doubleParser.hasNextDouble()){
+                                        putIn7dAvg(Utils.stripSpecial(NbtUtils.getNamefromItemStack(item).getString()).strip(),doubleParser.nextDouble());
+                                        continue;
+                                    }
+                                    doubleParser.next();
+                                }
+                                doubleParser.close();
+                                continue;
                             }
                         }
                     }catch(NullPointerException e){
@@ -127,11 +145,17 @@ public class Bazaar implements Filer, ScreenInteractor {
     public static void putInSell(String name, double price){
         bazaarSellPrices.put(name, price);
     }
+    public static void putIn7dAvg(String name, double price){
+        bazaar7dAvgPrices.put(name,price);
+    }
     public static double getBuy(String name){
         return bazaarBuyPrices.containsKey(name)?bazaarBuyPrices.get(name):-1;
     }
     public static double getSell(String name){
         return bazaarSellPrices.containsKey(name)?bazaarSellPrices.get(name):-1;
+    }
+    public static double get7dAvg(String name){
+        return bazaar7dAvgPrices.containsKey(name)?bazaar7dAvgPrices.get(name):-1;
     }
     public static void saveSettings(){
         try{
@@ -140,6 +164,7 @@ public class Bazaar implements Filer, ScreenInteractor {
                 Map<String,Map<String,Double>> bazaarPrices = new HashMap<>();
                 bazaarPrices.put("BuyPrices",bazaarBuyPrices);
                 bazaarPrices.put("SellPrices",bazaarSellPrices);
+                bazaarPrices.put("7dAvgPrices",bazaar7dAvgPrices);
                 writer.write(gson.toJson(bazaarPrices));
                 writer.close();
             }catch(IOException e){

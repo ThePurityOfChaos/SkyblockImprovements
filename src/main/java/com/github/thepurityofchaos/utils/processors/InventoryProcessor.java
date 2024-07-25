@@ -6,12 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
+import com.github.thepurityofchaos.mixin.HandledScreenAccessor;
 import com.github.thepurityofchaos.utils.Utils;
 
 import java.util.AbstractMap;
 
 import net.minecraft.client.MinecraftClient;
-
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -118,6 +119,17 @@ public class InventoryProcessor {
         return map;
     }
 
+    public static ItemStack getHoveredItem(MinecraftClient client) {
+        if (client.currentScreen != null && client.player != null) {
+            if (client.currentScreen instanceof HandledScreen) {
+                Slot slot = (Slot) (((HandledScreenAccessor)(HandledScreen<?>)client.currentScreen).getFocusedSlot());
+                if (slot != null && !slot.getStack().isEmpty()) {
+                    return slot.getStack();
+                }
+            }
+        }
+        return null;
+    }
 
 
 }

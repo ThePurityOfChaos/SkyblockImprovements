@@ -58,8 +58,8 @@ public class TabListProcessor {
                 
             }
         }
-        currentValues.put("Area",Text.of(" §cNo Area Found!"));
-        return Text.of(" §cNo Area Found!");
+        currentValues.put("Area",Text.of("§cNo Area Found!"));
+        return Text.of("§cNo Area Found!");
     }
     
     public static Text getProfile(){
@@ -73,6 +73,42 @@ public class TabListProcessor {
         }
         currentValues.put("Profile",Text.of("§cNo Profile Found!"));
         return Text.of("§cNo Profile Found!");
+    }
+    public static Text getREDACTED(){
+        if(!hasChanged) return currentValues.get("REDACTED");
+        for(Text listEntry : tabList){
+            if(listEntry!=null)
+                if(listEntry.getString().contains("REDACTED:")){
+                    currentValues.put("REDACTED",listEntry);
+                    return listEntry;
+            }
+        }
+        currentValues.put("REDACTED",Text.of("§cREDACTED not found. Try enabling your REDACTED /tablist widget."));
+        return Text.of("§cREDACTED not found. Try enabling your REDACTED /tablist widget.");
+    }
+    public static Text getMana(){
+        if(!hasChanged) return currentValues.get("Mana");
+        for(Text listEntry : tabList){
+            if(listEntry!=null)
+                if(listEntry.getString().contains("Mana:")){
+                    currentValues.put("Mana",listEntry);
+                    return listEntry;
+            }
+        }
+        currentValues.put("Mana",Text.of("§cMana not found. Try enabling your Mana /tablist widget."));
+        return Text.of("§cMana not found. Try enabling your Mana /tablist widget.");
+    }
+    public static Text getSoulflow(){
+        if(!hasChanged) return currentValues.get("Soulflow");
+        for(Text listEntry : tabList){
+            if(listEntry!=null)
+                if(listEntry.getString().contains("Soulflow:")){
+                    currentValues.put("Soulflow",listEntry);
+                    return listEntry;
+            }
+        }
+        currentValues.put("Soulflow",Text.of("§cSoulflow not found. Try enabling your Soulflow /tablist widget."));
+        return Text.of("§cSoulflow not found. Try enabling your Soulflow /tablist widget.");
     }
 
     /* generic getter for tab list

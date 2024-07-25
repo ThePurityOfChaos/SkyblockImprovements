@@ -3,10 +3,10 @@ package com.github.thepurityofchaos.features.economic;
 import java.util.Scanner;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.interfaces.Feature;
-import com.github.thepurityofchaos.interfaces.MessageProcessor;
+import com.github.thepurityofchaos.abstract_interfaces.Feature;
+import com.github.thepurityofchaos.abstract_interfaces.MessageProcessor;
 import com.github.thepurityofchaos.storage.Bazaar;
-import com.github.thepurityofchaos.utils.gui.GUIElement;
+import com.github.thepurityofchaos.utils.gui.MenuElement;
 
 import net.minecraft.text.Text;
 /**
@@ -22,21 +22,17 @@ import net.minecraft.text.Text;
  * 
  * 
  */
-public class BatFirework implements MessageProcessor,Feature {
+public class BatFirework extends Feature implements MessageProcessor {
     //INCLUDED IN: None
-    private static double currentProfit = 0.0;
+    private double currentProfit = 0.0;
+    
+    private static BatFirework instance = new BatFirework();
 
-    //INCLUDED IN: EcoConfig -> buttons
-    private static GUIElement BatVisual = null;
-
-    //INCLUDED IN: EcoConfig -> advanced
-    private static boolean isEnabled = false;
-
-    public static void init(){
-       BatVisual = new GUIElement(64, 32, 128, 32, null);
+    public void init(){
+       visual = new MenuElement(64, 32, 128, 32, null);
     }
 
-    public static boolean isMyMessage(Text message){
+    public boolean isMyMessage(Text message){
         SkyblockImprovements.push("SBI_BatFirework");
         if(message.getString().contains(" Purple Candies")){
             addToProfit(message.getString());
@@ -44,7 +40,7 @@ public class BatFirework implements MessageProcessor,Feature {
         SkyblockImprovements.pop();
         return false;
     }
-    private static void addToProfit(String message){
+    private void addToProfit(String message){
         int candyAmount = 0;
         try{
             double greenCandyPrice = Bazaar.getSell("Green Candy");
@@ -66,13 +62,13 @@ public class BatFirework implements MessageProcessor,Feature {
 
         }
     }
-    public static void resetProfit(){
+    public void resetProfit(){
         currentProfit = 0.0;
     }
-    public static double getProfit(){
+    public double getProfit(){
         return currentProfit;
     }
-    public static GUIElement getFeatureVisual(){return BatVisual;}
-    public static boolean getFeatureEnabled(){return isEnabled;}
-    public static void toggleFeature(){ isEnabled = !isEnabled;}
+    public static BatFirework getInstance(){
+        return instance;
+    }
 }

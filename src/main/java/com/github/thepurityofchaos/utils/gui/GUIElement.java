@@ -1,6 +1,9 @@
 package com.github.thepurityofchaos.utils.gui;
 
 import net.minecraft.client.gui.widget.*;
+
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.Text;
 /**
@@ -20,6 +23,7 @@ public class GUIElement extends ButtonWidget {
     private int defaultPosY;
     private boolean isDragging = false;
     private boolean defaultBehavior = false;
+    private final PressAction rightClickAction;
 
     public GUIElement(int defaultPosX, int defaultPosY, int sizeX, int sizeY, ButtonWidget.PressAction onPress){
         super(defaultPosX, defaultPosY, sizeX, sizeY, Text.of(""), onPress==null?button -> {}:onPress, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
@@ -28,7 +32,40 @@ public class GUIElement extends ButtonWidget {
         if(onPress == null){
             defaultBehavior = true;
         }
-        
+        rightClickAction = null;
+    }
+    public GUIElement(int defaultPosX, int defaultPosY, int sizeX, int sizeY, ButtonWidget.PressAction onPress, ButtonWidget.PressAction rightClickAction){
+        super(defaultPosX, defaultPosY, sizeX, sizeY, Text.of(""), onPress==null?button -> {}:onPress, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
+        this.defaultPosX = defaultPosX;
+        this.defaultPosY = defaultPosY;
+        if(onPress == null){
+            defaultBehavior = true;
+        }
+        this.rightClickAction = rightClickAction;
+    }
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (this.isValidClickButton(button) && this.clicked(mouseX, mouseY)) {
+            if (this.active) {
+                if (button == 0) { // Left click
+                    this.onPress();
+                } else if (button == 1) { // Right click
+                    this.onRightClick();
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+    @Override
+    protected boolean isValidClickButton(int button){
+        return button == 0 || button == 1;
+    }
+
+    protected void onRightClick() {
+        if (this.rightClickAction != null) {
+            this.rightClickAction.onPress(this);
+        }else{ onPress(); }
     }
     @Override
     public void onPress(){
@@ -50,7 +87,7 @@ public class GUIElement extends ButtonWidget {
         return this.getY()+this.getHeight()/2;
     }
 
-    public void setTooltip(Text tooltip){
+    public void setTooltip(@NotNull Text tooltip){
         this.setTooltip(Tooltip.of(tooltip));
     }
 

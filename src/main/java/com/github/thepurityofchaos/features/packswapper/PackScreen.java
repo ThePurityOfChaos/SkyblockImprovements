@@ -30,6 +30,7 @@ public class PackScreen extends GUIScreen {
     //Pack Screen. These three methods were originally intended to be an overload of init(), but Java uses type erasure so it became ambiguous.
     public Screen initAsPackMap(@Nullable Screen parent, Map<String,Map<String,Map<String,Boolean>>> map){
         int index = 0;
+        PackSwapper ps = PackSwapper.getInstance();
         for(Map.Entry<String,Map<String,Map<String,Boolean>>> entry : map.entrySet()){
             if(entry.getValue() instanceof Map){
                 GUIElement element = new GUIElement((index/verticalPerHorizontal)*buttonWidth+buttonOffset, (index%verticalPerHorizontal)*buttonHeight+buttonOffset, buttonWidth, buttonHeight, button ->{
@@ -37,7 +38,7 @@ public class PackScreen extends GUIScreen {
                     client.setScreen(s);
                     
                 });
-                element.setMessage(Text.of(Utils.getColorString(PackSwapper.getRegionColor())+entry.getKey().replace("file/_","").replace(".zip","")));
+                element.setMessage(Text.of(Utils.getColorString(ps.getRegionColor())+entry.getKey().replace("file/_","").replace(".zip","")));
                 addElement(entry.getKey(),element);
             }
             index++;
@@ -49,13 +50,14 @@ public class PackScreen extends GUIScreen {
     //Area Screens.
     public Screen initAsAreaMap(@Nullable Screen parent, Map<String,Map<String,Boolean>> map){
         int index = 0;
+        PackSwapper ps = PackSwapper.getInstance();
         for(Map.Entry<String,Map<String,Boolean>> entry : map.entrySet()){
             if(entry.getValue() instanceof Map){
                 GUIElement element = new GUIElement((index/verticalPerHorizontal)*buttonWidth+buttonOffset, (index%verticalPerHorizontal)*buttonHeight+buttonOffset, buttonWidth, buttonHeight, button ->{
                     PackScreen s = (PackScreen)new PackScreen().initAsRegionMap(this,entry.getValue());
                     client.setScreen(s);
                 });
-                element.setMessage(Text.of(Utils.getColorString(PackSwapper.getRegionColor())+entry.getKey()));
+                element.setMessage(Text.of(Utils.getColorString(ps.getRegionColor())+entry.getKey()));
                 addElement(entry.getKey(),element);
             }
             index++;
@@ -67,13 +69,14 @@ public class PackScreen extends GUIScreen {
     //Region Screens.
     public Screen initAsRegionMap(@Nullable Screen parent, Map<String,Boolean> map){
         int index = 0;
+        PackSwapper ps = PackSwapper.getInstance();
         for(Map.Entry<String,Boolean> entry : map.entrySet()){
             if(entry.getValue() instanceof Boolean){
                 GUIElement element = new GUIElement((index/verticalPerHorizontal)*buttonWidth+buttonOffset,(index%verticalPerHorizontal)*buttonHeight+buttonOffset,buttonWidth,buttonHeight,button->{
                     map.put(entry.getKey(),!map.get(entry.getKey()));
-                    getElement(entry.getKey()).setMessage(Text.of(Utils.getColorString(PackSwapper.getRegionColor())+(entry.getKey().equals("")?"All Regions":entry.getKey())+Utils.getStringFromBoolean(entry.getValue())));
+                    getElement(entry.getKey()).setMessage(Text.of(Utils.getColorString(ps.getRegionColor())+(entry.getKey().equals("")?"All Regions":entry.getKey())+Utils.getStringFromBoolean(entry.getValue())));
                 });
-            element.setMessage(Text.of(Utils.getColorString(PackSwapper.getRegionColor())+(entry.getKey().equals("")?"All Regions":entry.getKey())+Utils.getStringFromBoolean(entry.getValue())));
+            element.setMessage(Text.of(Utils.getColorString(ps.getRegionColor())+(entry.getKey().equals("")?"All Regions":entry.getKey())+Utils.getStringFromBoolean(entry.getValue())));
             addElement(entry.getKey(),element);
             }
             index++;
@@ -83,7 +86,7 @@ public class PackScreen extends GUIScreen {
     }
     
     public void close(){
-        PackSwapper.manipulatePacks(TabListProcessor.getArea().getString(), ScoreboardProcessor.getRegion().getString());
+        PackSwapper.getInstance().manipulatePacks(TabListProcessor.getArea().getString(), ScoreboardProcessor.getRegion().getString());
         super.close();
     }
 }

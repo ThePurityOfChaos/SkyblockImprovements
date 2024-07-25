@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import com.github.thepurityofchaos.interfaces.Feature;
-import com.github.thepurityofchaos.interfaces.ScreenInteractor;
+import com.github.thepurityofchaos.abstract_interfaces.Feature;
+import com.github.thepurityofchaos.abstract_interfaces.ScreenInteractor;
 import com.github.thepurityofchaos.utils.NbtUtils;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
@@ -34,8 +34,6 @@ import net.minecraft.util.Identifier;
  * 
  * <p> {@link #getColorCode()}: Returns the current color code. Currently does not change.
  * 
- * <p> {@link #getFeatureVisual()}: Returns the visual element.
- * 
  * <p> {@link #getRank()}: Returns the player's Rank.
  * 
  * <p> {@link #getTimeToPrestige()}: Returns the current time to prestige.
@@ -44,23 +42,24 @@ import net.minecraft.util.Identifier;
  * 
  * <p> {@link #getTimeToUpgrade()}: Returns the most efficient upgrade's time.
  */
-public class ChocolateFactory implements Feature, ScreenInteractor {
+public class ChocolateFactory extends Feature implements ScreenInteractor {
     //INCLUDED IN: None
-    private static Map<String,Long> factoryInfo = new HashMap<>();
-    private static int currentBaseProduction = 0;
-    private static double currentCPS = 0.0;
-    private static GUIElement CFVisual = null;
-    private static char colorCode = '6';
-    private static long mEuCost = 0;
+    private Map<String,Long> factoryInfo = new HashMap<>();
+    private int currentBaseProduction = 0;
+    private double currentCPS = 0.0;
+    private char colorCode = '6';
+    private long mEuCost = 0;
 
-    public static void processList(List<ItemStack> list){
+    private static ChocolateFactory instance = new ChocolateFactory();
+
+    public void processList(List<ItemStack> list){
         if(list==null) return;
         for(ItemStack item : list){
             getDataFromItemStack(item);
         }
         factoryInfo.entrySet().removeIf(entry -> entry.getValue()==-1);
     }
-    private static void getDataFromItemStack(ItemStack item){
+    private void getDataFromItemStack(ItemStack item){
         List<Text> lore = NbtUtils.getLorefromItemStack(item);
         Text name = NbtUtils.getNamefromItemStack(item);
         if(lore==null)
@@ -169,7 +168,7 @@ public class ChocolateFactory implements Feature, ScreenInteractor {
             }
     }
     //if a member of the Rabbit Family or the Time Tower
-    private static String processName(Text name){
+    private String processName(Text name){
         String nameString = name.getString();
         if(nameString.contains("Rabbit")){
             nameString = nameString.split("-")[0].strip();
@@ -186,42 +185,43 @@ public class ChocolateFactory implements Feature, ScreenInteractor {
         return nameString;
     }
 
-    public static Text getChocolateCount(){
+    public Text getChocolateCount(){
         Long i = factoryInfo.get("Chocolate Count");
         if(i!=null){
-        return Text.of(Utils.getColorString(colorCode)+"Chocolate Count: " + Utils.addCommas(i.toString()));
+        return Text.of(Utils.getColorString(colorCode)+"Chocolate Count: " + Utils.addCommas(i.toString(),0));
         }
         return Text.of("");
     }
 
-    public static Text getCPS(){
-        return Text.of(Utils.getColorString(colorCode)+"Chocolate Per Second: " + Utils.addCommas(((Integer)((Double)currentCPS).intValue()).toString()));
+    public Text getCPS(){
+        return Text.of(Utils.getColorString(colorCode)+"Chocolate Per Second: " + Utils.addCommas(((Integer)((Double)currentCPS).intValue()).toString(),1));
     }
 
-    public static Text getTimeToUpgrade(){
+    public Text getTimeToUpgrade(){
         try{
         long currentChocolate = factoryInfo.get("Chocolate Count");
         if(mEuCost < currentChocolate)
             return Text.of(Utils.getColorString(colorCode)+"Time to Upgrade: "+Utils.getColorString('a')+"Ready!");
-        double timeNeeded = (mEuCost - currentChocolate)/currentCPS;
+        double timeNeeded = (mEuCost - currentChocolate)/currentCPS+1;
         return Text.of(Utils.getColorString(colorCode)+"Time to Upgrade: "+Utils.getTime(timeNeeded));
         }catch(Exception e){
             return Text.of("");
         }
     }
-    public static Text getRank(){
+    public Text getRank(){
         try{
             long currentChocolateRank = factoryInfo.get("Ranking");
-            return Text.of(Utils.getColorString(colorCode)+"Ranking: "+Utils.getColorString('8')+"#"+Utils.getColorString('b')+Utils.addCommas(((Long)currentChocolateRank).toString()));
+            return Text.of(Utils.getColorString(colorCode)+"Ranking: "+Utils.getColorString('8')+"#"+Utils.getColorString('b')+Utils.addCommas(((Long)currentChocolateRank).toString(),0));
         }catch(Exception e){
             return Text.of("");
         }
     }
-    public static Text getTimeToPrestige(){
+    public Text getTimeToPrestige(){
         try{
             long currentChocolate = factoryInfo.get("Chocolate this Prestige");
             long chocolateNeeded = factoryInfo.get("Prestige Requirements");
-            double timeNeeded = (chocolateNeeded - currentChocolate)/currentCPS;
+            if(chocolateNeeded==0) return Text.of(Utils.getColorString(colorCode)+"Time to Prestige: "+Utils.getColorString('a')+"None! Well Done!");
+            double timeNeeded = (chocolateNeeded - currentChocolate)/currentCPS+1;
         return timeNeeded<0?
             Text.of(Utils.getColorString(colorCode)+"Time to Prestige: "+Utils.getColorString('a')+"Ready!"):
             Text.of(Utils.getColorString(colorCode)+"Time to Prestige: "+Utils.getTime(timeNeeded));
@@ -230,7 +230,7 @@ public class ChocolateFactory implements Feature, ScreenInteractor {
         }
     }
 
-    public static Text mostEfficientUpgrade(){
+    public Text mostEfficientUpgrade(){
         //get all info specific to the upgrades. This used to be a single list, but that was less maintainable 
         //than the current iteration's split.
         //add all employees here
@@ -304,17 +304,16 @@ public class ChocolateFactory implements Feature, ScreenInteractor {
         }
         return Text.of(Utils.getColorString(colorCode)+"Most Efficient Upgrade: "+Utils.getColorString('4')+"Unknown");
     }
-    public static void init(){CFVisual = new GUIElement(64,64,128,32, null);}
-    public static GUIElement getFeatureVisual(){return CFVisual;}
-    public static void setColorCode(char c){
+    public void init(){visual = new GUIElement(64,64,128,32, null);}
+    public void setColorCode(char c){
         colorCode = c;
     }
-    public static char getColorCode(){
+    public char getColorCode(){
         return colorCode;
     }
-    public static void interact(Screen screen){
+    public void interact(Screen screen){
             ScreenEvents.afterTick(screen).register(currentScreen -> {
-                ChocolateFactory.processList(InventoryProcessor.processSlotsToList(((GenericContainerScreen)screen).getScreenHandler()));
+                ChocolateFactory.getInstance().processList(InventoryProcessor.processSlotsToList(((GenericContainerScreen)screen).getScreenHandler()));
             });
             ScreenEvents.afterRender(screen).register((currentScreen, drawContext, mouseX, mouseY, delta)->{ 
                 Identifier texture = new Identifier("sbimp","textures/border.png");
@@ -322,16 +321,20 @@ public class ChocolateFactory implements Feature, ScreenInteractor {
                 int y = currentScreen.height/2;
                 int yOffset = currentScreen.height/4;
                 List<Text> texts = new ArrayList<>();
-                texts.add(ChocolateFactory.getChocolateCount());
-                texts.add(ChocolateFactory.getCPS());
+                ChocolateFactory cf = ChocolateFactory.getInstance();
+                texts.add(cf.getChocolateCount());
+                texts.add(cf.getCPS());
                 texts.add(Text.of(""));
-                texts.add(ChocolateFactory.mostEfficientUpgrade());
-                texts.add(ChocolateFactory.getTimeToUpgrade());
+                texts.add(cf.mostEfficientUpgrade());
+                texts.add(cf.getTimeToUpgrade());
                 texts.add(Text.of(""));
-                texts.add(ChocolateFactory.getTimeToPrestige());
-                texts.add(ChocolateFactory.getRank());
-                ScreenUtils.draw(drawContext, texts, texture, x, y-yOffset,-1,-1,1000,-1,-1,-1);
+                texts.add(cf.getTimeToPrestige());
+                texts.add(cf.getRank());
+                ScreenUtils.draw(drawContext, texts, texture, x, y-yOffset,-1,-1,1000,-1,-1,-1, true);
             });        
+    }
+    public static ChocolateFactory getInstance() {
+        return instance;
     }
 
 }

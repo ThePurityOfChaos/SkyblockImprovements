@@ -1,4 +1,4 @@
-package com.github.thepurityofchaos.interfaces;
+package com.github.thepurityofchaos.abstract_interfaces;
 /**
  * Implementing this Interface means that a class will be performing File I/O, usually but not limited to a Config.
  * 

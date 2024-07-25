@@ -3,6 +3,7 @@ package com.github.thepurityofchaos.utils.processors;
 import java.util.List;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
+import com.github.thepurityofchaos.features.miscellaneous.SlayerTimer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -53,7 +54,6 @@ public class ScoreboardProcessor {
             //only perform this every second
             timer--;
             if(timer>0) return;
-
             MinecraftClient client = MinecraftClient.getInstance();
             Scoreboard scoreboard = client.player.getScoreboard();
             List<Text> newScoreboard = new ArrayList<>();
@@ -76,6 +76,7 @@ public class ScoreboardProcessor {
                     temp.append(siblings.next());
                 currentScoreboard.add(Text.of(temp));
             }
+            SlayerTimer.sendTime();
             timer = 20;
         }catch(NullPointerException e){
             //occurs when player is null, such as when in the title screen or loading into a world. This happens sometimes, so it's expected and no action is taken.
@@ -83,6 +84,7 @@ public class ScoreboardProcessor {
         //fixes an issue with uncertainty in regions.
         getRegion();
         SkyblockImprovements.pop();
+
     }
 
     /**
@@ -145,5 +147,24 @@ public class ScoreboardProcessor {
             regionChanged = true;
         previousRegion = currentRegion;
         return regionChanged;
+    }
+    public static boolean bossSpawned(){
+        for(Text scoreboardText : currentScoreboard){
+            //Boss Spawned
+            if(scoreboardText.getString().contains("Slay the boss!")){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean onSlayerQuest() {
+        for(Text scoreboardText : currentScoreboard){
+            //On a Slayer Quest
+            if(scoreboardText.getString().contains("Slayer Quest")){
+                return true;
+            }
+        }
+        return false;
     }
 }

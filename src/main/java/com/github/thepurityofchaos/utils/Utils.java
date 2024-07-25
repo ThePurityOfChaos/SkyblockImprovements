@@ -31,14 +31,14 @@ public class Utils {
     public static String removeCommas(String s){
         return s.replace(",","");
     }
-    public static String addCommas(String s){
+    public static String addCommas(String s, int precision){
         try{
             Long i = Long.parseLong(s);
             return String.format("%,d",i);
         }catch(Exception x){
             try{
                 Double d = Double.parseDouble(s);
-                return String.format("%,.3f",d);
+                return String.format("%,."+precision+"f",d);
             }catch(Exception e){
                 return "";
             }
@@ -51,12 +51,6 @@ public class Utils {
     }
     public static String stripSpecial(String s){
         return s.replaceAll("[⸕✧☘✎❈❤❂❁☠α]","");
-    }
-    public static String normalizeDouble(double d){
-        if((d==((long)d))){
-            return Long.toString((long)d);
-        }
-        return Double.toString(d);    
     }
     public static String asciify(String s){
         //https://stackoverflow.com/questions/8519669/how-can-non-ascii-characters-be-removed-from-a-string
@@ -90,12 +84,15 @@ public class Utils {
         return (time>86400?((Double)(time/84600)).intValue()+"d ":"")+
         (time>3600?((Double)((time%86400)/3600)).intValue()+"h ":"")+
         (time>60?((Double)((time%3600)/60)).intValue()+"m ":"")+
-        ((Double)(time%60)).intValue() +"s";
+        (((Double)(time%60)).intValue()) +"s";
     }
     public static boolean containsAny(String string, String[] set){
         for(String s : set){
             if(string.contains(s)) return true; 
         }
         return false;
+    }
+    public static boolean ignorable(String input){
+        return Utils.containsAny(input, new String[]{"Close","Go Back"});
     }
 }

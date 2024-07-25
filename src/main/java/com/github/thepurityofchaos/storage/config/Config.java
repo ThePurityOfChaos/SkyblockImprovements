@@ -41,7 +41,7 @@ public class Config {
         try{
                 IPLConfig.init();
                 PSConfig.init();
-                Sacks.init();
+                Sacks.getInstance().init();
                 Bazaar.init();
                 EcoConfig.init();
                 RTConfig.init();
@@ -59,7 +59,7 @@ public class Config {
     public static void saveSettings(){
         IPLConfig.saveSettings();
         PSConfig.saveSettings();
-        Sacks.saveSettings();
+        Sacks.getInstance().saveSettings();
         Bazaar.saveSettings();
         EcoConfig.saveSettings();
         RTConfig.saveSettings();
@@ -98,7 +98,7 @@ public class Config {
         }
         IPLConfig.createFile();
         PSConfig.createFile();
-        Sacks.createFile();
+        Sacks.getInstance().createFile();
         Bazaar.createFile();
         RTConfig.createFile();
     }

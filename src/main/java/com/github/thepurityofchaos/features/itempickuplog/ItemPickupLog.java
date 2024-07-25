@@ -11,10 +11,10 @@ import java.util.Scanner;
 import java.util.Set;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.interfaces.Feature;
+import com.github.thepurityofchaos.abstract_interfaces.Feature;
 import com.github.thepurityofchaos.storage.Sacks;
 import com.github.thepurityofchaos.utils.Utils;
-import com.github.thepurityofchaos.utils.gui.GUIElement;
+import com.github.thepurityofchaos.utils.gui.MenuElement;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
 import com.github.thepurityofchaos.utils.processors.InventoryProcessor;
 import com.google.common.collect.ArrayListMultimap;
@@ -31,9 +31,9 @@ import net.minecraft.nbt.NbtCompound;
 /**
  * The Item Pickup Log
  * 
- * <p> {@link #init()}: Initializes the visual component.
+ * <p> Extends 
  * 
- * <p> {@link #getFeatureVisual()}: Returns the visual component.
+ * <p> {@link #init()}: Initializes the visual component.
  * 
  * <p> {@link #addSackText(Text)}: Parses text from a [Sacks] message and adds it to the system. Returns false if this failed.
  * 
@@ -46,16 +46,19 @@ import net.minecraft.nbt.NbtCompound;
  * <p> {@link #getLog()}: Returns a collection of all the entries.
  * 
  */
-public class ItemPickupLog implements Feature {
-    //There is only ever ONE Item Pickup Log, so it's safe for every member of the class to be static.
-    private static GUIElement IPLVisual;
-    private static List<ItemStack> formerInventory;
-    private static Multimap<Text,ChangeInstance> log = ArrayListMultimap.create();
+public class ItemPickupLog extends Feature {
+    private List<ItemStack> formerInventory;
+    private Multimap<Text,ChangeInstance> log = ArrayListMultimap.create();
+    private boolean annihilate = false;
+    private boolean centeredText = true;
+    private static ItemPickupLog instance = new ItemPickupLog();
 
-    public static void init(){IPLVisual = new GUIElement(64,64,128,32,null);}
-
-    public static GUIElement getFeatureVisual(){return IPLVisual;}
-    public static boolean addSackText(Text message){
+    public void init(){
+        visual = new MenuElement(64,64,128,32, null);
+        visual.setMessage(Text.of("Item Pickup Log"));
+        visual.setTooltip(Text.of(Utils.getStringFromBoolean(isEnabled)));
+    }
+    public boolean addSackText(Text message){
         //parse out an int from the sack text
         try (Scanner intParser = new Scanner(message.getString())) {
             int changeAmount = intParser.nextInt();
@@ -75,8 +78,8 @@ public class ItemPickupLog implements Feature {
                 .replace("(","§8(")
                 //remove extraneous spaces
                 .replace("   ","");
-                Sacks.update(strippedMessage,changeAmount);
-                log.put(message,new ChangeInstance(Text.of(strippedMessage+(Sacks.getFeatureEnabled()?Sacks.get(Utils.stripSpecial(strippedMessage.split("§")[0]).strip()):"")), 
+                Sacks.getInstance().update(strippedMessage,changeAmount);
+                log.put(message,new ChangeInstance(Text.of(strippedMessage+(Sacks.getInstance().isEnabled()?Sacks.getInstance().get(Utils.stripSpecial(strippedMessage.split("§")[0]).strip()):"")), 
                 changeAmount, true));
             }
             intParser.close();
@@ -86,7 +89,7 @@ public class ItemPickupLog implements Feature {
     }
 
 
-    public static void determineChanges(){
+    public void determineChanges(){
 
         //this is what formerInventory will be defined as at the end of each determination.
         List<ItemStack> inventory = InventoryProcessor.processInventoryToList(InventoryProcessor.getPlayerInventory(), true);
@@ -150,8 +153,8 @@ public class ItemPickupLog implements Feature {
                     for(ChangeInstance existingInstance : existingInstances){
                         //if the existing instance counts are not zero and are aligned with each other 
                         //negatives and positives should show separately and not annihilate: 
-                        //-1x Potato and +1x Potato should both show if a player drops and picks them back up.
-                        if((existingInstance.getCount() < 0 &&instance.getCount() < 0) || (existingInstance.getCount() > 0 && instance.getCount() > 0)){
+                        //-1x Potato and +1x Potato should both show if a player drops and picks them back up. This can be toggled by the player.
+                        if(annihilate || (existingInstance.getCount() < 0 &&instance.getCount() < 0) || (existingInstance.getCount() > 0 && instance.getCount() > 0)){
                             existingInstance.addToInstance(instance.getCount());
                             isAdded = true;
                         }
@@ -167,15 +170,30 @@ public class ItemPickupLog implements Feature {
 
     }
 
-    public static void cleanLog(){
+    public void cleanLog(){
         log.entries().removeIf(entry -> entry.getValue().getCurrentLifespan() > ChangeInstance.getMaxLifespan());
     }
-    public static void resetLog(){
+    public void resetLog(){
         formerInventory = null;
         log.clear();
     }
-    public static Collection<ChangeInstance> getLog(){
+    public Collection<ChangeInstance> getLog(){
         return log.values();
+    }
+    public static ItemPickupLog getInstance() {
+        return instance;
+    }
+    public List<ItemStack> getFormerInventory(){
+        return formerInventory;
+    }
+    public void shouldAnnihilate(boolean b){
+        annihilate = b;
+    }
+    public boolean centerText() {
+        return centeredText;
+    }
+    public void centerText(boolean b){
+        centeredText = b;
     }
 
 }

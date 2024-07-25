@@ -8,6 +8,7 @@ import com.github.thepurityofchaos.features.economic.Bingo;
 import com.github.thepurityofchaos.features.economic.ChocolateFactory;
 import com.github.thepurityofchaos.features.economic.Refinery;
 import com.github.thepurityofchaos.features.economic.ReforgeHelper;
+import com.github.thepurityofchaos.features.miscellaneous.SBIButton;
 import com.github.thepurityofchaos.features.retexturer.Retexturer;
 import com.github.thepurityofchaos.mixin.ChatScreenAccessor;
 import com.github.thepurityofchaos.storage.Bazaar;
@@ -53,7 +54,7 @@ public class ScreenListener {
                 //Sack
                 if(screenName.contains("Sack")&&!screenName.contains("Sack of Sacks")){
                     SkyblockImprovements.push("SBI_Sacks");
-                    Sacks.interact(screen);
+                    Sacks.getInstance().interact(screen);
                     SkyblockImprovements.pop();
                 } 
 
@@ -68,32 +69,35 @@ public class ScreenListener {
                 //Chocolate Factory
                 if(screenName.contains("Chocolate Factory")){
                     SkyblockImprovements.push("SBI_ChocolateFactory");
-                    ChocolateFactory.interact(screen);
+                    ChocolateFactory.getInstance().interact(screen);
                     SkyblockImprovements.pop();
                 }
                 //Reforge Station
                 if(screenName.contains("Reforge Item")){
                     SkyblockImprovements.push("SBI_ReforgeHelper");
-                    ReforgeHelper.interact(screen);
+                    ReforgeHelper.getInstance().interact(screen);
                     SkyblockImprovements.pop();
                 }
 
                 //Refinery
                 if(screenName.contains("Refine")){
                     SkyblockImprovements.push("SBI_Refinery");
-                    Refinery.interact(screen);
+                    Refinery.getInstance().interact(screen);
                     SkyblockImprovements.pop();
                 }
                 if(screenName.contains("Bingo Card")){
                     SkyblockImprovements.push("SBI_Bingo");
-                    Bingo.interact(screen);
+                    Bingo.getInstance().interact(screen);
                     SkyblockImprovements.pop();
                 }
 
             }
             if(screen instanceof InventoryScreen){
                 SkyblockImprovements.push("SBI_HelmetRetexturerInteractables");
-                Retexturer.interact(screen);
+                Retexturer.getInstance().interact(screen);
+                SkyblockImprovements.pop();
+                SkyblockImprovements.push("SBI_GenericInteractables");
+                SBIButton.interact(screen);
                 SkyblockImprovements.pop();
             }
             if(screen instanceof ChatScreen){
@@ -108,8 +112,8 @@ public class ScreenListener {
                         List<Text> text = new ArrayList<>();
                         double solution = MathSolutions.doMath(currentMessage);
                         if(solution!=-0.0){
-                            text.add(Text.of(Utils.getColorString(EcoConfig.getColorCode())+Utils.addCommas(Utils.normalizeDouble(solution))));
-                            ScreenUtils.draw(drawContext, text, x-xOffset, y+yOffset, -1, -1, 1000, -1, -1, -1);
+                            text.add(Text.of(Utils.getColorString(EcoConfig.getColorCode())+Utils.addCommas(((Double)solution).toString(),0)));
+                            ScreenUtils.draw(drawContext, text, x-xOffset, y+yOffset, -1, -1, 1000, -1, -1, -1, true);
                         }
                 });
                 SkyblockImprovements.pop();

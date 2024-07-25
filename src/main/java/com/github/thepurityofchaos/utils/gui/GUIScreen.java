@@ -24,7 +24,7 @@ import net.minecraft.text.Text;
 @Environment(EnvType.CLIENT)
 public class GUIScreen extends Screen {
     private @Nullable Screen parent;
-    private Map<String,GUIElement> allElements = new HashMap<String,GUIElement>();
+    protected Map<String,GUIElement> allElements = new HashMap<String,GUIElement>();
     public GUIScreen(){
         super(Text.literal("SkyblockImprovements"));
     }

@@ -1,4 +1,4 @@
-package com.github.thepurityofchaos.interfaces;
+package com.github.thepurityofchaos.abstract_interfaces;
 
 import net.minecraft.client.gui.screen.Screen;
 /**

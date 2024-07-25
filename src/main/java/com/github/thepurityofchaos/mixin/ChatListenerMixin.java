@@ -32,7 +32,8 @@ public class ChatListenerMixin {
             info.cancel();
             if(newMessage.equals(Text.of(""))) return;
             MinecraftClient client = MinecraftClient.getInstance();
-            client.inGameHud.getChatHud().addMessage(newMessage);
+            if(overlay) client.inGameHud.setOverlayMessage(newMessage, false);
+            else client.inGameHud.getChatHud().addMessage(newMessage);
         }
     }
 

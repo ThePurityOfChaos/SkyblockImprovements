@@ -34,21 +34,22 @@ public class RTConfig {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
     public static void init() {
         createFile();
+		Retexturer rt = Retexturer.getInstance();
         try{
 			BufferedReader reader = Files.newBufferedReader(SkyblockImprovements.FILE_LOCATION.resolve("rt.json"));
             JsonObject parser = JsonParser.parseReader(reader).getAsJsonObject();
-            if(parser.get("enabled").getAsBoolean()) Retexturer.toggleRecolor();
+            if(parser.get("enabled").getAsBoolean()) rt.toggleRecolor();
 			Gson gson = new Gson();
 			Type helmMap = new TypeToken<Map<String,List<String>>>(){}.getType();
 			Map<String,List<String>> knownHelms = gson.fromJson(parser.get("knownHelms"), helmMap);
-			if(knownHelms!=null) Retexturer.setKnownHelms(knownHelms);
+			if(knownHelms!=null) rt.setKnownHelms(knownHelms);
 			JsonObject advanced = parser.getAsJsonObject("advanced");
-				Retexturer.changeColor(advanced.get("color").getAsInt());
-				Retexturer.changeK(advanced.get("k").getAsInt());
+				rt.changeColor(advanced.get("color").getAsInt());
+				rt.changeK(advanced.get("k").getAsInt());
 			LOGGER.info("[SkyblockImprovements] Helmet Info Imported.");
 		}catch(Exception e){
 			LOGGER.error("[SkyblockImprovements] Helmet Info failed to load!");
-			Retexturer.toggleRecolor();
+			rt.toggleRecolor();
 		}
     }
     public static void createFile(){
@@ -69,14 +70,15 @@ public class RTConfig {
     }
     public static void saveSettings(){
 		try{
+			Retexturer rt = Retexturer.getInstance();
             BufferedWriter writer = Files.newBufferedWriter(SkyblockImprovements.FILE_LOCATION.resolve("rt.json"));
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
 				Map<String,Object> configOptions = new HashMap<>();
-					configOptions.put("enabled",Retexturer.getFeatureEnabled());
-					configOptions.put("knownHelms",Retexturer.getKnownHelms());
+					configOptions.put("enabled",rt.getFeatureEnabled());
+					configOptions.put("knownHelms",rt.getKnownHelms());
 					Map<String,Object> advanced = new HashMap<>();
-						advanced.put("color",Retexturer.getColorCode());
-						advanced.put("k",Retexturer.getK());
+						advanced.put("color",rt.getColorCode());
+						advanced.put("k",rt.getK());
 					configOptions.put("advanced",advanced);
                 writer.write(gson.toJson(configOptions));
                 writer.close();

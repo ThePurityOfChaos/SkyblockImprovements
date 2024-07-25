@@ -13,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
+import com.github.thepurityofchaos.abstract_interfaces.Filer;
 import com.github.thepurityofchaos.features.packswapper.PackSwapper;
-import com.github.thepurityofchaos.interfaces.Filer;
 import com.github.thepurityofchaos.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -47,10 +47,10 @@ import net.minecraft.text.Text;
  */
 public class PSConfig implements Filer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
-    private static boolean isEnabled = true;
 
     public static void init(){
         createFile();
+        PackSwapper ps = PackSwapper.getInstance();
         try{
             //create parser based on the client
             BufferedReader reader = Files.newBufferedReader(SkyblockImprovements.FILE_LOCATION.resolve("ps.json"));
@@ -58,59 +58,60 @@ public class PSConfig implements Filer {
             Gson gson = new Gson();
                 //button
                 JsonArray dimArray = parser.getAsJsonArray("button");
-                Utils.setDim(PackSwapper.getFeatureVisual(), dimArray);
+                Utils.setDim(ps.getFeatureVisual(), dimArray);
                     
                 //advanced settings    
                 JsonObject advanced = parser.getAsJsonObject("advanced");
-                    PackSwapper.setRegionColor(advanced.get("colorCode").getAsString().charAt(0));
+                    ps.setRegionColor(advanced.get("colorCode").getAsString().charAt(0));
                     if(!advanced.get("showPackName").getAsBoolean())
-                        PackSwapper.togglePackHelper();
+                        ps.togglePackHelper();
                     if(!advanced.get("renderComponent").getAsBoolean())
-                        PackSwapper.toggleRenderComponent();
+                        ps.toggleRenderComponent();
                     if(!advanced.get("debugInfo").getAsBoolean())
-                        PackSwapper.toggleDebugInfo();
-                    isEnabled = parser.get("enabled").getAsBoolean();
+                        ps.toggleDebugInfo();
+                    if(parser.get("enabled").getAsBoolean()) ps.toggle();
                 
                 //customizeable map for areas & regions
                 Type bigMap = new TypeToken<Map<String,Map<String,Map<String,Boolean>>>>(){}.getType();
                 if(parser.getAsJsonObject("allRegions")==null) throw new Exception();
-                PackSwapper.loadPackAreaRegionToggles(gson.fromJson(parser.getAsJsonObject("allRegions"),bigMap));
+                ps.loadPackAreaRegionToggles(gson.fromJson(parser.getAsJsonObject("allRegions"),bigMap));
             LOGGER.info("[SkyblockImprovements] Pack Swapper Config Imported.");
             updateFeatureVisuals();
         }catch(Exception e){
             LOGGER.error("[SkyblockImprovements] Pack Swapper's Config failed to load! Was it updated, or was it just created?");
 
-            PackSwapper.loadPackAreaRegionToggles(loadDefaultMap());
+            ps.loadPackAreaRegionToggles(loadDefaultMap());
             updateFeatureVisuals();
         }
     }
     public static void saveSettings(){
+        PackSwapper ps = PackSwapper.getInstance();
         try{
         BufferedWriter writer = Files.newBufferedWriter(SkyblockImprovements.FILE_LOCATION.resolve("ps.json"));
             Map<String,Object> configOptions = new HashMap<>();
                 //save all advanced options here
                 Map<String,Object> advanced = new HashMap<>();
                     //save PackSwapper's advanced options
-                    advanced.put("colorCode",PackSwapper.getRegionColor());
-                    advanced.put("showPackName",PackSwapper.showPackHelper());
-                    advanced.put("renderComponent",PackSwapper.isRendering());
-                    advanced.put("debugInfo",PackSwapper.sendDebugInfo());
+                    advanced.put("colorCode",ps.getRegionColor());
+                    advanced.put("showPackName",ps.showPackHelper());
+                    advanced.put("renderComponent",ps.isRendering());
+                    advanced.put("debugInfo",ps.sendDebugInfo());
                 //save all button locations here
                    
-                ButtonWidget button = PackSwapper.getFeatureVisual(); 
+                ButtonWidget button = ps.getFeatureVisual(); 
                 int[] PSButtonLocations = {button.getX(),button.getY(),button.getWidth(),button.getHeight()};
 
             //put all the config options into the main Map
             configOptions.put("button",PSButtonLocations);
             configOptions.put("advanced",advanced);
-            configOptions.put("enabled",isEnabled);
-            configOptions.put("allRegions",PackSwapper.getFullRegionMap());
+            configOptions.put("enabled",ps.isEnabled());
+            configOptions.put("allRegions",ps.getFullRegionMap());
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             writer.write(gson.toJson(configOptions));
             writer.close();
             /*
             BufferedWriter DEBUG_WRITER = Files.newBufferedWriter(SkyblockImprovements.FILE_LOCATION.resolve("TEMP_REGIONS.json"));
-            DEBUG_WRITER.write(gson.toJson(PackSwapper.DEBUG_GETALLREGIONS()));
+            DEBUG_WRITER.write(gson.toJson(ps.DEBUG_GETALLREGIONS()));
             DEBUG_WRITER.close();
             */
 
@@ -138,22 +139,14 @@ public class PSConfig implements Filer {
 			}
 		}
     }
-    public static boolean getFeatureEnabled(){
-		return isEnabled;
-    }
-    public static void toggleFeature(){
-        isEnabled = !isEnabled;
-        updateFeatureVisuals();
-        LOGGER.info("[SkyblockImprovements] Pack Swapper Toggled.");
-    }
     private static void updateFeatureVisuals(){
-        PackSwapper.getFeatureVisual().setMessage(Text.of("Pack Swapper"+Utils.getStringFromBoolean(isEnabled)));
+        PackSwapper.getInstance().getFeatureVisual().setMessage(Text.of("Pack Swapper"));
     }
     private static Map<String,Map<String,Map<String,Boolean>>> loadDefaultMap(){
         return new HashMap<>();
     }
     public static void updateFile(){
         //I love ConcurrentModificationExceptions :D
-        PackSwapper.needsUpdate(); 
+        PackSwapper.getInstance().needsUpdate(); 
     }
 }

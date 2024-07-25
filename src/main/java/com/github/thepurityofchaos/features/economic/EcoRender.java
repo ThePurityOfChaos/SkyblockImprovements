@@ -23,45 +23,48 @@ public class EcoRender {
     //@SuppressWarnings("resource")
     public static void render(DrawContext drawContext, float tickDelta){   
         //TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
-        if(BatFirework.getFeatureEnabled()){
-         GUIElement location = BatFirework.getFeatureVisual();
+        BatFirework bf = BatFirework.getInstance();
+        if(bf.isEnabled()){
+         GUIElement location = bf.getFeatureVisual();
             int [] pos = new int[2];
             pos[0] = location.getCenteredX();
             pos[1] = location.getCenteredY();
-            if(BatFirework.getProfit()!=0.0){
+            if(bf.getProfit()!=0.0){
                 List<Text> batFireworkProfit = new ArrayList<>();
                     batFireworkProfit.add(Text.of(Utils.getColorString(EcoConfig.getColorCode())+"Bat Firework Profit:"));
-                    batFireworkProfit.add(Text.of(Utils.getColorString(EcoConfig.getColorCode())+Utils.addCommas(Utils.normalizeDouble(BatFirework.getProfit()))));
-                ScreenUtils.draw(drawContext, batFireworkProfit, null, pos[0], pos[1], -1, -1, 10, 1074790416, -1, -1);
+                    batFireworkProfit.add(Text.of(Utils.getColorString(EcoConfig.getColorCode())+Utils.addCommas(((Double)bf.getProfit()).toString(),0)));
+                ScreenUtils.draw(drawContext, batFireworkProfit, null, pos[0], pos[1], -1, -1, 10, 1074790416, -1, -1, true);
             }
         }
-        if(GenericProfit.getFeatureEnabled()){
-            GUIElement location = GenericProfit.getFeatureVisual();
+        GenericProfit gp = GenericProfit.getInstance();
+        if(gp.isEnabled()){
+            GUIElement location = gp.getFeatureVisual();
             
                 List<Text> genericProfit = new ArrayList<>();
-                if(GenericProfit.getProfit()!=0.0){
+                if(gp.getProfit()!=0.0){
                     genericProfit.add(Text.of(Utils.getColorString(EcoConfig.getColorCode())+"Profit This Session:"));
-                    genericProfit.add(Text.of(Utils.getColorString(EcoConfig.getColorCode())+Utils.addCommas(((Long)(long)(GenericProfit.getProfit())).toString())));
+                    genericProfit.add(Text.of(Utils.getColorString(EcoConfig.getColorCode())+Utils.addCommas(((Long)(long)(gp.getProfit())).toString(),gp.getPrecision())));
                     genericProfit.add(Text.of(Utils.getColorString(EcoConfig.getColorCode())+"Time This Session: "));
-                    genericProfit.add(Text.of(Utils.getColorString(EcoConfig.getColorCode())+Utils.getTime((System.currentTimeMillis()-GenericProfit.getTime())/1000.0)));
+                    genericProfit.add(Text.of(Utils.getColorString(EcoConfig.getColorCode())+Utils.getTime((System.currentTimeMillis()-gp.getTime())/1000.0)));
                     genericProfit.add(Text.of(Utils.getColorString(EcoConfig.getColorCode())+"Profit Per Hour: "));
-                    genericProfit.add(Text.of(Utils.getColorString(EcoConfig.getColorCode())+Utils.addCommas(((Long)GenericProfit.getProfitPerHour()).toString())));
+                    genericProfit.add(Text.of(Utils.getColorString(EcoConfig.getColorCode())+Utils.addCommas(((Long)gp.getProfitPerHour()).toString(),gp.getPrecision())));
                 }
-                Set<Text> errors = GenericProfit.getErrors();
+                Set<Text> errors = gp.getErrors();
                 if(errors.size()!=0){
                     genericProfit.add(Text.of(Utils.getColorString('4')+"Unknown Item Prices Detected."));
                     genericProfit.add(Text.of(Utils.getColorString('4')+"Check Bazaar for:"));
                     genericProfit.addAll(errors);
                 }
                 if(genericProfit.size()!=0)
-                    ScreenUtils.draw(drawContext, genericProfit, null, location.getCenteredX(), location.getCenteredY(), -1, -1, 10, 1074790416, -1, -1);
+                    ScreenUtils.draw(drawContext, genericProfit, null, location.getCenteredX(), location.getCenteredY(), -1, -1, 10, 1074790416, -1, -1, true);
             
         }
-        if(Bingo.getFeatureEnabled()&&TabListProcessor.getProfile().getString().contains("Ⓑ")){
-            GUIElement location = Bingo.getFeatureVisual();
-            List<Text> tasks = Bingo.getTasks();
+        Bingo bng = Bingo.getInstance();
+        if(bng.isEnabled()&&TabListProcessor.getProfile().getString().contains("Ⓑ")){
+            GUIElement location = bng.getFeatureVisual();
+            List<Text> tasks = bng.getTasks();
             if(tasks!=null && tasks.size()!=0)
-                ScreenUtils.draw(drawContext, tasks, null, location.getCenteredX(), location.getCenteredY(), -1, -1, 10, 1074790416, -1, -1);
+                ScreenUtils.draw(drawContext, tasks, null, location.getCenteredX(), location.getCenteredY(), -1, -1, 10, 1074790416, -1, -1, true);
         }
     }
 }

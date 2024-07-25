@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.interfaces.Feature;
+import com.github.thepurityofchaos.abstract_interfaces.Feature;
 import com.github.thepurityofchaos.storage.config.PSConfig;
 import com.github.thepurityofchaos.utils.Utils;
-import com.github.thepurityofchaos.utils.gui.GUIElement;
+import com.github.thepurityofchaos.utils.gui.MenuElement;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -71,30 +71,29 @@ import net.minecraft.util.Identifier;
  * 
  * <p> {@link #needsUpdate()}: Notifies the system that it needs an update.
  */
-public class PackSwapper implements Feature {
+public class PackSwapper extends Feature {
     //Used to show current Region and number of Packs associated with it. if desired.
-    //INCLUDED IN: PSConfig -> buttons
-    private static GUIElement PSVisual;
     //INCLUDED IN: PSConfig -> advanced
-    private static char regionColor = 'e';
-    private static boolean packHelper = true;
-    private static boolean renderComponent = true;
-    private static boolean sendDebugInfo = true;
-    private static boolean undefinedRegions = true;
-    private static boolean needsUpdate = false;
+    private char regionColor = 'e';
+    private boolean packHelper = true;
+    private boolean renderComponent = true;
+    private boolean sendDebugInfo = true;
+    private boolean undefinedRegions = true;
+    private boolean needsUpdate = false;
     //INCLUDED IN: None
-    private static String previousArea;
-    private static String previousRegion;
+    private String previousArea;
+    private String previousRegion;
     //INCLUDED IN: PSConfig -> allRegions
-    private static Map<String,Map<String,Map<String,Boolean>>> packAreaRegionToggles = null;
+    private Map<String,Map<String,Map<String,Boolean>>> packAreaRegionToggles = null;
     
+    private static PackSwapper instance = new PackSwapper();
     
     //defines ALL default regions
-    private static Map<String,List<String>> allDefaultRegions = new HashMap<>();
+    private Map<String,List<String>> allDefaultRegions = new HashMap<>();
 
-    public static void init(){PSVisual = new GUIElement(64,96,128,32,null);}
+    public void init(){visual = new MenuElement(64,96,128,32,null);}
     
-    public static void manipulatePacks(String eArea, String eRegion){
+    public void manipulatePacks(String eArea, String eRegion){
         String sArea = Utils.clearArea(eArea);
         String sRegion = Utils.clearRegion(eRegion);
         if(sArea.equals("NoAreaFound!")||sRegion.equals("§cNotonSkyblock!")){
@@ -208,7 +207,7 @@ public class PackSwapper implements Feature {
         if(hasChanged){
             if(sendDebugInfo){
                 MinecraftClient client = MinecraftClient.getInstance();
-                client.player.sendMessage(Text.of("§"+PackSwapper.getRegionColor()+"[§7SkyblockImprovements§"+PackSwapper.getRegionColor()+"]"+" §7Region change detected."),false);
+                client.player.sendMessage(Text.of("§"+PackSwapper.getInstance().getRegionColor()+"[§7SkyblockImprovements§"+PackSwapper.getInstance().getRegionColor()+"]"+" §7Region change detected."),false);
             }
             MinecraftClient.getInstance().reloadResources();
         }
@@ -216,7 +215,8 @@ public class PackSwapper implements Feature {
     }
 
     //a shell test to ensure that manipulatePacks() is only ever called when the region changes
-    public static void testForValidManipulation(Text currentArea,Text currentRegion){
+    public void testForValidManipulation(Text currentArea,Text currentRegion){
+        if(currentArea == null || currentRegion == null) return;
         String sArea = Utils.clearArea(currentArea.getString());
         String sRegion = Utils.clearRegion(currentRegion.getString());
 
@@ -231,28 +231,27 @@ public class PackSwapper implements Feature {
     /*
      * feature toggles & getters
      */
-    public static GUIElement getFeatureVisual(){return PSVisual;}
-    public static char getRegionColor(){return regionColor;}
-    public static void setRegionColor(char c){regionColor = c;}
-    public static void togglePackHelper(){packHelper = !packHelper;}
-    public static boolean showPackHelper(){return packHelper;}
-    public static void toggleRenderComponent(){renderComponent = !renderComponent;}
-    public static void toggleDebugInfo(){sendDebugInfo = !sendDebugInfo;}
-    public static boolean sendDebugInfo(){return sendDebugInfo;}
-    public static boolean isRendering(){return renderComponent;}
+    public char getRegionColor(){return regionColor;}
+    public void setRegionColor(char c){regionColor = c;}
+    public void togglePackHelper(){packHelper = !packHelper;}
+    public boolean showPackHelper(){return packHelper;}
+    public void toggleRenderComponent(){renderComponent = !renderComponent;}
+    public void toggleDebugInfo(){sendDebugInfo = !sendDebugInfo;}
+    public boolean sendDebugInfo(){return sendDebugInfo;}
+    public boolean isRendering(){return renderComponent;}
 
     /*
      * Methods relating to the Pack Swapper's Config Map
      */
-    public static void toggleRegion(String pack, String area, String region){
+    public void toggleRegion(String pack, String area, String region){
         Map<String,Boolean> areaMap = packAreaRegionToggles.get(pack).get(area);
         areaMap.put(region,(Boolean)!areaMap.get(region).booleanValue());
     }
-    public static void loadPackAreaRegionToggles(Map<String,Map<String,Map<String,Boolean>>> map){
+    public void loadPackAreaRegionToggles(Map<String,Map<String,Map<String,Boolean>>> map){
         packAreaRegionToggles = map;
 
     }
-    public static Map<String,Map<String,Boolean>> loadDefaultAreas(Map<String,Map<String,Boolean>> areasForThisPack){
+    public Map<String,Map<String,Boolean>> loadDefaultAreas(Map<String,Map<String,Boolean>> areasForThisPack){
         allDefaultRegions.forEach((k,v) -> {
             if(!areasForThisPack.containsKey(k))
                 areasForThisPack.put(k,loadDefaultRegions(k,new HashMap<String,Boolean>()));
@@ -263,7 +262,7 @@ public class PackSwapper implements Feature {
         return areasForThisPack;
 
     }
-    private static Map<String,Boolean> loadDefaultRegions(String area, Map<String,Boolean> regions){
+    private Map<String,Boolean> loadDefaultRegions(String area, Map<String,Boolean> regions){
         if(allDefaultRegions.containsKey(area))
             for(String region : allDefaultRegions.get(area)){
                 if(!regions.containsKey(region))
@@ -271,7 +270,7 @@ public class PackSwapper implements Feature {
             }
         return regions;
     }
-    private static void removeMissing(){
+    private void removeMissing(){
         //remove any portions of the map that aren't actually in minecraft's pack list.
         ResourcePackManager manager = MinecraftClient.getInstance().getResourcePackManager();
         Collection<ResourcePackProfile> packs = manager.getProfiles();
@@ -287,7 +286,7 @@ public class PackSwapper implements Feature {
         packAreaRegionToggles = newMap;
     }
 
-    public static Map<String,Map<String,Map<String,Boolean>>> getFullRegionMap(){
+    public Map<String,Map<String,Map<String,Boolean>>> getFullRegionMap(){
         //prevents issues when unloaded
         if(MinecraftClient.getInstance().getResourcePackManager().getProfiles().size()!=0)
             removeMissing();
@@ -295,10 +294,10 @@ public class PackSwapper implements Feature {
 
     }
     
-    public static void setDefaultRegions(Map<String,List<String>> map){
+    public void setDefaultRegions(Map<String,List<String>> map){
         allDefaultRegions = map;
     }
-    public static void defineDefaultRegions(){
+    public void defineDefaultRegions(){
         //load default regions
         try{
             Type smallMap = new TypeToken<Map<String,List<String>>>(){}.getType();
@@ -317,12 +316,16 @@ public class PackSwapper implements Feature {
             x.printStackTrace();
         }
     }
-    public static void needsUpdate(){
+    public void needsUpdate(){
         needsUpdate = true;
     }
 
+    public static PackSwapper getInstance() {
+        return instance;
+    }
+
     /*
-    public static void DEBUG_ADDREGION(String area, String region){
+    public void DEBUG_ADDREGION(String area, String region){
         if(!area.equals("§cNoAreaFound!")){
             if(!allDefaultRegions.containsKey(area)){
                 allDefaultRegions.put(area,new ArrayList<>());
@@ -332,7 +335,7 @@ public class PackSwapper implements Feature {
             }
         }
     }
-    public static Map<String,List<String>> DEBUG_GETALLREGIONS(){
+    public Map<String,List<String>> DEBUG_GETALLREGIONS(){
         return allDefaultRegions;
     }*/
 }

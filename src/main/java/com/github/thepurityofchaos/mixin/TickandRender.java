@@ -10,11 +10,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.features.economic.EcoRender;
 import com.github.thepurityofchaos.features.itempickuplog.IPLRender;
+import com.github.thepurityofchaos.features.itempickuplog.ItemPickupLog;
 import com.github.thepurityofchaos.features.packswapper.PSRender;
+import com.github.thepurityofchaos.features.packswapper.PackSwapper;
 import com.github.thepurityofchaos.features.retexturer.RTRender;
-import com.github.thepurityofchaos.storage.config.EcoConfig;
-import com.github.thepurityofchaos.storage.config.IPLConfig;
-import com.github.thepurityofchaos.storage.config.PSConfig;
 import com.github.thepurityofchaos.utils.processors.ScoreboardProcessor;
 import com.github.thepurityofchaos.utils.processors.TabListProcessor;
 
@@ -38,18 +37,18 @@ public class TickandRender {
             TabListProcessor.processTabList();
             
             //Item Pickup Log
-            if(IPLConfig.getFeatureEnabled())
+            if(ItemPickupLog.getInstance().isEnabled())
                 IPLRender.render(drawContext,tickDelta);
 
             //Pack Swapper
-            if(PSConfig.getFeatureEnabled())
+            if(PackSwapper.getInstance().isEnabled())
                 PSRender.render(drawContext, tickDelta);
             //Economic Features
-            if(EcoConfig.getFeatureEnabled()){
-                EcoRender.render(drawContext, tickDelta);
-            }
+            EcoRender.render(drawContext, tickDelta);
+            
             //Retexturer(s)
             RTRender.render();
+
         });
     }   
 }
