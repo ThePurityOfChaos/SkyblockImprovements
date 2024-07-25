@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.github.thepurityofchaos.utils.gui.GUIElement;
+import com.google.gson.JsonArray;
+
 public class Utils {
     
     public static String getStringFromBoolean(boolean b){
@@ -28,14 +31,14 @@ public class Utils {
     public static String removeCommas(String s){
         return s.replace(",","");
     }
-    public static String addCommas(String s){
+    public static String addCommas(String s, int precision){
         try{
-            Integer i = Integer.parseInt(s);
+            Long i = Long.parseLong(s);
             return String.format("%,d",i);
         }catch(Exception x){
             try{
                 Double d = Double.parseDouble(s);
-                return String.format("%,.3f",d);
+                return String.format("%,."+precision+"f",d);
             }catch(Exception e){
                 return "";
             }
@@ -48,12 +51,6 @@ public class Utils {
     }
     public static String stripSpecial(String s){
         return s.replaceAll("[⸕✧☘✎❈❤❂❁☠α]","");
-    }
-    public static String normalizeDouble(double d){
-        if((d==((int)d))){
-            return Integer.toString((int)d);
-        }
-        return Double.toString(d);    
     }
     public static String asciify(String s){
         //https://stackoverflow.com/questions/8519669/how-can-non-ascii-characters-be-removed-from-a-string
@@ -73,5 +70,29 @@ public class Utils {
             }
         }
         return result;
+    }
+    public static void setDim(GUIElement featureVisual, JsonArray dimArray) {
+        //width, height, x, y (inverted). It's weird. I just store it as x,y,width,height.
+        featureVisual.setDimensionsAndPosition(
+        dimArray.get(2).getAsInt(),
+        dimArray.get(3).getAsInt(),
+        dimArray.get(0).getAsInt(),
+        dimArray.get(1).getAsInt()
+        );
+    }
+    public static String getTime(double time){
+        return (time>86400?((Double)(time/84600)).intValue()+"d ":"")+
+        (time>3600?((Double)((time%86400)/3600)).intValue()+"h ":"")+
+        (time>60?((Double)((time%3600)/60)).intValue()+"m ":"")+
+        (((Double)(time%60)).intValue()) +"s";
+    }
+    public static boolean containsAny(String string, String[] set){
+        for(String s : set){
+            if(string.contains(s)) return true; 
+        }
+        return false;
+    }
+    public static boolean ignorable(String input){
+        return Utils.containsAny(input, new String[]{"Close","Go Back"});
     }
 }

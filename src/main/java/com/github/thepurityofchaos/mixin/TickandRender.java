@@ -8,19 +8,20 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.config.EcoConfig;
-import com.github.thepurityofchaos.config.IPLConfig;
-import com.github.thepurityofchaos.config.PSConfig;
 import com.github.thepurityofchaos.features.economic.EcoRender;
 import com.github.thepurityofchaos.features.itempickuplog.IPLRender;
+import com.github.thepurityofchaos.features.itempickuplog.ItemPickupLog;
 import com.github.thepurityofchaos.features.packswapper.PSRender;
+import com.github.thepurityofchaos.features.packswapper.PackSwapper;
 import com.github.thepurityofchaos.features.retexturer.RTRender;
 import com.github.thepurityofchaos.utils.processors.ScoreboardProcessor;
 import com.github.thepurityofchaos.utils.processors.TabListProcessor;
 
 
 
-
+/**
+ * MIXIN: Injects into the HudRenderCallback to piggyback off of the Scheduler.
+ */
 @Mixin(SkyblockImprovements.class)
 public class TickandRender {
     
@@ -30,24 +31,24 @@ public class TickandRender {
         //Render all
         HudRenderCallback.EVENT.register((drawContext, tickDelta)->{
             //Process Scoreboard & Tab List for this Tick 
-            //(Used for multiple events- piggybacking on HudRenderCallback, 
+            //(Used for multiple events- piggybacking on HudRenderCallback 
             //makes it so that creating a new ticking system is not necessary)
             ScoreboardProcessor.processScoreboard();
             TabListProcessor.processTabList();
             
             //Item Pickup Log
-            if(IPLConfig.getFeatureEnabled())
+            if(ItemPickupLog.getInstance().isEnabled())
                 IPLRender.render(drawContext,tickDelta);
 
             //Pack Swapper
-            if(PSConfig.getFeatureEnabled())
+            if(PackSwapper.getInstance().isEnabled())
                 PSRender.render(drawContext, tickDelta);
             //Economic Features
-            if(EcoConfig.getFeatureEnabled()){
-                EcoRender.render(drawContext, tickDelta);
-            }
+            EcoRender.render(drawContext, tickDelta);
+            
             //Retexturer(s)
             RTRender.render();
+
         });
     }   
 }

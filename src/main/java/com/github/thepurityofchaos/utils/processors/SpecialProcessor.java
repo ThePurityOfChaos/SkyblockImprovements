@@ -1,4 +1,4 @@
-package com.github.thepurityofchaos.listeners;
+package com.github.thepurityofchaos.utils.processors;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.interfaces.Listener;
+import com.github.thepurityofchaos.abstract_interfaces.MessageProcessor;
 import com.github.thepurityofchaos.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -23,7 +23,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
-public class SpecialListener implements Listener {
+public class SpecialProcessor implements MessageProcessor {
     //testing listener to figure out how to modify messages that come in and send them back out. This listener makes all my messages purple :)
     private static Map<String, Character> specialNameMap = new HashMap<>();
     //load name list
@@ -53,7 +53,7 @@ public class SpecialListener implements Listener {
         for(String name : specialNameMap.keySet()){
             if(message.getString().contains(name)){
                 SkyblockImprovements.pop();
-                return SpecialListener.recolorMessage(message, name, Style.EMPTY.withColor(Formatting.byCode(specialNameMap.get(name))));
+                return SpecialProcessor.recolorMessage(message, name, Style.EMPTY.withColor(Formatting.byCode(specialNameMap.get(name))));
             }
         }
         //if something else

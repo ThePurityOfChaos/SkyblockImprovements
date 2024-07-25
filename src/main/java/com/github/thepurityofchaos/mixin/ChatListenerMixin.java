@@ -14,7 +14,9 @@ import net.minecraft.network.message.MessageType;
 import net.minecraft.network.message.SignedMessage;
 
 import net.minecraft.text.Text;
-
+/**
+ * MIXIN: Injects into onChatMessage() and onGameMessage() to listen to all messages and remove some messages.
+ */
 @Mixin(MessageHandler.class)
 public class ChatListenerMixin {
     //Inject into message parsing for generic purposes
@@ -30,7 +32,8 @@ public class ChatListenerMixin {
             info.cancel();
             if(newMessage.equals(Text.of(""))) return;
             MinecraftClient client = MinecraftClient.getInstance();
-            client.inGameHud.getChatHud().addMessage(newMessage);
+            if(overlay) client.inGameHud.setOverlayMessage(newMessage, false);
+            else client.inGameHud.getChatHud().addMessage(newMessage);
         }
     }
 

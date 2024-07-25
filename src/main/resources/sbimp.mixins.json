@@ -7,8 +7,10 @@
 		"TickandRender",
 		"ChatListenerMixin",
 		"SkullRendererMixin",
+		"HandledScreenMixin",
 		"ChatScreenAccessor",
-		"TabListAccessor"
+		"TabListAccessor",
+		"HandledScreenAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1

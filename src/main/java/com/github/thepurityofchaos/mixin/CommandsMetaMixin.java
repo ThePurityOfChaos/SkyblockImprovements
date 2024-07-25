@@ -9,29 +9,40 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.config.ConfigScreen;
-import com.github.thepurityofchaos.config.EcoConfig;
-import com.github.thepurityofchaos.config.IPLConfig;
-import com.github.thepurityofchaos.config.PSConfig;
 import com.github.thepurityofchaos.features.economic.BatFirework;
+import com.github.thepurityofchaos.features.economic.Bingo;
+import com.github.thepurityofchaos.features.economic.GenericProfit;
+import com.github.thepurityofchaos.features.itempickuplog.ItemPickupLog;
 import com.github.thepurityofchaos.features.packswapper.PackScreen;
 import com.github.thepurityofchaos.features.packswapper.PackSwapper;
-import com.github.thepurityofchaos.features.retexturer.HelmetRetexturer;
+import com.github.thepurityofchaos.features.retexturer.Retexturer;
 import com.github.thepurityofchaos.storage.Sacks;
+import com.github.thepurityofchaos.storage.config.ConfigScreen;
+import com.github.thepurityofchaos.storage.config.EcoConfig;
+import com.github.thepurityofchaos.storage.config.IPLConfig;
+import com.github.thepurityofchaos.storage.config.PSConfig;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
 import com.github.thepurityofchaos.utils.math.ColorUtils;
+import com.github.thepurityofchaos.utils.screen.GeneratorScreen;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 
-
+/**
+ * A mixin to bind ALL commands related to SkyblockImprovements. 
+ */
 @Mixin(SkyblockImprovements.class)
 public class CommandsMetaMixin {
     //Inject into the mod's initializer. If this isn't done, causes an EXCEPTION_ACCESS_VIOLATION.
-
-    @SuppressWarnings("resource")
+    /**
+     * Command registration superstructure.
+     *
+     * @see https://docproject.github.io/fabricmc_fabric/net/fabricmc/fabric/api/client/screen/v1/ScreenEvents.html
+     *    
+     * @param info
+     */
     @Inject(at = @At("HEAD"), method = "onInitializeClient", remap = false)
     private void onInitializeClient(CallbackInfo info){
-        //basic command to access SBI's User Interface 
+        //base command to access SBI's User Interface 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher
         .register(ClientCommandManager.literal("sbi")
 
@@ -63,7 +74,7 @@ public class CommandsMetaMixin {
                 )))
                 .then(ClientCommandManager.literal("showSackAmounts")
                         .executes(context ->{
-                            Sacks.toggleFeature();
+                            Sacks.getInstance().toggle();
                             IPLConfig.saveSettings();
                             return 1;
                         }
@@ -75,37 +86,38 @@ public class CommandsMetaMixin {
                         }
                 ))
                 .executes(context ->{
-                    IPLConfig.toggleFeature();
+                    ItemPickupLog.getInstance().toggle();
                     IPLConfig.saveSettings();
                     return 1;
                 }
             ))
+            //Pack Swapper
             .then(ClientCommandManager.literal("PackSwapper")
                 .then(ClientCommandManager.literal("setColorCode")
                     .then(ClientCommandManager.argument("color_code_char", StringArgumentType.word())
                         .executes(context ->{
-                            PackSwapper.setRegionColor(StringArgumentType.getString(context, "color_code_char").charAt(0));
+                            PackSwapper.getInstance().setRegionColor(StringArgumentType.getString(context, "color_code_char").charAt(0));
                             PSConfig.saveSettings();
                             return 1;
                         }   
                 )))
                 .then(ClientCommandManager.literal("toggleRPHelper")
                     .executes(context ->{
-                        PackSwapper.togglePackHelper();
+                        PackSwapper.getInstance().togglePackHelper();
                         PSConfig.saveSettings();
                         return 1;
                     }
                 ))
                 .then(ClientCommandManager.literal("toggleRender")
                     .executes(context ->{
-                        PackSwapper.toggleRenderComponent();
+                        PackSwapper.getInstance().toggleRenderComponent();
                         PSConfig.saveSettings();
                         return 1;
                     }
                 ))
                 .then(ClientCommandManager.literal("toggleDebugInfo")
                     .executes(context ->{
-                        PackSwapper.toggleDebugInfo();
+                        PackSwapper.getInstance().toggleDebugInfo();
                         PSConfig.saveSettings();
                         return 1;
                     }
@@ -113,18 +125,19 @@ public class CommandsMetaMixin {
                 .then(ClientCommandManager.literal("config")
                     .executes(context ->{
                         context.getSource().getClient().send(() -> context.getSource().getClient().setScreen(
-                            new PackScreen().initAsPackMap(null,PackSwapper.getFullRegionMap())
+                            new PackScreen().initAsPackMap(null,PackSwapper.getInstance().getFullRegionMap())
                             ));
                         PSConfig.saveSettings();
                         return 1;
                     }
                 ))
                 .executes(context ->{
-                    PSConfig.toggleFeature();
+                    PackSwapper.getInstance().toggle();
                     PSConfig.saveSettings();
                     return 1;
                 }
             ))
+            //Economic Helpers
             .then(ClientCommandManager.literal("EconomicHelpers")
             
             .then(ClientCommandManager.literal("setColorCode")
@@ -135,20 +148,22 @@ public class CommandsMetaMixin {
                         return 1;
                     }
             )))
+            //Bat Firework Helper
             .then(ClientCommandManager.literal("BatFirework")
                     
                 .then(ClientCommandManager.literal("resetProfit")
                     .executes(context ->{
-                        BatFirework.resetProfit();
+                        BatFirework.getInstance().resetProfit();
                         return 1;
                     }
             ))            
                 .executes(context ->{
-                    BatFirework.toggleFeature();
+                    BatFirework.getInstance().toggle();
                     EcoConfig.saveSettings();
                     return 1;
                 }
             ))
+            //Math Helper
             .then(ClientCommandManager.literal("toggleMathHelper")
                     .executes(context ->{
                         EcoConfig.toggleMath();
@@ -156,13 +171,30 @@ public class CommandsMetaMixin {
                     }
 
             ))
-            
-            .executes(context ->{
-                EcoConfig.toggleFeature();
-                EcoConfig.saveSettings();
-                return 1;
-            }
-        ))
+            //Generic Profit Helper
+            .then(ClientCommandManager.literal("resetProfit")
+                    .executes(context ->{
+                        GenericProfit.getInstance().resetProfit();
+                        return 1;
+                    }
+
+            ))
+            //Bingo
+            .then(ClientCommandManager.literal("Bingo")  
+                .then(ClientCommandManager.literal("showCommunity")
+                    .executes(context ->{
+                        Bingo.getInstance().toggleCommunity();
+                        return 1;
+                    }
+            ))            
+                .executes(context ->{
+                    Bingo.getInstance().toggle();
+                    EcoConfig.saveSettings();
+                    return 1;
+                }
+            ))
+        )
+        //Helmer Retexturer
         .then(ClientCommandManager.literal("HelmetRetexturer")
             
         .then(ClientCommandManager.literal("setColor")
@@ -170,7 +202,7 @@ public class CommandsMetaMixin {
                 .then(ClientCommandManager.argument("Green 0-255",IntegerArgumentType.integer())
                     .then(ClientCommandManager.argument("Blue 0-255",IntegerArgumentType.integer())
                         .executes(context ->{
-                            HelmetRetexturer.changeColor(ColorUtils.rGBAToInt(
+                            Retexturer.getInstance().changeColor(ColorUtils.rGBAToInt(
                             (int)(IntegerArgumentType.getInteger(context, "Red 0-255")), 
                             (int)(IntegerArgumentType.getInteger(context, "Green 0-255")), 
                             (int)(IntegerArgumentType.getInteger(context, "Blue 0-255")), 
@@ -181,23 +213,26 @@ public class CommandsMetaMixin {
         .then(ClientCommandManager.literal("setK")
             .then(ClientCommandManager.argument("K 2-16",IntegerArgumentType.integer())
                 .executes(context ->{
-                    HelmetRetexturer.changeK((int)(IntegerArgumentType.getInteger(context, "K 2-16")));
+                    Retexturer.getInstance().changeK((int)(IntegerArgumentType.getInteger(context, "K 2-16")));
                     return 1;
                 }
         )))
         .executes(context ->{
-            HelmetRetexturer.toggleRecolor();
+            Retexturer.getInstance().toggleRecolor();
             return 1;
-        })
-        )
-
+        }))
+        //Debug Features
+        .then(ClientCommandManager.literal("EXPERIMENTAL_TOGGLE_DEBUG_FEATURES")
+            .executes(context ->{
+                SkyblockImprovements.EXPERIMENTAL_TOGGLE_DEBUG_FEATURES();
+                return 1;
+            }
+        ))
 
 
 
         //default execution
         .executes(context -> {
-            //https://docproject.github.io/fabricmc_fabric/net/fabricmc/fabric/api/client/screen/v1/ScreenEvents.html 
-
             //Create and Display Config Screen
             ConfigScreen screen = new ConfigScreen();
             screen.init(null);
@@ -206,6 +241,17 @@ public class CommandsMetaMixin {
             context.getSource().getClient().send(() -> context.getSource().getClient().setScreen(screen)); 
             return 1;
         })));
-  
+    ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher
+        .register(ClientCommandManager.literal("gen")
+            .then(ClientCommandManager.literal("item")
+                .executes(context ->{
+                    GeneratorScreen screen = GeneratorScreen.getInstance();
+                    screen.init(null);
+                    context.getSource().getClient().send(() -> context.getSource().getClient().setScreen(screen)); 
+                    return 1;
+                }
+            ))
+        ));
     }
+    
 }

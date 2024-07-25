@@ -1,12 +1,22 @@
 package com.github.thepurityofchaos.listeners;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.config.IPLConfig;
 import com.github.thepurityofchaos.features.economic.BatFirework;
+import com.github.thepurityofchaos.features.economic.Bingo;
+import com.github.thepurityofchaos.storage.config.IPLConfig;
+import com.github.thepurityofchaos.utils.processors.SackProcessor;
+import com.github.thepurityofchaos.utils.processors.SpecialProcessor;
 
 import net.minecraft.network.message.SignedMessage;
 import net.minecraft.text.Text;
 
+
+/**
+ * Listens to all chat messages.
+ * <p> {@link #parseMessage(SignedMessage)}: See below.
+ * 
+ * <p> {@link #parseMessage(Text)}: Checks every MessageProcessor's isMyMessage() method.
+ */
 public class ChatListener {
     
 
@@ -27,10 +37,6 @@ public class ChatListener {
             SkyblockImprovements.pop();
             return null;
         }
-        if(message.getStyle().getHoverEvent()!=null){
-            SkyblockImprovements.pop();
-            return null;
-        }
         //Generic Parse Checks. Should be ordered by probability of appearance.  
 
         /*Is this a(n) [X] message? If so, hand it off to XListener. 
@@ -41,7 +47,7 @@ public class ChatListener {
         */    
 
         //Is this a [Sacks] message? If so, hand it off to the SackListener.
-        if(SackListener.isMyMessage(message)){
+        if(SackProcessor.isMyMessage(message)){
             if(IPLConfig.removeMessage()){ 
                 SkyblockImprovements.pop();
                 return Text.of("");
@@ -50,12 +56,21 @@ public class ChatListener {
             return null;
         }
             
-        if(BatFirework.isMyMessage(message)){
+        if(BatFirework.getInstance().isMyMessage(message)){
             SkyblockImprovements.pop();
             return null;
         }
+        if(Bingo.getInstance().isMyMessage(message)){
+            SkyblockImprovements.pop();
+            return null;
+        }
+        if(message.getStyle().getHoverEvent()!=null){
+            SkyblockImprovements.pop();
+            return null;
+        }
+
         SkyblockImprovements.pop();
-        return SpecialListener.isMyMessage(message);
+        return SpecialProcessor.isMyMessage(message);
         
     }
 }

@@ -3,23 +3,36 @@ package com.github.thepurityofchaos.features.economic;
 import java.util.Scanner;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.interfaces.Feature;
-import com.github.thepurityofchaos.interfaces.Listener;
+import com.github.thepurityofchaos.abstract_interfaces.Feature;
+import com.github.thepurityofchaos.abstract_interfaces.MessageProcessor;
 import com.github.thepurityofchaos.storage.Bazaar;
-import com.github.thepurityofchaos.utils.gui.GUIElement;
+import com.github.thepurityofchaos.utils.gui.MenuElement;
 
 import net.minecraft.text.Text;
+/**
+ * Economic Widget for determining the profit of a Bat Firework.
+ * 
+ * <p> {@link #init()}: Initializes the visual component.
+ * 
+ * <p> {@link #isMyMessage(Text)}: Determines whether or not the message is a Bat Firework message.
+ * 
+ * <p> {@link #getProfit()}: Returns the current profit.
+ * 
+ * <p> {@link #resetProfit()}: Resets the current profit back to 0.
+ * 
+ * 
+ */
+public class BatFirework extends Feature implements MessageProcessor {
+    //INCLUDED IN: None
+    private double currentProfit = 0.0;
+    
+    private static BatFirework instance = new BatFirework();
 
-public class BatFirework implements Listener,Feature {
-    private static double currentProfit = 0.0;
-    private static GUIElement BatVisual = null;
-    private static boolean isEnabled = false;
-
-    public static void init(){
-       BatVisual = new GUIElement(64, 32, 128, 32, null);
+    public void init(){
+       visual = new MenuElement(64, 32, 128, 32, null);
     }
 
-    public static boolean isMyMessage(Text message){
+    public boolean isMyMessage(Text message){
         SkyblockImprovements.push("SBI_BatFirework");
         if(message.getString().contains(" Purple Candies")){
             addToProfit(message.getString());
@@ -27,7 +40,7 @@ public class BatFirework implements Listener,Feature {
         SkyblockImprovements.pop();
         return false;
     }
-    private static void addToProfit(String message){
+    private void addToProfit(String message){
         int candyAmount = 0;
         try{
             double greenCandyPrice = Bazaar.getSell("Green Candy");
@@ -49,13 +62,13 @@ public class BatFirework implements Listener,Feature {
 
         }
     }
-    public static void resetProfit(){
+    public void resetProfit(){
         currentProfit = 0.0;
     }
-    public static double getProfit(){
+    public double getProfit(){
         return currentProfit;
     }
-    public static GUIElement getFeatureVisual(){return BatVisual;}
-    public static boolean getFeatureEnabled(){return isEnabled;}
-    public static void toggleFeature(){ isEnabled = !isEnabled;}
+    public static BatFirework getInstance(){
+        return instance;
+    }
 }

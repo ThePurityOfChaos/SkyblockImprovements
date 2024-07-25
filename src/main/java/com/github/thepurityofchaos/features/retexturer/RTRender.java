@@ -23,22 +23,35 @@ import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.util.Identifier;
 
+/**
+ * Rendering component for the Retexturer.
+ * <p> {@link #getModifiedRenderLayer(net.minecraft.block.SkullBlock.SkullType, GameProfile)}: Returns the retextured RenderLayer, if applicable. Otherwise, returns what it would without this.
+ * 
+ * <p> {@link #getKnownIdentifiers()}: Gets the list of known Identifiers.
+ * 
+ * <p> {@link #loadTexture(Path, String)}: Transforms a texture file into a Minecraft-readable Identifier.
+ * 
+ * <p> {@link #render()}: Retextures the current helm.
+ * 
+ * <p> {@link #setKnownIdentifiers()}: Calls loadTexture() for every known helm.
+ */
 public class RTRender {
     private static Map<String, Identifier> knownIdentifiers = new HashMap<>();
     public static RenderLayer getModifiedRenderLayer(SkullBlock.SkullType type, @Nullable GameProfile profile){
         try{
             //if texture contained in the list of textures and festure is enabled
-            if(HelmetRetexturer.getFeatureEnabled()&&profile!=null&&HelmetRetexturer.getKnownHelms().size()!=0){
+            Retexturer rt = Retexturer.getInstance();
+            if(rt.getFeatureEnabled()&&profile!=null&&rt.getKnownHelms().size()!=0){
                 Map<String,Collection<Property>> profileProperties = profile.getProperties().asMap();
                 Object[] textureProperties = profileProperties.get("textures").toArray();
-                String textureURL = HelmetRetexturer.getURL(((Property)textureProperties[0]).value());
+                String textureURL = rt.getURL(((Property)textureProperties[0]).value());
                 if(knownIdentifiers.containsKey(textureURL)){
                     return RenderLayer.getEntityTranslucent(knownIdentifiers.get(textureURL));
                 }
-                for(Entry<String,List<String>> entry : HelmetRetexturer.getKnownHelms().entrySet()){
+                for(Entry<String,List<String>> entry : rt.getKnownHelms().entrySet()){
                         int index = entry.getValue().indexOf(textureURL);
                         if(index!=-1){
-                            String name = entry.getKey().toString()+index+"mod.png";
+                            String name = entry.getKey().toString()+index+".png";
                             Identifier ident = loadTexture(SkyblockImprovements.FILE_LOCATION.resolve("helms").resolve(name),name);
                             knownIdentifiers.put(textureURL,ident);
                             return RenderLayer.getEntityTranslucent(ident);
@@ -65,12 +78,12 @@ public class RTRender {
         }
     }
     public static void render(){
-        HelmetRetexturer.retextureHelm(InventoryProcessor.getHelmet());
+        Retexturer.getInstance().retextureHelm(InventoryProcessor.getHelmet());
     }
     public static void setKnownIdentifiers() {
-        for(Entry<String,List<String>> entry : HelmetRetexturer.getKnownHelms().entrySet()){
+        for(Entry<String,List<String>> entry : Retexturer.getInstance().getKnownHelms().entrySet()){
                 for(int i=0; i<entry.getValue().size(); i++){
-                String name = entry.getKey().toString()+i+"mod.png";
+                String name = entry.getKey().toString()+i+".png";
                 Identifier ident = loadTexture(SkyblockImprovements.FILE_LOCATION.resolve("helms").resolve(name),name);
                 knownIdentifiers.put(entry.getKey(),ident);
             }

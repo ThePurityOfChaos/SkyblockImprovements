@@ -19,7 +19,14 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.feature.HeadFeatureRenderer;
 
 // https://fabricmc.net/wiki/tutorial:mixin_examples 
-
+/**
+ * 
+ * MIXIN: Injects into HeadFeatureRenderer's render method.
+ * 
+ * <p> {@link #getModifiedRenderLayer(net.minecraft.block.SkullBlock.SkullType, GameProfile)}: Replaces the invocation of getRenderLayer() in HeadFeatureRenderer with a custom one.
+ * 
+ * <p> Annoying.
+ */
 @Mixin(HeadFeatureRenderer.class)
 public class SkullRendererMixin {
 

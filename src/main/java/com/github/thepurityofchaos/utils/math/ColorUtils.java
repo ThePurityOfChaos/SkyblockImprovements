@@ -2,6 +2,8 @@ package com.github.thepurityofchaos.utils.math;
 
 import java.util.List;
 
+import com.github.thepurityofchaos.utils.Utils;
+
 public class ColorUtils {
     // from ColorHelper, 
     //a, r, g, and b should be 255 or less, otherwise indeterminate behavior may occur.
@@ -53,5 +55,8 @@ public class ColorUtils {
             sum+=color*color;
         }
         return Math.sqrt(sum);
+    }
+    public static int rGBAToInt(String r, String g, String b, int a) {
+        return rGBAToInt(Integer.parseInt(Utils.removeText(r)), Integer.parseInt(Utils.removeText(g)), Integer.parseInt(Utils.removeText(b)), a);
     }
 }

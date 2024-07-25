@@ -3,6 +3,7 @@ package com.github.thepurityofchaos.utils.processors;
 import java.util.List;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
+import com.github.thepurityofchaos.features.miscellaneous.SlayerTimer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,9 +21,9 @@ import net.minecraft.text.Text;
 /**
  * The main processor for all Scoreboard operations in the mod.
  * 
- * <p>{@link #getScoreboard getScoreboard()}: Gets a List<Text> containing everything in the current scoreboard. It's suggested to call processScoreboard() before calling this, unless you want the previous instance.
+ * <p> {@link #getScoreboard getScoreboard()}: Gets a List<Text> containing everything in the current scoreboard. It's suggested to call processScoreboard() before calling this, unless you want the previous instance.
  * 
- * <p>{@link #processScoreboard processScoreboard()}: Updates the current state of the Scoreboard.
+ * <p> {@link #processScoreboard processScoreboard()}: Updates the current state of the Scoreboard.
  * 
  * <p> {@link #getRegion getRegion()}: Gets the current region in {@link Text} format. 
  * 
@@ -39,17 +40,24 @@ public class ScoreboardProcessor {
     private static boolean isOnSkyblock = false;
     private static boolean wasOnSkyblock = false;
     private static int recentChange = 100;
+    private static int timer = 20;
     private static Text previousRegion;
 
 
 
-    @SuppressWarnings("resource")
+    
     public static void processScoreboard(){
         SkyblockImprovements.push("SBI_ScoreboardProcessor");
         try{
-            //the current scoreboard
-            Scoreboard scoreboard = MinecraftClient.getInstance().player.getScoreboard();
+            //parse the current scoreboard
+
+            //only perform this every second
+            timer--;
+            if(timer>0) return;
+            MinecraftClient client = MinecraftClient.getInstance();
+            Scoreboard scoreboard = client.player.getScoreboard();
             List<Text> newScoreboard = new ArrayList<>();
+            //we're only looking for objectives in the sidebar
             ScoreboardObjective sidebar = scoreboard.getObjectiveForSlot(ScoreboardDisplaySlot.SIDEBAR);
             for(ScoreHolder h : scoreboard.getKnownScoreHolders()){
                 if(scoreboard.getScoreHolderObjectives(h).containsKey(sidebar)){
@@ -68,20 +76,31 @@ public class ScoreboardProcessor {
                     temp.append(siblings.next());
                 currentScoreboard.add(Text.of(temp));
             }
+            SlayerTimer.sendTime();
+            timer = 20;
         }catch(NullPointerException e){
             //occurs when player is null, such as when in the title screen or loading into a world. This happens sometimes, so it's expected and no action is taken.
         }
         //fixes an issue with uncertainty in regions.
         getRegion();
         SkyblockImprovements.pop();
+
     }
 
-
+    /**
+     * 
+     * @return the list of every line on the Sidebar.
+     * 
+     */
     public static List<Text> getScoreboard(){
         return currentScoreboard;
     }
 
-
+    /**
+     * 
+     * @return the Text associated with the current region, or Not On Skyblock if no region is found.
+     * 
+     */
     public static Text getRegion(){
         for(Text scoreboardText : currentScoreboard){
             //Rift
@@ -128,5 +147,24 @@ public class ScoreboardProcessor {
             regionChanged = true;
         previousRegion = currentRegion;
         return regionChanged;
+    }
+    public static boolean bossSpawned(){
+        for(Text scoreboardText : currentScoreboard){
+            //Boss Spawned
+            if(scoreboardText.getString().contains("Slay the boss!")){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean onSlayerQuest() {
+        for(Text scoreboardText : currentScoreboard){
+            //On a Slayer Quest
+            if(scoreboardText.getString().contains("Slayer Quest")){
+                return true;
+            }
+        }
+        return false;
     }
 }

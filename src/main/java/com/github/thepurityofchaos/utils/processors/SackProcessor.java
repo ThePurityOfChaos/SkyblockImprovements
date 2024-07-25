@@ -1,13 +1,13 @@
-package com.github.thepurityofchaos.listeners;
+package com.github.thepurityofchaos.utils.processors;
 
 
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
 
+import com.github.thepurityofchaos.abstract_interfaces.MessageProcessor;
 import com.github.thepurityofchaos.features.itempickuplog.ItemPickupLog;
-import com.github.thepurityofchaos.interfaces.Listener;
 
-public class SackListener implements Listener{
+public class SackProcessor implements MessageProcessor{
 
     public static boolean isMyMessage(Text message){
         if((message.getString().contains("[Sacks]")&&message.getStyle()!=null)){
@@ -24,7 +24,7 @@ public class SackListener implements Listener{
                 temp+=sibling.getString();
                 //somewhat hacky but it works really, really well for this specific instance, and can be easily modified. It's just checking for a new line without newline characters.
                 if(sibling.getString().contains(")")){
-                    ItemPickupLog.addSackText(Text.of(temp));
+                    ItemPickupLog.getInstance().addSackText(Text.of(temp));
                     temp = "";
                 }
             }

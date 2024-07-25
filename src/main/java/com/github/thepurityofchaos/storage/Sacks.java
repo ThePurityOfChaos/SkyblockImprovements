@@ -10,17 +10,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
-import com.github.thepurityofchaos.config.Config;
-import com.github.thepurityofchaos.interfaces.Filer;
+import com.github.thepurityofchaos.abstract_interfaces.Filer;
+import com.github.thepurityofchaos.abstract_interfaces.ScreenInteractor;
+import com.github.thepurityofchaos.abstract_interfaces.Toggleable;
+import com.github.thepurityofchaos.features.economic.GenericProfit;
+import com.github.thepurityofchaos.storage.config.Config;
 import com.github.thepurityofchaos.utils.NbtUtils;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.inventory.ChangeInstance;
+import com.github.thepurityofchaos.utils.processors.InventoryProcessor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
@@ -30,14 +37,39 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-
-public class Sacks implements Filer{
-    private static final Logger LOGGER = LoggerFactory.getLogger(Sacks.class);
-    private static Map<String,Integer> allSackContents = null;
-    private static boolean featureEnabled = false;
-    private static boolean dataArrived = false;
-    private static int ticksSinceData = 0;
-    public static void init(){
+/**
+ * Storage module for Sack amounts.
+ * <p> {@link #init()}: Gets the amounts from sacks.json.
+ * 
+ * <p> {@link #saveSettings()}: Writes back the amounts to sacks.json.
+ * 
+ * <p> {@link #update(String, int)}: Safely adds an item to the contents.
+ * 
+ * <p> {@link #put(String, int)}: Directly adds an item to the contents.
+ * 
+ * <p> {@link #get(String)}: Gets an item's amount from the contents.
+ * 
+ * <p> {@link #processList(List)}: Processes a list of itemstacks into sacks.
+ * 
+ * <p> {@link #interact(Screen)}: Determines when to process Sacks.
+ * 
+ * <p> {@link #createFile()}: Creates sacks.json.
+ * 
+ * <p> {@link #dataArrived()}: Returns if data has arrived or not.
+ * 
+ * <p> {@link #newData()}: dataArrived = false.
+ * 
+ * <p> {@link #ticksSinceData()}: Returns the number of ticks since the data arrived.
+ * 
+ * <p> {@link #tickData()}: ticksSinceData++.
+ */
+public class Sacks extends Toggleable implements Filer, ScreenInteractor{
+    private final Logger LOGGER = LoggerFactory.getLogger(Sacks.class);
+    private Map<String,Integer> allSackContents = null;
+    private boolean dataArrived = false;
+    private int ticksSinceData = 0;
+    private static Sacks instance = new Sacks();
+    public void init(){
         createFile();
         try{
             BufferedReader reader = Files.newBufferedReader(SkyblockImprovements.FILE_LOCATION.resolve("sacks.json"));
@@ -51,7 +83,7 @@ public class Sacks implements Filer{
         }
     }
     
-    public static void saveSettings(){
+    public void saveSettings(){
         try{
             BufferedWriter writer = Files.newBufferedWriter(SkyblockImprovements.FILE_LOCATION.resolve("sacks.json"));
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -72,14 +104,15 @@ public class Sacks implements Filer{
         }
     }
 
-    public static void update(String strippedMessage, int input){ 
+    public void update(String strippedMessage, int input){ 
         String splitMessage = Utils.stripSpecial(strippedMessage.split("§")[0]).strip();
         allSackContents.put(splitMessage,allSackContents.getOrDefault(splitMessage, 0)+input);
+        GenericProfit.getInstance().add(splitMessage, input);
     }
-    public static void put(String type, int amount){
+    public void put(String type, int amount){
         allSackContents.put(type,amount);
     }
-    public static String get(String strippedMessage){
+    public String get(String strippedMessage){
         String splitMessage = strippedMessage.split("§")[0].strip().replaceAll("-[0-9]","").strip();
         try{
         return " ("+Utils.getColorString(ChangeInstance.getColorCode())+allSackContents.getOrDefault(splitMessage,0).toString()+"§8)";
@@ -87,7 +120,7 @@ public class Sacks implements Filer{
             return "";
         }
     }
-    public static boolean processList(List<ItemStack> list){
+    public boolean processList(List<ItemStack> list){
         try{
             //should not go above 54
             for(ItemStack item : list){
@@ -140,8 +173,18 @@ public class Sacks implements Filer{
             return true;
         }
     }
+    public void interact(Screen screen){
+        instance.newData();
+        ScreenEvents.afterTick(screen).register(currentScreen -> {
+            if(ticksSinceData() < 5 ||!dataArrived){
+                processList(InventoryProcessor.processSlotsToList(((GenericContainerScreen)screen).getScreenHandler()));
+                saveSettings();
+                tickData();
+            }
+        });
+    }
 
-    public static void createFile(){
+    public void createFile(){
         if(Files.notExists(SkyblockImprovements.FILE_LOCATION.resolve("sacks.json"))){
 			try{
 				Files.writeString(SkyblockImprovements.FILE_LOCATION.resolve("sacks.json"),"",StandardOpenOption.CREATE);
@@ -150,23 +193,20 @@ public class Sacks implements Filer{
 			}
 		}
     }
-    public static boolean getFeatureEnabled(){
-        return featureEnabled;
-    }
-    public static void toggleFeature(){
-        featureEnabled = !featureEnabled;
-    }
-    public static boolean dataArrived(){
+    public boolean dataArrived(){
         return dataArrived;
     }
-    public static void newData(){
+    public void newData(){
         dataArrived = false;
     }
-    public static int ticksSinceData(){
+    public int ticksSinceData(){
         return ticksSinceData;
     }
-    public static void tickData(){
+    public void tickData(){
         ticksSinceData++;
+    }
+    public static Sacks getInstance(){
+        return instance;
     }
 
 }
