@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
 
@@ -186,6 +187,39 @@ public class NbtUtils {
             }
         }
         return result.toString();
+    }
+    public static String convertTextToString(Text text) {
+        StringBuilder sb = new StringBuilder();
+        processText(sb, text);
+        return sb.toString();
+    }
+    private static void processText(StringBuilder sb, Text text) {
+        Style style = text.getStyle();
+
+        if (style.getColor() != null) {
+            sb.append(getColorCode(style.getColor().getName()));
+        }
+        if (style.isBold()) {
+            sb.append("&l");
+        }
+        if (style.isItalic()) {
+            sb.append("&o");
+        }
+        if (style.isUnderlined()) {
+            sb.append("&n");
+        }
+        if (style.isStrikethrough()) {
+            sb.append("&m");
+        }
+        if (style.isObfuscated()) {
+            sb.append("&k");
+        }
+
+        sb.append(text.copyContentOnly().getString());
+
+        for (Text sibling : text.getSiblings()) {
+            processText(sb, sibling);
+        }
     }
 
     private static String getColorCode(String color) {

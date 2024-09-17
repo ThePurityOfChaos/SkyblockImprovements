@@ -29,7 +29,7 @@ public class GeneratorScreen extends MenuScreen {
     private GUIElement rarity = new GUIElement(0, 448, 128, 16, button -> {cycleRarity();}, button -> {cycleBack();});
     private GUIElement recomb = new GUIElement(0, 464, 256, 16, button -> {recombed = !recombed;});
     private GUIElement generate = new GUIElement(0, 16, 256, 16, button -> {parseGenerator();});
-    private TextFieldElement type = new TextFieldElement(128, 448, 128, 16, Text.of("&f&f"));
+    private TextFieldElement type = new TextFieldElement(128, 448, 128, 16, Text.of("&f"));
     private static GeneratorScreen screenInstance = new GeneratorScreen();
 
     public GeneratorScreen() {
@@ -82,15 +82,15 @@ public class GeneratorScreen extends MenuScreen {
 
         ScreenEvents.afterRender(this).register((currentScreen, drawContext, mouseX, mouseY, delta) -> {
         List<Text> generatedText = new ArrayList<>();
-        generatedText.add(Text.of(name.getText().replace("&","§")));
+        generatedText.add(Text.of(replaceTerms(name.getText().replace("&","§"))));
         //body of the generator
-        for(String str : generator.getText().replace("&","§").split("\\\\n"))
+        for(String str : replaceTerms(generator.getText()).replace("&","§").split("\\\\n"))
             generatedText.add(Text.of(str));
 
         generatedText.add(
             Text.of((recombed?Utils.getColorString(colors[current])+"§ka ":"") + 
             (rarity.getMessage().getString().contains("NONE")?"":rarity.getMessage().getString()+" ")+
-            type.getText().replace("&","§")+
+            replaceTerms(type.getText().replace("&","§"))+
             (recombed?Utils.getColorString(colors[current])+" §ka":""))
         );
 
@@ -101,10 +101,38 @@ public class GeneratorScreen extends MenuScreen {
             allElements.put("generate",generate);
         });
     }
+    private String replaceTerms(String str) {
+        //This could be a Pattern / Matcher regex, but I suspect that the overhead of a regex at this point is simply not going to make it more viable than this simplified version. Perhaps if the number of replacements exceeds 100 or so?
+        if(str!=null)
+            str = str
+            .replace("\\defense","❈")
+            .replace("\\health","❤")
+            .replace("\\truedefense","❂")
+            .replace("\\strength","❁")
+            .replace("\\fish","α")
+            .replace("\\skull","☠")
+            .replace("\\intelligence","✎")
+            .replace("\\fortune","☘")
+            .replace("\\pristine","✧")
+            .replace("\\mining","⸕")
+            .replace("\\bullet","∙")
+            .replace("\\critchance","☣")
+            .replace("\\abilitydamage","๑")
+            .replace("\\mending","☄")
+            .replace("\\vitality","♨")
+            .replace("\\healthregen","❣")
+            .replace("\\ferocity","⫽")
+            .replace("\\attackspeed","⚔")
+            .replace("\\swingrange","Ⓢ")
+            .replace("\\coopsoulbound","&8&l* &8Co-op Soulbound &8&l*")
+            .replace("\\soulbound","&8&l* &8Soulbound &8&l*")
+            .replace("\\reforgable","&8This item can be reforged!");
+        return str;
+    }
     private void setTooltipsAndMessages(){
-        copiableCharacters.setText(Utils.getColorString('f')+" ⸕ ✧ ☘ ✎ ❈ ❤ ❂ ❁ α ☠ ");
+        copiableCharacters.setText("❤ ❈ ❁ ❂ ✎ ☘ ⸕ ✧ α ☠ ∙ ☣");
         copiableCharacters.setEditable(false);
-        copiableCharacters.setTooltip(Text.of("Special Characters"));
+        copiableCharacters.setTooltip(Text.of(Utils.getColorString('6')+"Special Characters:"+Utils.getColorString('7')+"\n\n\\health -> ❤\n∙\\defense -> ❈\n∙\\strength -> ❁\n∙\\truedefense -> ❂\n∙\\intelligence -> ✎\n∙\\fortune -> ☘\n∙\\mining -> ⸕\n∙\\pristine -> ✧\n∙\\fish -> α\n∙\\skull -> ☠\n∙\\bullet -> ∙"));
         name.setTooltip(Text.of("Name"));
         generator.setTooltip(Text.of("The body of the generator. \nUse \\n for a new line in the item.\nUse &[a-f,0-9] for different colors."));
         type.setTooltip(Text.of("The item's Type."));

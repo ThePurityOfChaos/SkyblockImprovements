@@ -4,6 +4,7 @@ import net.minecraft.client.gui.widget.*;
 
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.Text;
 /**
@@ -58,6 +59,16 @@ public class GUIElement extends ButtonWidget {
         return false;
     }
     @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button){
+        if (this.isValidClickButton(button)) {
+            this.isDragging = false;
+            this.onRelease(mouseX, mouseY);
+            return true;
+         } else {
+            return false;
+         }
+    }
+    @Override
     protected boolean isValidClickButton(int button){
         return button == 0 || button == 1;
     }
@@ -70,16 +81,17 @@ public class GUIElement extends ButtonWidget {
     @Override
     public void onPress(){
         if(defaultBehavior){
-            this.isDragging = true;
+            this.isDragging = !this.isDragging;
         }
         super.onPress();
     }
-
-    @Override
-    public void onRelease(double mouseX, double mouseY){
-        this.isDragging = false;
-        super.onRelease(mouseX, mouseY);
+    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta){
+        if(this.isDragging){
+            this.setPosition((int) (mouseX - this.getWidth() / 2), (int) (mouseY - this.getHeight() / 2));
+        }
+        super.renderWidget(context, mouseX, mouseY, delta);
     }
+
     public int getCenteredX(){
         return this.getX()+this.getWidth()/2;
     }
@@ -100,5 +112,8 @@ public class GUIElement extends ButtonWidget {
     }
     public void notDragging(){
         isDragging = false;
+    }
+    public void setMessage(String s){
+        this.setMessage(Text.of(s));
     }
 }

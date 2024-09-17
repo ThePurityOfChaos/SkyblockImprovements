@@ -112,7 +112,7 @@ public class ScreenListener {
                         List<Text> text = new ArrayList<>();
                         double solution = MathSolutions.doMath(currentMessage);
                         if(solution!=-0.0){
-                            text.add(Text.of(Utils.getColorString(EcoConfig.getColorCode())+Utils.addCommas(((Double)solution).toString(),0)));
+                            text.add(Text.of(Utils.getColorString(EcoConfig.getColorCode())+Utils.addCommas(((Double)solution).toString(),EcoConfig.getPrecision())));
                             ScreenUtils.draw(drawContext, text, x-xOffset, y+yOffset, -1, -1, 1000, -1, -1, -1, true);
                         }
                 });

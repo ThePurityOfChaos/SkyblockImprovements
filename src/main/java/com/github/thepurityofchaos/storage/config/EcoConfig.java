@@ -17,7 +17,10 @@ import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.abstract_interfaces.Filer;
 import com.github.thepurityofchaos.features.economic.BatFirework;
 import com.github.thepurityofchaos.features.economic.Bingo;
+import com.github.thepurityofchaos.features.economic.ChocolateFactory;
 import com.github.thepurityofchaos.features.economic.GenericProfit;
+import com.github.thepurityofchaos.features.economic.Refinery;
+import com.github.thepurityofchaos.features.economic.ReforgeHelper;
 import com.github.thepurityofchaos.utils.Utils;
 
 import com.google.gson.Gson;
@@ -29,7 +32,6 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
 /**
  * Config for all Economic Widgets. Currently Bat Firework Helper, Math Helper, and Generic Profit Manager.
  * 
@@ -59,6 +61,7 @@ public class EcoConfig implements Filer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
     private static boolean math = true;
     private static char colorCode = 'e';
+    public static int mathPrecision = 3;
     /**
      * 
      */
@@ -67,21 +70,46 @@ public class EcoConfig implements Filer {
         BatFirework bf = BatFirework.getInstance();
         GenericProfit gp = GenericProfit.getInstance();
         Bingo bng = Bingo.getInstance();
+        ChocolateFactory cf = ChocolateFactory.getInstance();
+        ReforgeHelper rh = ReforgeHelper.getInstance();
+        Refinery rf = Refinery.getInstance();
         bf.init();
         gp.init();
         bng.init();
+        cf.init();
+        rh.init();
+        rf.init();
         try{
             //create parser based on the client
             BufferedReader reader = Files.newBufferedReader(SkyblockImprovements.FILE_LOCATION.resolve("eco.json"));
             JsonObject parser = JsonParser.parseReader(reader).getAsJsonObject();
                 //buttons
                 JsonObject buttons = parser.getAsJsonObject("buttons");
+                try{
                     JsonArray bfDimArray = buttons.getAsJsonArray("Bat");
                     Utils.setDim(bf.getFeatureVisual(),bfDimArray);
+                }catch(Exception e){}
+                try{
                     JsonArray gpDimArray = buttons.getAsJsonArray("GP");
                     Utils.setDim(gp.getFeatureVisual(), gpDimArray);
-                    JsonArray bingoDimArray = buttons.getAsJsonArray("Bingo");
+                }catch(Exception e){}
+                try{
+                    JsonArray bingoDimArray = buttons.getAsJsonArray("BNG");
                     Utils.setDim(bng.getFeatureVisual(), bingoDimArray);
+                }catch(Exception e){}
+                try{
+                    JsonArray cfDimArray = buttons.getAsJsonArray("CF");
+                    Utils.setDim(cf.getFeatureVisual(), cfDimArray);
+                }catch(Exception e){}
+                try{
+                    JsonArray rhDimArray = buttons.getAsJsonArray("RH");
+                    Utils.setDim(rh.getFeatureVisual(), rhDimArray);
+                }catch(Exception e){}
+                try{
+                    JsonArray rfDimArray = buttons.getAsJsonArray("Ref");
+                    Utils.setDim(rf.getFeatureVisual(),rfDimArray);
+                }catch(Exception e){}
+
                 //advanced settings
                 JsonObject advanced = parser.getAsJsonObject("advanced");
                     colorCode = advanced.get("colorCode").getAsString().charAt(0);
@@ -92,19 +120,17 @@ public class EcoConfig implements Filer {
                     if(advanced.get("showCommunity").getAsBoolean()) bng.toggleCommunity();
                     JsonElement bingoTasks = advanced.get("BingoTasks");
                     Gson gson = new Gson();
-                    Type type = new TypeToken<List<Text>>(){}.getType();
+                    Type type = new TypeToken<List<String>>(){}.getType();
                     if(bingoTasks==null) throw new Exception();
-                    bng.setTasks(gson.fromJson(bingoTasks,type));
+                    bng.setTasksFromStrings(gson.fromJson(bingoTasks,type));
                        
             LOGGER.info("[SkyblockImprovements] Economic Config Imported.");
-            updateFeatureVisuals();
         }catch(Exception e){
             LOGGER.error("[SkyblockImprovements] Economic Config failed to load! Was it updated, or was it just created?"); 
             //enable all features
             bf.toggle();
             gp.toggle();
             bng.toggle();
-            updateFeatureVisuals();
         }
     }
     public static void createFile(){
@@ -128,19 +154,28 @@ public class EcoConfig implements Filer {
                     advanced.put("GenericProfit",GenericProfit.getInstance().isEnabled());
                     advanced.put("Bingo",Bingo.getInstance().isEnabled());
                     advanced.put("showCommunity",Bingo.getInstance().showCommunity());
-                    advanced.put("BingoTasks",Bingo.getInstance().getTasks());
+                    advanced.put("BingoTasks",Bingo.getInstance().getTasksAsStrings());
                     
                 //save button locations here
                 ButtonWidget BatWidget = BatFirework.getInstance().getFeatureVisual();
                 ButtonWidget GPWidget = GenericProfit.getInstance().getFeatureVisual();
                 ButtonWidget BingoWidget = Bingo.getInstance().getFeatureVisual();
+                ButtonWidget CFWidget = ChocolateFactory.getInstance().getFeatureVisual();
+                ButtonWidget RHWidget = ReforgeHelper.getInstance().getFeatureVisual();
+                ButtonWidget RFWidget = Refinery.getInstance().getFeatureVisual();
                 Map<String,Integer[]> EcoButtonLocations = new HashMap<>();
                     Integer[] BatButtonLoc = {BatWidget.getX(),BatWidget.getY(),BatWidget.getWidth(),BatWidget.getHeight()}; 
                     Integer[] GPButtonLoc = {GPWidget.getX(),GPWidget.getY(),GPWidget.getWidth(),GPWidget.getHeight()};
                     Integer[] BingoButtonLoc = {BingoWidget.getX(),BingoWidget.getY(),BingoWidget.getWidth(),BingoWidget.getHeight()};
+                    Integer[] CFButtonLoc = {CFWidget.getX(),CFWidget.getY(),CFWidget.getWidth(),CFWidget.getHeight()};
+                    Integer[] RHButtonLoc = {RHWidget.getX(),RHWidget.getY(),RHWidget.getWidth(),RHWidget.getHeight()};
+                    Integer[] RFButtonLoc = {RFWidget.getX(),RFWidget.getY(),RFWidget.getWidth(),RFWidget.getHeight()};
                     EcoButtonLocations.put("Bat",BatButtonLoc);
                     EcoButtonLocations.put("GP",GPButtonLoc);
-                    EcoButtonLocations.put("Bingo",BingoButtonLoc);
+                    EcoButtonLocations.put("BNG",BingoButtonLoc);
+                    EcoButtonLocations.put("CF",CFButtonLoc);
+                    EcoButtonLocations.put("RH",RHButtonLoc);
+                    EcoButtonLocations.put("Ref",RFButtonLoc);
             
             //put all completed options into the main Map    
             configOptions.put("buttons",EcoButtonLocations);
@@ -175,12 +210,14 @@ public class EcoConfig implements Filer {
     public static void toggleMath(){
         math = !math;
     }
+    public static void setPrecision(int precision){
+        mathPrecision = precision;
+    }
+    public static int getPrecision(){
+        return mathPrecision;
+    }
     public static char getColorCode(){
         return colorCode;
-    }
-    private static void updateFeatureVisuals(){
-        BatFirework.getInstance().getFeatureVisual().setMessage(Text.of("Bat Firework Profit"));
-        Bingo.getInstance().getFeatureVisual().setMessage(Text.of("Bingo Tasks"));
     }
     public static void setColorCode(char c) {
         colorCode = c;

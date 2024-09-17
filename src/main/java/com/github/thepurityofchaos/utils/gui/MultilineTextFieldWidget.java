@@ -119,7 +119,7 @@ public class MultilineTextFieldWidget extends TextFieldWidget {
     }
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (this.isVisible() && this.isMouseOver(mouseX, mouseY)) {
+        if (this.isVisible() && this.isMouseOver(mouseX, mouseY) && lines.size()>0) {
             this.setFocused(true);
             int clickedLine = (int) ((mouseY - this.getY()) / this.lineHeight);
             int lineStart = 0;
@@ -130,7 +130,12 @@ public class MultilineTextFieldWidget extends TextFieldWidget {
             int charPos = this.getTextRenderer().trimToWidth(line, (int) (mouseX - this.getX())).length();
             cursorPosition = lineStart + charPos;
             return true;
-        } else {
+        } 
+        else if(this.isVisible() && this.isMouseOver(mouseX, mouseY) && lines.size()==0){
+            this.setFocused(true);
+            cursorPosition = 0;
+            return true;
+        }else {
             this.setFocused(false);
             return false;
         }

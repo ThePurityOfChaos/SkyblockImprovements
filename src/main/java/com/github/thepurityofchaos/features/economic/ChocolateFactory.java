@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 import com.github.thepurityofchaos.abstract_interfaces.Feature;
 import com.github.thepurityofchaos.abstract_interfaces.ScreenInteractor;
+import com.github.thepurityofchaos.storage.config.EcoConfig;
 import com.github.thepurityofchaos.utils.NbtUtils;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
@@ -17,11 +18,13 @@ import com.github.thepurityofchaos.utils.processors.InventoryProcessor;
 import com.github.thepurityofchaos.utils.screen.ScreenUtils;
 
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 /**
  * Contains all the information for the Chocolate Factory.
  * <p> {@link #init()}: Initializes the visual element.
@@ -304,7 +307,9 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
         }
         return Text.of(Utils.getColorString(colorCode)+"Most Efficient Upgrade: "+Utils.getColorString('4')+"Unknown");
     }
-    public void init(){visual = new GUIElement(64,64,128,32, null);}
+    public void init(){
+        visual = new GUIElement(64,64,128,32, null);
+    }
     public void setColorCode(char c){
         colorCode = c;
     }
@@ -312,14 +317,12 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
         return colorCode;
     }
     public void interact(Screen screen){
+            Screens.getButtons(screen).add(ChocolateFactory.getInstance().getFeatureVisual());
             ScreenEvents.afterTick(screen).register(currentScreen -> {
                 ChocolateFactory.getInstance().processList(InventoryProcessor.processSlotsToList(((GenericContainerScreen)screen).getScreenHandler()));
             });
             ScreenEvents.afterRender(screen).register((currentScreen, drawContext, mouseX, mouseY, delta)->{ 
                 Identifier texture = new Identifier("sbimp","textures/border.png");
-                int x = currentScreen.width/4;
-                int y = currentScreen.height/2;
-                int yOffset = currentScreen.height/4;
                 List<Text> texts = new ArrayList<>();
                 ChocolateFactory cf = ChocolateFactory.getInstance();
                 texts.add(cf.getChocolateCount());
@@ -330,11 +333,16 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
                 texts.add(Text.of(""));
                 texts.add(cf.getTimeToPrestige());
                 texts.add(cf.getRank());
-                ScreenUtils.draw(drawContext, texts, texture, x, y-yOffset,-1,-1,1000,-1,-1,-1, true);
+                Pair<Integer,Integer> p = ScreenUtils.draw(drawContext, texts, texture, visual.getCenteredX(), visual.getY(),-1,-1,1000,-1,-1,-1, true);
+                visual.setDimensions(p.getLeft(), p.getRight()-3);
+            });
+            ScreenEvents.remove(screen).register((currentScreen2)->{
+                EcoConfig.saveSettings();
             });        
     }
     public static ChocolateFactory getInstance() {
         return instance;
     }
+
 
 }

@@ -5,16 +5,20 @@ import java.util.List;
 
 import com.github.thepurityofchaos.abstract_interfaces.Feature;
 import com.github.thepurityofchaos.abstract_interfaces.ScreenInteractor;
+import com.github.thepurityofchaos.storage.config.EcoConfig;
 import com.github.thepurityofchaos.utils.NbtUtils;
 import com.github.thepurityofchaos.utils.Utils;
+import com.github.thepurityofchaos.utils.gui.GUIElement;
 import com.github.thepurityofchaos.utils.processors.InventoryProcessor;
 import com.github.thepurityofchaos.utils.screen.ScreenUtils;
 
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Pair;
 
 /**
  * Shows the player the current reforge.
@@ -42,7 +46,7 @@ public class ReforgeHelper extends Feature implements ScreenInteractor {
         }
     }
     public void init() {
-        
+        visual = new GUIElement(128, 128, 0, 0, null);
     }
     private void getDataFromItemStack(ItemStack item){
         Text name = NbtUtils.getNamefromItemStack(item);
@@ -67,25 +71,24 @@ public class ReforgeHelper extends Feature implements ScreenInteractor {
     public void interact(Screen screen){
             //process inventory
             ReforgeHelper rh = ReforgeHelper.getInstance();
+            Screens.getButtons(screen).add(visual);
             ScreenEvents.afterTick(screen).register(currentScreen -> {
                 rh.processList(InventoryProcessor.processSlotsToList(((GenericContainerScreen)screen).getScreenHandler()));
             });
             //show current reforge
             ScreenEvents.afterRender(screen).register((currentScreen, drawContext, mouseX, mouseY, delta)->{ 
-                int x = currentScreen.width/2;
-                int xOffset = currentScreen.width/16;
-                int y = currentScreen.height/2;
-                int yOffset = currentScreen.height/9;
                 Text temp = rh.getReforge();
                 if(temp!=null){
                     List<Text> text = new ArrayList<>();
                     text.add(temp);
-                    ScreenUtils.draw(drawContext, text, x-xOffset, y-yOffset, -1, -1, 1000, -1, -1, -1, false); 
+                    Pair<Integer,Integer> p = ScreenUtils.draw(drawContext, text, visual.getX()+3, visual.getY()+3, -1, -1, 1000, -1, -1, -1, false);
+                    visual.setDimensions(p.getLeft(), p.getRight()); 
                 }
             });
             //remove reforge when screen closes
             ScreenEvents.remove(screen).register(currentScreen ->{
                 rh.setReforge(null);
+                EcoConfig.saveSettings();
             });
                   
     }

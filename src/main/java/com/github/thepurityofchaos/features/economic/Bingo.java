@@ -44,6 +44,7 @@ public class Bingo extends Feature implements MessageProcessor,ScreenInteractor{
 
     public void init(){
         visual = new MenuElement(0, 0, 128, 32, null);
+        visual.setMessage("Bingo Tasks");
     }
 
     public void interact(Screen screen){
@@ -96,9 +97,23 @@ public class Bingo extends Feature implements MessageProcessor,ScreenInteractor{
 
     //getters and toggles
     public List<Text> getTasks(){ return tasks;}
+    public List<String> getTasksAsStrings(){
+        List<String> taskStrings = new ArrayList<>();
+        for(Text task : tasks){
+            taskStrings.add(NbtUtils.convertTextToString(task));
+        }
+        return taskStrings;
+    }
     public boolean showCommunity(){return showCommunity;}
     public void toggleCommunity(){showCommunity = !showCommunity;}
     public void setTasks(List<Text> newTasks) {tasks = newTasks;}
+    public void setTasksFromStrings(List<String> newTasks){
+        List<Text> taskTexts = new ArrayList<>();
+        for(String task : newTasks){
+            taskTexts.add(Text.of(task.replace("&","§")));
+        }
+        setTasks(taskTexts);
+    }
 
     public static Bingo getInstance() {
         return instance;

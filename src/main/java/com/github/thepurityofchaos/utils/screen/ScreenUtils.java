@@ -10,39 +10,41 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 
 public class ScreenUtils {
     
-    public static void draw(DrawContext context, int x, int y, int width, int height, int z, int baseColor, int lineStartColor, int lineEndColor, boolean centered){
-        draw(context, null, null, x, y, width, height, z, baseColor, lineStartColor,lineEndColor, 0, centered);
+    public static Pair<Integer, Integer> draw(DrawContext context, int x, int y, int width, int height, int z, int baseColor, int lineStartColor, int lineEndColor, boolean centered){
+        return draw(context, null, null, x, y, width, height, z, baseColor, lineStartColor,lineEndColor, 0, centered);
     }
-    public static void draw(DrawContext context, List<Text> text, int x, int y, int width, int height, int z, int baseColor, int lineStartColor, int lineEndColor, boolean centered){
-        draw(context,text, null, x, y, width, height, z, baseColor, lineStartColor, lineEndColor, 0, centered);
+    public static Pair<Integer, Integer> draw(DrawContext context, List<Text> text, int x, int y, int width, int height, int z, int baseColor, int lineStartColor, int lineEndColor, boolean centered){
+        return draw(context,text, null, x, y, width, height, z, baseColor, lineStartColor, lineEndColor, 0, centered);
     }
-    public static void draw(DrawContext context, List<Text> text, int x, int y, int width, int height, int z, int baseColor, int lineStartColor, int lineEndColor, int firstLineOffset, boolean centered){
-        draw(context,text, null, x, y, width, height, z, baseColor, lineStartColor, lineEndColor, firstLineOffset, centered);
+    public static Pair<Integer, Integer> draw(DrawContext context, List<Text> text, int x, int y, int width, int height, int z, int baseColor, int lineStartColor, int lineEndColor, int firstLineOffset, boolean centered){
+        return draw(context,text, null, x, y, width, height, z, baseColor, lineStartColor, lineEndColor, firstLineOffset, centered);
     }
-    public static void draw(DrawContext context, Identifier texture, int x, int y, int width, int height, int z, int baseColor, int lineStartColor, int lineEndColor, boolean centered){
-        draw(context, null, texture, x, y, width, height, z, baseColor, lineStartColor, lineEndColor, 0, centered);
+    public static Pair<Integer, Integer> draw(DrawContext context, Identifier texture, int x, int y, int width, int height, int z, int baseColor, int lineStartColor, int lineEndColor, boolean centered){
+        return draw(context, null, texture, x, y, width, height, z, baseColor, lineStartColor, lineEndColor, 0, centered);
     }
-    public static void draw(DrawContext context, @Nullable List<Text> texts, @Nullable Identifier texture, int x, int y, int width, int height, int z, int baseColor, int lineStartColor, int lineEndColor, boolean centered){
-        draw(context, texts, texture, x, y, width, height, z, 8, baseColor, lineStartColor, lineEndColor, 0, centered);
+    public static Pair<Integer, Integer> draw(DrawContext context, @Nullable List<Text> texts, @Nullable Identifier texture, int x, int y, int width, int height, int z, int baseColor, int lineStartColor, int lineEndColor, boolean centered){
+        return draw(context, texts, texture, x, y, width, height, z, 8, baseColor, lineStartColor, lineEndColor, 0, centered);
     }
-    public static void draw(DrawContext context, @Nullable List<Text> texts, @Nullable Identifier texture, int x, int y, int width, int height, int z, int baseColor, int lineStartColor, int lineEndColor, int firstLineOffset, boolean centered){
-        draw(context, texts, texture, x, y, width, height, z, 8, baseColor, lineStartColor, lineEndColor, firstLineOffset, centered);
+    public static Pair<Integer, Integer> draw(DrawContext context, @Nullable List<Text> texts, @Nullable Identifier texture, int x, int y, int width, int height, int z, int baseColor, int lineStartColor, int lineEndColor, int firstLineOffset, boolean centered){
+        return draw(context, texts, texture, x, y, width, height, z, 8, baseColor, lineStartColor, lineEndColor, firstLineOffset, centered);
     }
 
     //taken directly from TooltipBackgroundRenderer.class and heavily modified by allowing custom colors, text, and textures. 
     //This allows SBI to mimic the structure of Minecraft's tooptips without always copying the color scheme, texture, or text.
     //Use -1 for width and height if the values should be taken from the text.
-    public static void draw(DrawContext context, @Nullable List<Text> texts, @Nullable Identifier texture, int x, int y, int width, int height, int z, int textDistance, int baseColor, int lineStartColor, int lineEndColor, int firstLineOffset, boolean centered) {
+    public static Pair<Integer,Integer> draw(DrawContext context, @Nullable List<Text> texts, @Nullable Identifier texture, int x, int y, int width, int height, int z, int textDistance, int baseColor, int lineStartColor, int lineEndColor, int firstLineOffset, boolean centered) {
         int i,j,k,l;
         //if undefined width and height, use the size of text.
         if(texts!=null && width < 0 && height < 0){
             MinecraftClient client = MinecraftClient.getInstance();
             int currentWidth = 0;
             for(Text text : texts){
-                currentWidth = Math.max(currentWidth,client.textRenderer.getWidth(text));
+                if(text!=null)
+                    currentWidth = Math.max(currentWidth,client.textRenderer.getWidth(text));
             }
             width = currentWidth;
             height = texts.size() * textDistance;
@@ -113,6 +115,7 @@ public class ScreenUtils {
                 context.getMatrices().pop();
             }
         }
+        return new Pair<>(k,l);
     }
 
     public static void drawBorder(DrawContext context, int x, int y, int width, int height, int z, int startColor, int endColor, boolean inverted) {

@@ -141,11 +141,8 @@ public class Refinery extends ErrorableFeature implements ScreenInteractor{
     }
     public void interact(Screen screen){
             ScreenEvents.afterRender(screen).register((currentScreen, drawContext, mouseX, mouseY, delta) -> {
-                int x = currentScreen.width/5;
-                int xOffset = 0;
-                int y = currentScreen.height/5;
-                int yOffset = 0;
-                ScreenUtils.draw(drawContext, Refinery.getInstance().getMostProfitable(((GenericContainerScreen)screen).getScreenHandler()), x-xOffset, y+yOffset, -1, -1, 1000, -1, -1, -1, false);
+                Pair<Integer,Integer> p = ScreenUtils.draw(drawContext, getMostProfitable(((GenericContainerScreen)screen).getScreenHandler()), visual.getCenteredX(), visual.getY(), -1, -1, 1000, -1, -1, -1, false);
+                visual.setDimensions(p.getLeft(), p.getRight()-3);
             });        
     }
     public static Refinery getInstance() {
@@ -154,6 +151,6 @@ public class Refinery extends ErrorableFeature implements ScreenInteractor{
 
     @Override
     public void init() {
-        visual = new MenuElement(0,0,96,32,null);
+        visual = new MenuElement(128,128,96,32,null);
     }
 }

@@ -30,6 +30,7 @@ public class BatFirework extends Feature implements MessageProcessor {
 
     public void init(){
        visual = new MenuElement(64, 32, 128, 32, null);
+       visual.setMessage("Bat Firework Profit");
     }
 
     public boolean isMyMessage(Text message){
