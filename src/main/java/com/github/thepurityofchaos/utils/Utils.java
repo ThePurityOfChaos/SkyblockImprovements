@@ -19,6 +19,9 @@ public class Utils {
     public static String removeText(String s){
         return s.replaceAll("[A-Za-z]","");
     }
+    public static String numbersOnly(String s){
+        return s.replaceAll("\\D","");
+    }
     public static String clearArea(String s){
         return s.replace("Area:","").replace(" ","");
     }

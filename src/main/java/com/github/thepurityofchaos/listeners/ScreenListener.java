@@ -6,10 +6,10 @@ import java.util.List;
 import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.features.economic.Bingo;
 import com.github.thepurityofchaos.features.economic.ChocolateFactory;
-import com.github.thepurityofchaos.features.economic.Refinery;
 import com.github.thepurityofchaos.features.economic.ReforgeHelper;
 import com.github.thepurityofchaos.features.miscellaneous.SBIButton;
 import com.github.thepurityofchaos.features.retexturer.Retexturer;
+import com.github.thepurityofchaos.features.search.Search;
 import com.github.thepurityofchaos.mixin.ChatScreenAccessor;
 import com.github.thepurityofchaos.storage.Bazaar;
 import com.github.thepurityofchaos.storage.Sacks;
@@ -50,6 +50,8 @@ public class ScreenListener {
                 
                 //determine type
                 String screenName = screen.getTitle().getString();
+                //search function for ANY GenericContainerScreen
+                Search.getInstance().interact(screen);
 
                 //Sack
                 if(screenName.contains("Sack")&&!screenName.contains("Sack of Sacks")){
@@ -79,10 +81,10 @@ public class ScreenListener {
                     SkyblockImprovements.pop();
                 }
 
-                //Refinery
+                //Refinery (DEPRECATED)
                 if(screenName.contains("Refine")){
                     SkyblockImprovements.push("SBI_Refinery");
-                    Refinery.getInstance().interact(screen);
+                    //Refinery.getInstance().interact(screen);
                     SkyblockImprovements.pop();
                 }
                 if(screenName.contains("Bingo Card")){
@@ -113,7 +115,7 @@ public class ScreenListener {
                         double solution = MathSolutions.doMath(currentMessage);
                         if(solution!=-0.0){
                             text.add(Text.of(Utils.getColorString(EcoConfig.getColorCode())+Utils.addCommas(((Double)solution).toString(),EcoConfig.getPrecision())));
-                            ScreenUtils.draw(drawContext, text, x-xOffset, y+yOffset, -1, -1, 1000, -1, -1, -1, true);
+                            ScreenUtils.draw(drawContext, text, x-xOffset, y+yOffset, -1, -1, 1000, -1, -1, -1, false);
                         }
                 });
                 SkyblockImprovements.pop();

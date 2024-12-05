@@ -10,6 +10,7 @@ import com.github.thepurityofchaos.features.economic.ChocolateFactory;
 import com.github.thepurityofchaos.features.itempickuplog.ItemPickupLog;
 import com.github.thepurityofchaos.features.packswapper.PackSwapper;
 import com.github.thepurityofchaos.features.retexturer.RTRender;
+import com.github.thepurityofchaos.features.search.Search;
 import com.github.thepurityofchaos.listeners.ScreenListener;
 import com.github.thepurityofchaos.storage.config.Config;
 import com.github.thepurityofchaos.utils.processors.InventoryProcessor;
@@ -20,6 +21,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.option.KeyBinding;
@@ -56,7 +58,7 @@ public class SkyblockImprovements implements ClientModInitializer {
 	public void onInitializeClient() {
 		LOGGER.info("Entered SkyblockImprovements");
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
-
+		
 		ItemPickupLog.getInstance().init();
 		PackSwapper.getInstance().init();
 		ScreenListener.init();
@@ -65,16 +67,17 @@ public class SkyblockImprovements implements ClientModInitializer {
 		//this entrypoint is necessary for initializing features that require the player to be in a world
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client)->{
 			SpecialProcessor.init();
+			Search.getInstance().init();
 			RTRender.setKnownIdentifiers();
 			GAME_PROFILER = MinecraftClient.getInstance().getProfiler();
 		});
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client)->{
 			Config.saveSettings();
 		});
-
+		
 		//entrypoint for keybindings
-		 openItemGen = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.sbimp.openItemGen", // Translation key
+		openItemGen = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        	"key.sbimp.openItemGen", // Translation key
             InputUtil.Type.KEYSYM, // Key type
             GLFW.GLFW_KEY_RIGHT_CONTROL, // Default key
             "category.sbimp.general" // Category

@@ -76,14 +76,18 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
                 }
 
                 if(text.getString().contains("per second")){
+                    try{
                     Scanner doubleScanner = new Scanner(Utils.removeCommas(text.getString()));
                     currentCPS = doubleScanner.nextDouble();
                     doubleScanner.close();
+                    }catch(Exception e){}
                 }
                 if(text.getString().contains("+")){
+                    try{
                     Scanner intScanner = new Scanner(Utils.removeCommas(text.getString().replace("+","").strip()));
                     currentBaseProduction+=intScanner.nextInt();
                     intScanner.close();
+                    }catch(Exception e){}
                 }
             }
             return;
@@ -122,6 +126,15 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
                 }catch(Exception e){}
             }
             return;
+        }
+        if(name.getString().contains("Rabbit Hitman")){
+            for(Text text : lore){
+                if(text.getString().contains("eggs")){
+                    try{
+                    factoryInfo.put("HitmanEggs",Long.parseLong(Utils.numbersOnly(text.getString())));
+                    }catch(Exception e){}
+                }
+            }
         }
 
         for(Text text : lore){
@@ -193,7 +206,7 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
         if(i!=null){
         return Text.of(Utils.getColorString(colorCode)+"Chocolate Count: " + Utils.addCommas(i.toString(),0));
         }
-        return Text.of("");
+        return null;
     }
 
     public Text getCPS(){
@@ -201,6 +214,7 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
     }
 
     public Text getTimeToUpgrade(){
+        if(mEuCost==-1) return null;
         try{
         long currentChocolate = factoryInfo.get("Chocolate Count");
         if(mEuCost < currentChocolate)
@@ -208,7 +222,7 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
         double timeNeeded = (mEuCost - currentChocolate)/currentCPS+1;
         return Text.of(Utils.getColorString(colorCode)+"Time to Upgrade: "+Utils.getTime(timeNeeded));
         }catch(Exception e){
-            return Text.of("");
+            return null;
         }
     }
     public Text getRank(){
@@ -216,7 +230,7 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
             long currentChocolateRank = factoryInfo.get("Ranking");
             return Text.of(Utils.getColorString(colorCode)+"Ranking: "+Utils.getColorString('8')+"#"+Utils.getColorString('b')+Utils.addCommas(((Long)currentChocolateRank).toString(),0));
         }catch(Exception e){
-            return Text.of("");
+            return null;
         }
     }
     public Text getTimeToPrestige(){
@@ -229,7 +243,15 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
             Text.of(Utils.getColorString(colorCode)+"Time to Prestige: "+Utils.getColorString('a')+"Ready!"):
             Text.of(Utils.getColorString(colorCode)+"Time to Prestige: "+Utils.getTime(timeNeeded));
         }catch(Exception e){
-            return Text.of("");
+            return null;
+        }
+    }
+    public Text getHitmanEggs(){
+        try{
+            long eggs = factoryInfo.get("HitmanEggs");
+            return Text.of(Utils.getColorString(colorCode)+"Hitman Eggs: "+eggs);
+        }catch(Exception e){
+            return null;
         }
     }
 
@@ -305,7 +327,7 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
         }catch(Exception e){
             mEuCost = -1;
         }
-        return Text.of(Utils.getColorString(colorCode)+"Most Efficient Upgrade: "+Utils.getColorString('4')+"Unknown");
+        return null;
     }
     public void init(){
         visual = new GUIElement(64,64,128,32, null);
@@ -331,6 +353,7 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
                 texts.add(cf.mostEfficientUpgrade());
                 texts.add(cf.getTimeToUpgrade());
                 texts.add(Text.of(""));
+                texts.add(cf.getHitmanEggs());
                 texts.add(cf.getTimeToPrestige());
                 texts.add(cf.getRank());
                 Pair<Integer,Integer> p = ScreenUtils.draw(drawContext, texts, texture, visual.getCenteredX(), visual.getY(),-1,-1,1000,-1,-1,-1, true);

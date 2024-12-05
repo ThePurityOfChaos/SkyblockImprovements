@@ -51,11 +51,15 @@ public class IPLConfig implements Filer{
                     ChangeInstance.setColorCode(advanced.get("colorCode").getAsString().charAt(0));
                     ChangeInstance.setDistance(advanced.get("distance").getAsInt());
                     ChangeInstance.setLifespan(advanced.get("duration").getAsInt());
+                    
                     if(advanced.get("showSacks").getAsBoolean()){
                         Sacks.getInstance().toggle();
                     }
                     if(advanced.get("removeMessage").getAsBoolean()){
                         removeMessage = !removeMessage;
+                    }
+                    if(advanced.get("annihilate").getAsBoolean()){
+                        ipl.shouldAnnihilate(true);
                     }
             LOGGER.info("[SkyblockImprovements] Item Pickup Log Config Imported.");
         }catch(Exception e){
@@ -75,6 +79,7 @@ public class IPLConfig implements Filer{
                     advanced.put("distance",ChangeInstance.getDistance());
                     advanced.put("showSacks",Sacks.getInstance().isEnabled());
                     advanced.put("removeMessage",removeMessage);
+                    advanced.put("annihilate",ItemPickupLog.getInstance().shouldAnnihilate());
                 //save button location here
                 ButtonWidget IPLWidget = ItemPickupLog.getInstance().getFeatureVisual();
                 int[] IPLButtonLocations = {IPLWidget.getX(),IPLWidget.getY(),IPLWidget.getWidth(),IPLWidget.getHeight()}; 

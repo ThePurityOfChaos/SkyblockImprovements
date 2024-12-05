@@ -23,12 +23,14 @@ public class TextFieldElement extends GUIElement {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button){
         if(this.textField.isMouseOver(mouseX, mouseY)){
+            this.setFocused(true);
             this.textField.setFocused(true);
             if(this.onPress!=null){
                 this.onPress.onPress(this);
             }
             return true;
         }
+        this.setFocused(false);
         this.textField.setFocused(false);
         if(this.onPress!=null){
             this.onPress.onPress(this);
@@ -69,6 +71,14 @@ public class TextFieldElement extends GUIElement {
     }
     public void setMaxLength(int newLength){
         this.textField.setMaxLength(newLength);
+    }
+    @Override
+    public void setMessage(Text message){
+        this.textField.setMessage(message);
+    }
+    @Override
+    public Text getMessage(){
+        return this.textField.getMessage();
     }
     
 }

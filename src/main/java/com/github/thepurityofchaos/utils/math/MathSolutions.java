@@ -1,6 +1,7 @@
 package com.github.thepurityofchaos.utils.math;
 
 
+import java.util.EmptyStackException;
 import java.util.HashMap;
 
 import java.util.Map;
@@ -17,6 +18,7 @@ public class MathSolutions {
         operations.put('*',1);
         operations.put('/',1);
         operations.put('^',2);
+        operations.put('%',3);
         
     }
     //Some assistance from ChatGPT on this, mostly helping with the idea of using Stacks.
@@ -49,27 +51,58 @@ public class MathSolutions {
                 else
                 //op
                 if(operations.containsKey(current)){
-                    while(!ops.empty() && (priority(ops.peek())>=priority(current))) vals.push(solve(ops.pop(),vals.pop(),vals.pop()));
+                    while(!ops.empty() && (priority(ops.peek())>=priority(current))) 
+                    try{
+                        char op = ops.pop();
+                        Double rhs = vals.pop();
+                        try{
+                            vals.push(solve(op,rhs,vals.pop()));
+                        }catch(EmptyStackException e){
+                            throw new SolutionException(op, rhs, null);
+                        }
+                    }catch(SolutionException e){
+                        if(e.left!=null) vals.push((Double)e.right);
+                        vals.push(solveExceptionalCase((char)e.operation, e.left!=null?(Double)e.left:(Double)e.right));
+                    }
                     ops.push(current);
                 }
                 
             }
             //finish up
-            while(!ops.empty()) vals.push(solve(ops.pop(),vals.pop(),vals.pop()));
+            while(!ops.empty()) 
+            try{
+                char op = ops.pop();
+                Double rhs = vals.pop();
+                try{
+                    vals.push(solve(op,rhs,vals.pop()));
+                }catch(EmptyStackException e){
+                    throw new SolutionException(op, rhs, null);
+                }
+            }catch(SolutionException e){
+                if(e.left!=null) vals.push((Double)e.right);
+                vals.push(solveExceptionalCase((char)e.operation, e.left!=null?(Double)e.left:(Double)e.right));
+            }
 
             return vals.pop();
         }catch(Exception e){
             return -0.0;
         }
     }
-    private static double solve(char op, double rhs, double lhs){
+    private static double solve(char op, double rhs, double lhs) throws Exception{
         switch(op){
             case '+': return lhs+rhs;
             case '-': return lhs-rhs;
             case '*': return lhs*rhs;
             case '/': return lhs/rhs;
             case '^': return Math.pow(lhs,rhs);
+            case '%': throw new SolutionException('%',lhs,rhs);
             default: return -0.0;
+        }
+    }
+    private static double solveExceptionalCase(char op, double lhs){
+        switch(op){
+            case '%': return lhs/100;
+            default: return lhs;
         }
     }
     private static double priority(char c){

@@ -189,6 +189,9 @@ public class ItemPickupLog extends Feature {
     public void shouldAnnihilate(boolean b){
         annihilate = b;
     }
+    public boolean shouldAnnihilate(){
+        return annihilate;
+    }
     public boolean centerText() {
         return centeredText;
     }

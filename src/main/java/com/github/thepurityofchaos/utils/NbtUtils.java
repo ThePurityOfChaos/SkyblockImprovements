@@ -38,6 +38,7 @@ public class NbtUtils {
         return Text.of("");
     }
     public static List<Text> getLorefromItemStack(ItemStack stack){
+        if(stack==null) return null;
         NbtCompound data = stack.getNbt();
         if(data!=null && data.contains("display",NbtElement.COMPOUND_TYPE)){
             NbtCompound displayData = data.getCompound("display");

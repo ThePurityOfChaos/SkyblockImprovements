@@ -15,4 +15,10 @@ public interface HandledScreenAccessor {
     
     @Accessor("focusedSlot")
     Slot getFocusedSlot();
+
+    @Accessor("x")
+    int getX();
+
+    @Accessor("y")
+    int getY();
 }

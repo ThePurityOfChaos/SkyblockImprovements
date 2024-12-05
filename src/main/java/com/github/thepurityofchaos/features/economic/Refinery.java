@@ -26,7 +26,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
 /**
- * IN PROGRESS The Refinery Widget is intended to determine what the most profitable items are, given a relative time efficiency (If you can only play for 8 hours a day, for example, 33%)
+ * DEPRECATED- REFINERY UPDATE MAKES THIS POINTLESS
  * 
  * <p> {@link #getMostProfitable()}: Returns the most profitable item, given what you have available.
  * 

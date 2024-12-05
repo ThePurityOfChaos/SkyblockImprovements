@@ -80,6 +80,9 @@ public class ConfigScreen extends MenuScreen {
             GUIElement iplToggleElement = new GUIElement(0, 0, 96, 32, button ->{
                 ItemPickupLog.getInstance().toggle();
             });
+            GUIElement iplAnnihilElement = new GUIElement(0, 0, 96, 32, button ->{
+                ItemPickupLog.getInstance().shouldAnnihilate(!ItemPickupLog.getInstance().shouldAnnihilate());
+            });
             TextFieldElement iplColorCodeElement = new TextFieldElement(0, 0, 64, 32,Text.of(ChangeInstance.getColorCode()+""));
             iplColorCodeElement.setPressAction(button->{
                 try{
@@ -102,6 +105,7 @@ public class ConfigScreen extends MenuScreen {
             iplToggleElement.setMessage(Text.of("Toggle Feature"));
             iplSackElement.setMessage(Text.of("Sack Numbers"));
             iplMessageElement.setMessage(Text.of("Remove Message"));
+            iplAnnihilElement.setMessage(Text.of("Annihilate Dupes"));
             iplColorCodeElement.setMessage(Text.of("Color Code"));
             iplDistanceElement.setMessage(Text.of("Distance"));
 
@@ -109,6 +113,7 @@ public class ConfigScreen extends MenuScreen {
             iplToggleElement.setTooltip(Text.of("Whether or not to show the Item Pickup Log."));
             iplSackElement.setTooltip(Text.of("Whether or not to Show Sack Numbers."));
             iplMessageElement.setTooltip(Text.of("Whether or not to remove the Sacks Message when it is sent."));
+            iplAnnihilElement.setTooltip(Text.of("Whether or not a + and - of the same thing in the Log should be condensed.\n(never show +- of the exact same thing)"));
             iplColorCodeElement.setTooltip(Text.of("Color Code for the Sack items."));
             iplDistanceElement.setTooltip(Text.of("Vertical Distance between items."));
 
@@ -117,6 +122,7 @@ public class ConfigScreen extends MenuScreen {
             IPLVisual.addSubElement(iplToggleElement);
             IPLVisual.addSubElement(iplSackElement);
             IPLVisual.addSubElement(iplMessageElement);
+            IPLVisual.addSubElement(iplAnnihilElement);
             IPLVisual.addSubElement(iplColorCodeElement);
             IPLVisual.addSubElement(iplDistanceElement);
 

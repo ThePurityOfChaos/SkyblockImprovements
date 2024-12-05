@@ -97,7 +97,9 @@ public class MultilineTextFieldWidget extends TextFieldWidget {
             try{
             this.setText(currentText.substring(0, cursorPosition - 1) + currentText.substring(cursorPosition));
             }catch(Exception e){
+                try{
                 this.setText(currentText.substring(0,currentText.length()-1));
+                }catch(StringIndexOutOfBoundsException oob){}
             }
             cursorPosition--;
             this.updateLines();
