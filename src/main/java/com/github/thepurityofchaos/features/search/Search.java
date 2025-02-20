@@ -39,15 +39,15 @@ public class Search extends Feature {
 
             for(String term : terms){
                 String color = getColor(term);
-                String cleanTerm = stripColor(term);
+                String cleanTerm = stripColor(term).toLowerCase();
 
-                if(cleanTerm.startsWith("LORE:")){
-                    String loreQuery = cleanTerm.substring(5).toLowerCase();
+                if(cleanTerm.startsWith("lore:")){
+                    String loreQuery = cleanTerm.substring(5);
                     if(contains(item,loreQuery)){
                         highlight(inventory.get(slot),color);
                     }
                 }else{
-                    if(item.getName().getString().toLowerCase().contains(cleanTerm.toLowerCase())){
+                    if(item.getName().getString().toLowerCase().contains(cleanTerm)){
                         highlight(inventory.get(slot),color);
                     }
                 }

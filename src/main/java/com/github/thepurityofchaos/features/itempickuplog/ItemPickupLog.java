@@ -51,6 +51,7 @@ public class ItemPickupLog extends Feature {
     private Multimap<Text,ChangeInstance> log = ArrayListMultimap.create();
     private boolean annihilate = false;
     private boolean centeredText = true;
+    private boolean full = true;
     private static ItemPickupLog instance = new ItemPickupLog();
 
     public void init(){
@@ -96,7 +97,11 @@ public class ItemPickupLog extends Feature {
 
         if(formerInventory!=null && inventory!=null){
             boolean equals = true;
+            boolean temp = true;
             for(int i=0; i<inventory.size(); i++){
+                if(i<35&&inventory.get(i)==null){
+                    temp = false;
+                }
                 try{
                 if(!ItemStack.areEqual(inventory.get(i), formerInventory.get(i))){
                     equals = false;
@@ -107,6 +112,8 @@ public class ItemPickupLog extends Feature {
                     break;
                 }
             }
+            //fixes an issue where Inventory Full! flashes for a single tick when the inventory is NOT full
+            full = temp;
             if(equals) return;
             SkyblockImprovements.push("SBI_determineChanges");
             //map out the inventories from list form.
@@ -197,6 +204,9 @@ public class ItemPickupLog extends Feature {
     }
     public void centerText(boolean b){
         centeredText = b;
+    }
+    public boolean isInventoryFull(){
+        return full;
     }
 
 }

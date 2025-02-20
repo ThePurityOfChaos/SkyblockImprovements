@@ -44,7 +44,7 @@ public class IPLRender {
                             //color (positive or negative)
                             ((log[i].getCount()>0?"§a+":"§c"))+
                             //count
-                            log[i].getCount()+"x§"+ChangeInstance.getColorCode()+" "+
+                            (log[i].getCount()==0?"":log[i].getCount()+"x§")+ChangeInstance.getColorCode()+" "+
                             //name: multiple tests to determine whether in sacks or not / whether or not to use custom data if it exists
                             ((log[i].isFromSacks()==true || log[i].getName().getStyle()==null)?
                             log[i].getName().getString():"")
@@ -58,6 +58,9 @@ public class IPLRender {
                     if(!log[i].isFromSacks() && log[i].getName().getStyle()!=null)
                         temp.append(log[i].getName()); 
                     logText.add(temp);
+                    }
+                    if(ipl.isInventoryFull()){
+                        logText.add(Text.of("§cInventory Full!"));
                     }
                 //finally, draw the text.
                 if(logText.size()>0)
