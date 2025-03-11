@@ -5,7 +5,7 @@ import com.github.thepurityofchaos.features.economic.BatFirework;
 import com.github.thepurityofchaos.features.economic.Bingo;
 import com.github.thepurityofchaos.storage.config.IPLConfig;
 import com.github.thepurityofchaos.utils.processors.SackProcessor;
-import com.github.thepurityofchaos.utils.processors.SpecialProcessor;
+import com.github.thepurityofchaos.utils.processors.ChatColorProcessor;
 
 import net.minecraft.network.message.SignedMessage;
 import net.minecraft.text.Text;
@@ -70,7 +70,7 @@ public class ChatListener {
         }
 
         SkyblockImprovements.pop();
-        return SpecialProcessor.isMyMessage(message);
+        return ChatColorProcessor.isMyMessage(message);
         
     }
 }

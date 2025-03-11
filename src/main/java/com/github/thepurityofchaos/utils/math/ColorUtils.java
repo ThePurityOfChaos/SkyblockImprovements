@@ -62,11 +62,7 @@ public class ColorUtils {
     public static int getColorFromCode(char c){
         //ARGB
         switch(c){
-            case 'b': return 0x5555FFFF; //cyan
-            case 'c': return 0x55FF5555; //red
-            case 'd': return 0x55FF55FF; //pink
-            case 'e': return 0x55FFFF55; //yellow
-            case 'f': return 0x55FFFFFF; //white
+            case '0': return 0x55000000; //black
             case '1': return 0x550000AA; //dark blue
             case '2': return 0x5500AA00; //dark green
             case '3': return 0x5500AAAA; //dark aqua
@@ -76,9 +72,13 @@ public class ColorUtils {
             case '7': return 0x55AAAAAA; //gray
             case '8': return 0x55555555; //dark gray
             case '9': return 0x555555FF; //blue
-            case '0': return 0x55000000; //black
+            case 'a': return 0x5555FF55; //green
+            case 'b': return 0x5555FFFF; //cyan
+            case 'c': return 0x55FF5555; //red
+            case 'd': return 0x55FF55FF; //pink
+            case 'e': return 0x55FFFF55; //yellow
 
-            default: return 0x5555FF55; //green, default. Functionally the same as &a.
+            default: return 0x55FFFFFF; //white, default. Functionally the same as &f.
         }
 
     }

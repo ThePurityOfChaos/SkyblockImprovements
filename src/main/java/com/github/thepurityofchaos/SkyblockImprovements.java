@@ -14,7 +14,7 @@ import com.github.thepurityofchaos.features.search.Search;
 import com.github.thepurityofchaos.listeners.ScreenListener;
 import com.github.thepurityofchaos.storage.config.Config;
 import com.github.thepurityofchaos.utils.processors.InventoryProcessor;
-import com.github.thepurityofchaos.utils.processors.SpecialProcessor;
+import com.github.thepurityofchaos.utils.processors.ChatColorProcessor;
 import com.github.thepurityofchaos.utils.screen.GeneratorScreen;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -66,7 +66,7 @@ public class SkyblockImprovements implements ClientModInitializer {
 
 		//this entrypoint is necessary for initializing features that require the player to be in a world
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client)->{
-			SpecialProcessor.init();
+			ChatColorProcessor.init();
 			Search.getInstance().init();
 			RTRender.setKnownIdentifiers();
 			GAME_PROFILER = MinecraftClient.getInstance().getProfiler();

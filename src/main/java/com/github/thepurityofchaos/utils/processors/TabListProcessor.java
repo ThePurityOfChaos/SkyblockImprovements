@@ -33,7 +33,7 @@ public class TabListProcessor {
             hasChanged = true;
             tabList = new ArrayList<>();
             players.forEach(player ->{
-                Text temp = SpecialProcessor.isMyMessage(player.getDisplayName());
+                Text temp = ChatColorProcessor.isMyMessage(player.getDisplayName());
                 if(temp!=null)
                     player.setDisplayName(temp);
                 tabList.add(player.getDisplayName());

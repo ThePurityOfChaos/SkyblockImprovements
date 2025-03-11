@@ -41,6 +41,7 @@ public class ReforgeHelper extends Feature implements ScreenInteractor {
     private static ReforgeHelper instance = new ReforgeHelper();
     
     public void processList(List<ItemStack> inventory){
+        if(inventory==null) return;
         for(ItemStack item : inventory){
             getDataFromItemStack(item);
         }
