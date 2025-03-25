@@ -13,15 +13,16 @@ import com.github.thepurityofchaos.utils.screen.ScreenUtils;
 //import net.minecraft.client.MinecraftClient;
 //import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
 /**
  * Renderer for Economic Features. 
  * 
- * <p> {@link #render(DrawContext, float)}: Renders the features if they are enabled and need to be rendered.
+ * <p> {@link #render(DrawContext, RenderTickCounter)}: Renders the features if they are enabled and need to be rendered.
  */
 public class EcoRender {
     //@SuppressWarnings("resource")
-    public static void render(DrawContext drawContext, float tickDelta){   
+    public static void render(DrawContext drawContext, RenderTickCounter tickDelta){   
         //TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
         BatFirework bf = BatFirework.getInstance();
         if(bf.isEnabled()){
@@ -60,11 +61,13 @@ public class EcoRender {
             
         }
         Bingo bng = Bingo.getInstance();
-        if(bng.isEnabled()&&TabListProcessor.getProfile().getString().contains("Ⓑ")){
-            GUIElement location = bng.getFeatureVisual();
-            List<Text> tasks = bng.getTasks();
-            if(tasks!=null && tasks.size()!=0)
-                ScreenUtils.draw(drawContext, tasks, null, location.getCenteredX(), location.getCenteredY(), -1, -1, 10, 1074790416, -1, -1, true);
-        }
+        try{
+            if(bng.isEnabled()&&TabListProcessor.getProfile().getString().contains("Ⓑ")){
+                GUIElement location = bng.getFeatureVisual();
+                List<Text> tasks = bng.getTasks();
+                if(tasks!=null && tasks.size()!=0)
+                    ScreenUtils.draw(drawContext, tasks, null, location.getCenteredX(), location.getCenteredY(), -1, -1, 10, 1074790416, -1, -1, true);
+                }
+        }catch(NullPointerException e){}
     }
 }

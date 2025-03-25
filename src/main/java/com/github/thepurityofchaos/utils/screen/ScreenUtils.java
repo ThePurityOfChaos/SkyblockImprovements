@@ -3,7 +3,7 @@ package com.github.thepurityofchaos.utils.screen;
 import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
-
+import com.github.thepurityofchaos.mixin.RenderLayerAccessor;
 import com.github.thepurityofchaos.utils.math.ColorUtils;
 
 import net.minecraft.client.MinecraftClient;
@@ -44,9 +44,16 @@ public class ScreenUtils {
             int currentWidth = 0;
             int nulls = 0;
             for(Text text : texts){
-                if(text!=null)
-                    currentWidth = Math.max(currentWidth,client.textRenderer.getWidth(text));
-                else{nulls++;}
+                //weird bug where it is null but can't be made me swap this from normal, idk.
+                try{
+                    if(text!=null){
+                        currentWidth = Math.max(currentWidth,client.textRenderer.getWidth(text));
+                    }else{
+                        nulls++;
+                    }
+                }catch(NullPointerException e){
+                    nulls++;
+                }
             }
             width = currentWidth;
             height = (texts.size()-nulls) * textDistance;
@@ -85,7 +92,8 @@ public class ScreenUtils {
         drawHorizontalLine(context, i, j - 1, k, z, baseColor);
         drawHorizontalLine(context, i, j + l, k, z, baseColor);
         if(texture!=null){
-            context.drawTexture(texture,
+            
+            context.drawTexture(RenderLayerAccessor.getGuiTexturedFunction(), texture,
             //x,y
             i,j,
             //u,v
@@ -105,22 +113,26 @@ public class ScreenUtils {
             MinecraftClient client = MinecraftClient.getInstance();
             int nulls = 0;
             for(int n = 0; n<texts.size(); n++){
-                if(texts.get(n)==null){
-                    nulls++;
-                    continue;
-                } 
-                context.getMatrices().push();
-                context.getMatrices().translate(0, 0, z+1);
-                int y0 = y;
-                if(n!=0){
-                    y0+=firstLineOffset;
-                }
+                try{
+                    if(texts.get(n)==null){
+                        nulls++;
+                        continue;
+                    } 
+                    context.getMatrices().push();
+                    context.getMatrices().translate(0, 0, z+1);
+                    int y0 = y;
+                    if(n!=0){
+                        y0+=firstLineOffset;
+                    }
                 
-                if(centered)
-                    context.drawCenteredTextWithShadow(client.textRenderer,texts.get(n),x,y0+(n-nulls)*textDistance,1);
-                else
-                    context.drawTextWithShadow(client.textRenderer, texts.get(n), i+3, y0+(n-nulls)*textDistance, 1);
-                context.getMatrices().pop();
+                    if(centered)
+                        context.drawCenteredTextWithShadow(client.textRenderer,texts.get(n),x,y0+(n-nulls)*textDistance,1);
+                    else
+                        context.drawTextWithShadow(client.textRenderer, texts.get(n), i+3, y0+(n-nulls)*textDistance, 1);
+                    context.getMatrices().pop();
+                }catch(NullPointerException e){
+                    nulls++;
+                }
             }
         }
         return new Pair<>(k,l);

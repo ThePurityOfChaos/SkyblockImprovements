@@ -21,6 +21,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.SkullBlockEntityRenderer;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
+import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.util.Identifier;
 
 /**
@@ -37,12 +38,12 @@ import net.minecraft.util.Identifier;
  */
 public class RTRender {
     private static Map<String, Identifier> knownIdentifiers = new HashMap<>();
-    public static RenderLayer getModifiedRenderLayer(SkullBlock.SkullType type, @Nullable GameProfile profile){
+    public static RenderLayer getModifiedRenderLayer(SkullBlock.SkullType type, @Nullable ProfileComponent profile){
         try{
             //if texture contained in the list of textures and festure is enabled
             Retexturer rt = Retexturer.getInstance();
             if(rt.getFeatureEnabled()&&profile!=null&&rt.getKnownHelms().size()!=0){
-                Map<String,Collection<Property>> profileProperties = profile.getProperties().asMap();
+                Map<String,Collection<Property>> profileProperties = profile.gameProfile().getProperties().asMap();
                 Object[] textureProperties = profileProperties.get("textures").toArray();
                 String textureURL = rt.getURL(((Property)textureProperties[0]).value());
                 if(knownIdentifiers.containsKey(textureURL)){
@@ -71,7 +72,8 @@ public class RTRender {
             FileInputStream input = new FileInputStream(path.toFile());
             NativeImage img = NativeImage.read(input);
             NativeImageBackedTexture texture = new NativeImageBackedTexture(img);
-            Identifier tId = MinecraftClient.getInstance().getTextureManager().registerDynamicTexture(name, texture);
+            Identifier tId = Identifier.of("sbimp:"+name);
+            MinecraftClient.getInstance().getTextureManager().registerTexture(tId, texture);
             return tId;
         }catch(Exception e){
             return null;

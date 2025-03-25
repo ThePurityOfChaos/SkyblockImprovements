@@ -3,7 +3,7 @@ package com.github.thepurityofchaos.utils.screen;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.thepurityofchaos.utils.NbtUtils;
+import com.github.thepurityofchaos.utils.ComponentUtils;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
 import com.github.thepurityofchaos.utils.gui.MenuScreen;
@@ -12,8 +12,8 @@ import com.github.thepurityofchaos.utils.gui.TextFieldElement;
 
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
@@ -46,12 +46,11 @@ public class GeneratorScreen extends MenuScreen {
     public static boolean parseItemToGenerator(ItemStack item){
         if(item==null) return false;
         //parse
-        NbtCompound itemData = item.getNbt();
         try{
             //set name
-            screenInstance.name.setText(NbtUtils.getStringFromName(itemData.asString()));
+            screenInstance.name.setText(ComponentUtils.convertTextToString(item.getName()));
             //get rarity and type information (recomb included as rarity + rarity.length)
-            Pair<Integer,String> rarityAndType = NbtUtils.getRarityAndTypeFromLore(itemData.asString());
+            Pair<Integer,String> rarityAndType = ComponentUtils.getRarityAndTypeFromLore(item.get(DataComponentTypes.LORE));
             //set rarity
             screenInstance.setRarity(rarityAndType.getLeft()%rarities.length);
             //remove extraneous text from type
@@ -62,7 +61,7 @@ public class GeneratorScreen extends MenuScreen {
             //set type
             if(rarityAndType.getLeft()%rarities.length!=0) screenInstance.type.setText(rarityAndType.getRight().strip());
             //set generator body
-            screenInstance.generator.setText(Utils.getColorString('f')+NbtUtils.getStringFromLore(itemData.asString(), rarityAndType.getLeft()==0)+" ");
+            screenInstance.generator.setText(Utils.getColorString('f')+ComponentUtils.getStringFromLore(item.get(DataComponentTypes.LORE), rarityAndType.getLeft()==0)+" ");
             return true;
         }catch(Exception e){
             return false;

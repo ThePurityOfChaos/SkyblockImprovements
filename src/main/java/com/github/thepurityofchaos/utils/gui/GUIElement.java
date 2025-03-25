@@ -46,7 +46,7 @@ public class GUIElement extends ButtonWidget {
     }
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (this.isValidClickButton(button) && this.clicked(mouseX, mouseY)) {
+        if (this.isValidClickButton(button) && this.isMouseOver(mouseX, mouseY)) {
             if (this.active) {
                 if (button == 0) { // Left click
                     this.onPress();

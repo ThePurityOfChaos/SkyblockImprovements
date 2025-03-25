@@ -11,6 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import net.minecraft.component.ComponentMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -19,7 +20,7 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
 
-public class NbtUtils {
+public class ComponentUtils {
 
     public static final Gson GSON = new Gson();
 
@@ -28,18 +29,18 @@ public class NbtUtils {
     }
 
     public static Text getNamefromItemStack(ItemStack stack){
-        NbtCompound data = stack.getNbt();
-        if(data!=null && data.contains("display",NbtElement.COMPOUND_TYPE)){
+        ComponentMap data = stack.getComponents();
+        /*if(data!=null && data.contains("display",NbtElement.COMPOUND_TYPE)){
             NbtCompound displayData = data.getCompound("display");
             if(displayData.contains("Name")){
                 return Text.Serialization.fromJson(displayData.getString("Name"));
             }
-        }
+        }*/
         return Text.of("");
     }
     public static List<Text> getLorefromItemStack(ItemStack stack){
         if(stack==null) return null;
-        NbtCompound data = stack.getNbt();
+        /*NbtCompound data = stack.getNbt();
         if(data!=null && data.contains("display",NbtElement.COMPOUND_TYPE)){
             NbtCompound displayData = data.getCompound("display");
             if(displayData.contains("Lore")){
@@ -50,13 +51,13 @@ public class NbtUtils {
                 }
                 return result;
             }
-        }
+        }*/
         return null;
     }
     public static String getTextureFromSkull(ItemStack stack){
-        if(!stack.hasNbt()){
+        //if(!stack.hasNbt()){
             return null;
-        }
+        /*}
         NbtCompound data = stack.getNbt();
         if(!data.contains("SkullOwner")){
             return null;
@@ -71,12 +72,12 @@ public class NbtUtils {
         }
         NbtList textures = (NbtList) properties.get("textures");
         NbtCompound value = (NbtCompound) textures.get(0);
-        return value.getString("Value");
+        return value.getString("Value");*/
     }
     public static UUID getUUIDFromSkull(ItemStack stack){
-        if(!stack.hasNbt()){
+        //if(!stack.hasNbt()){
             return null;
-        }
+        /* }
         NbtCompound data = stack.getNbt();
         if(!data.contains("SkullOwner")){
             return null;
@@ -84,7 +85,7 @@ public class NbtUtils {
         NbtCompound skullData = (NbtCompound) data.get("SkullOwner");
         if(skullData.containsUuid("Id"))
             return skullData.getUuid("Id");
-        return null;
+        return null;*/
     }
     
     public static String getStringFromLore(String nbtJson, boolean parseLastElement) {

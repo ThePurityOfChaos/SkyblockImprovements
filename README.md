@@ -1,7 +1,7 @@
 # SkyblockImprovements
-Hypixel Skyblock Quality-of-Life Mod for 1.20.4
+Hypixel Skyblock Quality-of-Life Mod for 1.21.4
 
-Current Version: 0.2.0
+Current Version: 0.3.3
 
 Features:
 
@@ -30,12 +30,12 @@ Planned Versioning:
 
 0.2.1: Economic Analyses
 
-???
-
 0.3.0: 3 Economic Analysis Examples & Custom Analysis
 
 0.3.1: Helmet Retexturer Basics
 
-0.3.2: Helmet Retexturer Visual Integration
+0.3.2: Helmet Retexturer Visual Integration (Heatmap)
 
-1.0.0: Helmet Retexturer Complete
+0.3.3: Additional features & version change
+
+1.0.0: Helmet Retexturer Complete (2 versions, 1 grayscaling, 1 heatmapped)
