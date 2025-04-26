@@ -7,7 +7,7 @@ import com.github.thepurityofchaos.abstract_interfaces.Feature;
 import com.github.thepurityofchaos.abstract_interfaces.MessageProcessor;
 import com.github.thepurityofchaos.abstract_interfaces.ScreenInteractor;
 import com.github.thepurityofchaos.storage.config.EcoConfig;
-import com.github.thepurityofchaos.utils.NbtUtils;
+import com.github.thepurityofchaos.utils.ComponentUtils;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.gui.MenuElement;
 import com.github.thepurityofchaos.utils.processors.InventoryProcessor;
@@ -44,6 +44,7 @@ public class Bingo extends Feature implements MessageProcessor,ScreenInteractor{
 
     public void init(){
         visual = new MenuElement(0, 0, 128, 32, null);
+        visual.setMessage("Bingo Tasks");
     }
 
     public void interact(Screen screen){
@@ -58,13 +59,14 @@ public class Bingo extends Feature implements MessageProcessor,ScreenInteractor{
      */
     private void processList(List<ItemStack> list) {
         if(list==null) return;
+        if(list.size()<=1) return;
         tasks = new ArrayList<>();
         for(ItemStack item : list){
             if(item==null) continue;
-            String name = NbtUtils.getNamefromItemStack(item).getString();
+            String name = ComponentUtils.getNamefromItemStack(item).getString();
             if(Utils.containsAny(name, incorrectStrings)) continue;
-            List<Text> lore = NbtUtils.getLorefromItemStack(item);
-            if(lore==null||lore.get(lore.size()-1).getString().contains("GOAL REACHED")) continue;
+            List<Text> lore = ComponentUtils.getLorefromItemStack(item);
+            if(lore==null||lore.size()==0||lore.get(lore.size()-1).getString().contains("GOAL REACHED")) continue;
             if(!showCommunity&&lore.get(0).getString().contains("Community")) continue;
             MutableText temp = MutableText.of(Text.of(Utils.getColorString(EcoConfig.getColorCode())+name+(lore.get(0).getString().contains("Community")?" ("+Utils.getColorString('8')+"Community"+Utils.getColorString(EcoConfig.getColorCode())+"):":":")).getContent());
             boolean record = false;
@@ -96,9 +98,23 @@ public class Bingo extends Feature implements MessageProcessor,ScreenInteractor{
 
     //getters and toggles
     public List<Text> getTasks(){ return tasks;}
+    public List<String> getTasksAsStrings(){
+        List<String> taskStrings = new ArrayList<>();
+        for(Text task : tasks){
+            taskStrings.add(ComponentUtils.convertTextToString(task));
+        }
+        return taskStrings;
+    }
     public boolean showCommunity(){return showCommunity;}
     public void toggleCommunity(){showCommunity = !showCommunity;}
     public void setTasks(List<Text> newTasks) {tasks = newTasks;}
+    public void setTasksFromStrings(List<String> newTasks){
+        List<Text> taskTexts = new ArrayList<>();
+        for(String task : newTasks){
+            taskTexts.add(Text.of(task.replace("&","§")));
+        }
+        setTasks(taskTexts);
+    }
 
     public static Bingo getInstance() {
         return instance;

@@ -1,9 +1,9 @@
 # SkyblockImprovements
-Hypixel Skyblock Quality-of-Life Mod for 1.20.4
+Hypixel Skyblock Quality-of-Life Mod for 1.21.4
 
 Discord: https://discord.gg/dyAUSNyhBh
 
-Current Version: 0.3.1
+Current Version: 0.3.3
 
 Features:
 
@@ -45,7 +45,12 @@ Bat Firework Helper
 
 0.3.1: Generic Profit Manager
 
-1.0.0: First Release
+
+0.3.2: Helmet Retexturer Visual Integration (Heatmap)
+
+0.3.3: Additional features & version change
+
+1.0.0: Helmet Retexturer Complete (2 versions, 1 grayscaling, 1 heatmapped)
 
 ### Icon Source
 Mod Icon: E8 Petrie Projection

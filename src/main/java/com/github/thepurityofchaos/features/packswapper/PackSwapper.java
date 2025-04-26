@@ -11,20 +11,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.abstract_interfaces.Feature;
 import com.github.thepurityofchaos.storage.config.PSConfig;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.gui.MenuElement;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourcePackManager;
 import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.text.Text;
@@ -113,93 +110,54 @@ public class PackSwapper extends Feature {
         //DEBUG_ADDREGION(sArea, sRegion);
         ResourcePackManager manager = MinecraftClient.getInstance().getResourcePackManager();
         Collection<ResourcePackProfile> packs = manager.getProfiles();
-        Collection<ResourcePackProfile> currentlyEnabledPacks = manager.getEnabledProfiles();
         List<String> packsToRemove = new ArrayList<>();
-        List<String> guaranteedPacks = new ArrayList<>();
-        List<String> unmodifiedPacks = new ArrayList<>();
         List<String> modifiedPacks = new ArrayList<>();
-        boolean isValidPack = false;
         for(ResourcePackProfile pack:packs){
-            //ignore all packs not directly relevant: guaranteed packs, and unmodified ones.
-            String name = pack.getName();
-            ResourcePack metadataHelper = pack.createResourcePack();
-            try{
-                InputStreamReader stream = new InputStreamReader((InputStream)
-                metadataHelper.openRoot(SkyblockImprovements.RESOURCE_PACK_LOCATION.resolve(name).resolve(ResourcePack.PACK_METADATA_NAME).toString()));
-                    if(stream!=null){
-                        JsonElement json = JsonParser.parseReader(stream);
-                        if(json.isJsonObject()){
-                            JsonObject jsonObject = json.getAsJsonObject();
-                            if(jsonObject.has("sbimp")){
-                                isValidPack = jsonObject.get("sbimp").getAsBoolean();
-                            }else{
-                                isValidPack = false;
-                            }
-                        }
-                    }
-            }catch(Exception e){
-                isValidPack = false;
-            }
+                if(!pack.getDescription().getString().toLowerCase().contains("sbimp "))
+                    continue;
 
-            if(!isValidPack&&!name.startsWith("file/_")){
-                if(pack.isAlwaysEnabled()){
-                    guaranteedPacks.add(name);
-                }
-                if(currentlyEnabledPacks.contains(pack))
-                    unmodifiedPacks.add(name);
-                continue;
-            }
             //if the pack is new, add it to the main pack map.
-            if(!packAreaRegionToggles.containsKey(name)){
+            if(!packAreaRegionToggles.containsKey(pack.getId())&&pack.getDescription().getString().toLowerCase().contains("sbimp ")){
                 //only load the default packs if a new pack is needed
                 if(undefinedRegions){
                     defineDefaultRegions();
                 }
-                packAreaRegionToggles.put(name,loadDefaultAreas(new HashMap<>()));
+                packAreaRegionToggles.put(pack.getId(),loadDefaultAreas(new HashMap<>()));
             }
             //add modified packs
-            Map<String,Map<String,Boolean>> areaRegionToggles = packAreaRegionToggles.get(name);
+            Map<String,Map<String,Boolean>> areaRegionToggles = packAreaRegionToggles.get(pack.getId());
 
             if(areaRegionToggles.containsKey(sArea)){
                 //full area check
                 if(areaRegionToggles.get(sArea).get("").booleanValue()){
-                    modifiedPacks.add(name);
+                    modifiedPacks.add(pack.getId());
                     continue;
                 }
                 else if(areaRegionToggles.get(sArea).size()==1){
-                    packsToRemove.add(name);
+                    packsToRemove.add(pack.getId());
                     continue;
                 }
                 //if not, go to specific regions
                 if(areaRegionToggles.get(sArea).containsKey(sRegion)){
                     if(areaRegionToggles.get(sArea).get(sRegion).booleanValue()){
-                        modifiedPacks.add(name);
+                        modifiedPacks.add(pack.getId());
                     }else{
-                        packsToRemove.add(name);
+                        packsToRemove.add(pack.getId());
                     }
                 }
             }
         }
-
-        //this is done to prioritize the packs in the hierarchy. The last ones added have the highest priority.
-        Collection<String> packsToActivate = new ArrayList<>();
-        packsToActivate.addAll(guaranteedPacks);
-        packsToActivate.addAll(unmodifiedPacks);
-        packsToActivate.addAll(modifiedPacks);
         
-        Collection<String> currentPacks = manager.getEnabledNames();
+        Collection<String> currentPacks = manager.getEnabledIds();
         boolean hasChanged = false;
-        for(String pack : packsToActivate){
+        for(String pack : modifiedPacks){
             if(!currentPacks.contains(pack)){
-                manager.setEnabledProfiles(packsToActivate);
-                hasChanged = true;
-                break;
+                hasChanged = manager.enable(pack) || hasChanged;
             }
         }
         for(String pack : packsToRemove){
             if(currentPacks.contains(pack)){
-                manager.disable(pack);
-                hasChanged = true;
+                hasChanged = manager.disable(pack) || hasChanged;
             }
         }
         //only make changes if the packs change. 
@@ -222,7 +180,9 @@ public class PackSwapper extends Feature {
 
         //only manipulate packs if area changes and not in no area
         if(!sArea.equals("NoAreaFound!")&&(!sArea.equals(previousArea)||!sRegion.equals(previousRegion))){
-            manipulatePacks(sArea,sRegion);
+            try{
+                manipulatePacks(sArea,sRegion);
+            }catch(Exception e){}
         }
         previousArea = sArea;
         previousRegion = sRegion;
@@ -276,7 +236,7 @@ public class PackSwapper extends Feature {
         Collection<ResourcePackProfile> packs = manager.getProfiles();
         List<String> names = new ArrayList<>();
         packs.forEach(pack ->{
-            names.add(pack.getName());
+            names.add(pack.getId());
         });
         Map<String,Map<String,Map<String,Boolean>>> newMap = new HashMap<>();
         packAreaRegionToggles.forEach((pack,map) ->{
@@ -301,7 +261,7 @@ public class PackSwapper extends Feature {
         //load default regions
         try{
             Type smallMap = new TypeToken<Map<String,List<String>>>(){}.getType();
-            Identifier allDefaultRegions = new Identifier("sbimp","info/defaultar.json");
+            Identifier allDefaultRegions = Identifier.of("sbimp","info/defaultar.json");
             ResourceManager source = MinecraftClient.getInstance().getResourceManager();
             if(source!=null){
             Gson gson = new Gson();

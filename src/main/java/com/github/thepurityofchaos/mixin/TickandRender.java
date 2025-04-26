@@ -1,6 +1,10 @@
 package com.github.thepurityofchaos.mixin;
 
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.util.Identifier;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,26 +33,26 @@ public class TickandRender {
     @Inject(at = @At("TAIL"), method = "onInitializeClient", remap = false)
     private void onInitializeClient(CallbackInfo info){
         //Render all
-        HudRenderCallback.EVENT.register((drawContext, tickDelta)->{
-            //Process Scoreboard & Tab List for this Tick 
-            //(Used for multiple events- piggybacking on HudRenderCallback 
+        HudLayerRegistrationCallback.EVENT.register(layeredDrawer -> layeredDrawer.attachLayerBefore(IdentifiedLayer.MISC_OVERLAYS, Identifier.of("sbimp","default-sbimp-layer"), TickandRender::render));
+    }
+    private static void render(DrawContext context, RenderTickCounter counter){
+        //Process Scoreboard & Tab List for this Tick 
+            //(Used for multiple events- piggybacking on HudLayerRegistrationCallback 
             //makes it so that creating a new ticking system is not necessary)
             ScoreboardProcessor.processScoreboard();
             TabListProcessor.processTabList();
-            
             //Item Pickup Log
             if(ItemPickupLog.getInstance().isEnabled())
-                IPLRender.render(drawContext,tickDelta);
+                IPLRender.render(context, counter);
 
             //Pack Swapper
             if(PackSwapper.getInstance().isEnabled())
-                PSRender.render(drawContext, tickDelta);
+                PSRender.render(context, counter);
             //Economic Features
-            EcoRender.render(drawContext, tickDelta);
+            EcoRender.render(context, counter);
             
             //Retexturer(s)
             RTRender.render();
 
-        });
     }   
 }

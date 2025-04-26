@@ -21,8 +21,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.text.Text;
+import net.minecraft.component.ComponentMap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 //I looked at https://github.com/BiscuitDevelopment/SkyblockAddons/blob/main/src/main/java/codes/biscuit/skyblockaddons/utils/InventoryUtils.java#L303 while making this,
 //but it was pretty far apart from what I actually wanted to do considering its version difference, incompatibility, etc. so I ended up doing something rather different, 
 //though the idea of using Maps & a Multimap I definitely agreed with there.
@@ -51,6 +51,7 @@ public class ItemPickupLog extends Feature {
     private Multimap<Text,ChangeInstance> log = ArrayListMultimap.create();
     private boolean annihilate = false;
     private boolean centeredText = true;
+    private boolean full = true;
     private static ItemPickupLog instance = new ItemPickupLog();
 
     public void init(){
@@ -96,7 +97,11 @@ public class ItemPickupLog extends Feature {
 
         if(formerInventory!=null && inventory!=null){
             boolean equals = true;
+            boolean temp = true;
             for(int i=0; i<inventory.size(); i++){
+                if(i<35&&inventory.get(i)==null){
+                    temp = false;
+                }
                 try{
                 if(!ItemStack.areEqual(inventory.get(i), formerInventory.get(i))){
                     equals = false;
@@ -107,11 +112,13 @@ public class ItemPickupLog extends Feature {
                     break;
                 }
             }
+            //fixes an issue where Inventory Full! flashes for a single tick when the inventory is NOT full
+            full = temp;
             if(equals) return;
             SkyblockImprovements.push("SBI_determineChanges");
             //map out the inventories from list form.
-            Map<Text, AbstractMap.SimpleEntry<Integer,NbtCompound>> formerInventoryMap = InventoryProcessor.processListToMap(formerInventory);
-            Map<Text, AbstractMap.SimpleEntry<Integer,NbtCompound>> currentInventoryMap = InventoryProcessor.processListToMap(inventory);
+            Map<Text, AbstractMap.SimpleEntry<Integer,ComponentMap>> formerInventoryMap = InventoryProcessor.processListToMap(formerInventory);
+            Map<Text, AbstractMap.SimpleEntry<Integer,ComponentMap>> currentInventoryMap = InventoryProcessor.processListToMap(inventory);
             //recorder for change instances
             List<ChangeInstance> allChangeInstances = new ArrayList<>();
 
@@ -189,11 +196,17 @@ public class ItemPickupLog extends Feature {
     public void shouldAnnihilate(boolean b){
         annihilate = b;
     }
+    public boolean shouldAnnihilate(){
+        return annihilate;
+    }
     public boolean centerText() {
         return centeredText;
     }
     public void centerText(boolean b){
         centeredText = b;
+    }
+    public boolean isInventoryFull(){
+        return full;
     }
 
 }

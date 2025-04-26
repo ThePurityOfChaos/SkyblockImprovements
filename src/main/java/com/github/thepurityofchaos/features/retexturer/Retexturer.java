@@ -15,13 +15,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.storage.config.RTConfig;
-import com.github.thepurityofchaos.utils.NbtUtils;
+import com.github.thepurityofchaos.utils.ComponentUtils;
 import com.github.thepurityofchaos.utils.Utils;
 import com.github.thepurityofchaos.utils.gui.GUIElement;
 import com.github.thepurityofchaos.utils.gui.MenuElement;
@@ -83,8 +84,8 @@ public class Retexturer {
                 return;
             }
             if(MinecraftClient.getInstance()==null) return;
-            String helmetTextureURL = NbtUtils.getTextureFromSkull(helmet);
-            UUID hID = NbtUtils.getUUIDFromSkull(helmet);
+            String helmetTextureURL = ComponentUtils.getTextureFromSkull(helmet);
+            UUID hID = ComponentUtils.getUUIDFromSkull(helmet);
             if(helmetTextureURL == null|| hID ==null) return;
             String helmetID = hID.toString();
             String currentTextureURL = getURL(helmetTextureURL);
@@ -136,7 +137,7 @@ public class Retexturer {
 
         //Download Texture from MC's Servers
         private BufferedImage downloadTexture(String helmetID, String currentTextureURL, int index) throws IOException{
-            URL url = new URL(currentTextureURL);
+            URL url = URI.create(currentTextureURL).toURL();
             InputStream input = url.openConnection().getInputStream();
             FileOutputStream output = new FileOutputStream(SkyblockImprovements.FILE_LOCATION.resolve("helms").resolve(helmetID+index+".png").toString());
             ReadableByteChannel channel = Channels.newChannel(input);
@@ -325,8 +326,8 @@ public class Retexturer {
         }
         public void refresh(ItemStack helmet){
             try{
-                String helmetID = NbtUtils.getUUIDFromSkull(helmet).toString();
-                String textureURL = NbtUtils.getTextureFromSkull(helmet);
+                String helmetID = ComponentUtils.getUUIDFromSkull(helmet).toString();
+                String textureURL = ComponentUtils.getTextureFromSkull(helmet);
                 knownHelms.remove(helmetID);
                 RTRender.getKnownIdentifiers().remove(getURL(textureURL));
                 RTConfig.saveSettings();
@@ -362,8 +363,8 @@ public class Retexturer {
                 MenuElement helmResetButton = new MenuElement(x-16, y, 16, 16, button ->{
                     try{
                     ItemStack helmet = InventoryProcessor.getHelmet();
-                    String helmetTextureURL = NbtUtils.getTextureFromSkull(helmet);
-                    UUID hID = NbtUtils.getUUIDFromSkull(helmet);
+                    String helmetTextureURL = ComponentUtils.getTextureFromSkull(helmet);
+                    UUID hID = ComponentUtils.getUUIDFromSkull(helmet);
                     if(helmetTextureURL == null|| hID ==null) return;
                     String helmetID = hID.toString();
                     String currentTextureURL = getURL(helmetTextureURL);
@@ -411,9 +412,6 @@ public class Retexturer {
                     newColor = ColorUtils.rGBAToInt(helmR.getText(),helmG.getText(),helmB.getText(),255);
                     k= Integer.parseInt(helmK.getText());
                     }catch(Exception e){};
-                    helmR.setText(ColorUtils.getRed(newColor)+"");
-                    helmG.setText(ColorUtils.getGreen(newColor)+"");
-                    helmB.setText(ColorUtils.getBlue(newColor)+"");
                 });
         }
         public static Retexturer getInstance(){
