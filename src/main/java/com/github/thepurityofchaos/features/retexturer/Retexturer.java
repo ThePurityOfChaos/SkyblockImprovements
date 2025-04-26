@@ -412,9 +412,6 @@ public class Retexturer {
                     newColor = ColorUtils.rGBAToInt(helmR.getText(),helmG.getText(),helmB.getText(),255);
                     k= Integer.parseInt(helmK.getText());
                     }catch(Exception e){};
-                    helmR.setText(ColorUtils.getRed(newColor)+"");
-                    helmG.setText(ColorUtils.getGreen(newColor)+"");
-                    helmB.setText(ColorUtils.getBlue(newColor)+"");
                 });
         }
         public static Retexturer getInstance(){

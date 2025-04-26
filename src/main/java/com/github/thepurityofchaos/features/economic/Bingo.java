@@ -59,13 +59,14 @@ public class Bingo extends Feature implements MessageProcessor,ScreenInteractor{
      */
     private void processList(List<ItemStack> list) {
         if(list==null) return;
+        if(list.size()<=1) return;
         tasks = new ArrayList<>();
         for(ItemStack item : list){
             if(item==null) continue;
             String name = ComponentUtils.getNamefromItemStack(item).getString();
             if(Utils.containsAny(name, incorrectStrings)) continue;
             List<Text> lore = ComponentUtils.getLorefromItemStack(item);
-            if(lore==null||lore.get(lore.size()-1).getString().contains("GOAL REACHED")) continue;
+            if(lore==null||lore.size()==0||lore.get(lore.size()-1).getString().contains("GOAL REACHED")) continue;
             if(!showCommunity&&lore.get(0).getString().contains("Community")) continue;
             MutableText temp = MutableText.of(Text.of(Utils.getColorString(EcoConfig.getColorCode())+name+(lore.get(0).getString().contains("Community")?" ("+Utils.getColorString('8')+"Community"+Utils.getColorString(EcoConfig.getColorCode())+"):":":")).getContent());
             boolean record = false;

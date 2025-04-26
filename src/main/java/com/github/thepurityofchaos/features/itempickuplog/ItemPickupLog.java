@@ -23,7 +23,6 @@ import com.google.common.collect.Multimap;
 import net.minecraft.text.Text;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 //I looked at https://github.com/BiscuitDevelopment/SkyblockAddons/blob/main/src/main/java/codes/biscuit/skyblockaddons/utils/InventoryUtils.java#L303 while making this,
 //but it was pretty far apart from what I actually wanted to do considering its version difference, incompatibility, etc. so I ended up doing something rather different, 
 //though the idea of using Maps & a Multimap I definitely agreed with there.

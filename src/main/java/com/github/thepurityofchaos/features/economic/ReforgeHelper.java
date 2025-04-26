@@ -53,7 +53,7 @@ public class ReforgeHelper extends Feature implements ScreenInteractor {
         Text name = ComponentUtils.getNamefromItemStack(item);
         List<Text> lore = ComponentUtils.getLorefromItemStack(item);
         //if the item is 'fake'
-        if(lore==null){
+        if(lore==null || lore.size()==0){
             return;
         }
         if(!name.getString().contains("Reforge")&&!Utils.ignorable(name.getString())){

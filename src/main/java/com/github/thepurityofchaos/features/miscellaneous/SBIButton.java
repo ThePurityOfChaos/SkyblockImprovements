@@ -16,14 +16,14 @@ public class SBIButton implements ScreenInteractor  {
     public static void interact(Screen screen){
         ScreenEvents.beforeRender(screen).register((currentScreen, drawContext, mouseX, mouseY, delta) -> {
             if(!shown){
-            GUIElement ConfigButton = new GUIElement(currentScreen.width/2-40,currentScreen.height-32,80,32,button ->{
+            GUIElement ConfigButton = new GUIElement(currentScreen.width/4,currentScreen.height-32,80,32,button ->{
                 ConfigScreen configScreen = new ConfigScreen();
                 configScreen.init(currentScreen);
                 MinecraftClient client = MinecraftClient.getInstance();
                 client.setScreen(configScreen);
             });
             ConfigButton.setMessage(Text.of(Utils.getColorString('f')+"Open Config"));
-            ConfigButton.setTooltip(Text.of(Utils.getColorString('f')+"Open the SkyblockImprovements Config"));
+            ConfigButton.setTooltip(Text.of(Utils.getColorString('f')+"§fOpen the Skyblock Improvements Config. \n§6/sbi§f does this too!"));
             Screens.getButtons(currentScreen).add(ConfigButton);
             shown = true;
             }

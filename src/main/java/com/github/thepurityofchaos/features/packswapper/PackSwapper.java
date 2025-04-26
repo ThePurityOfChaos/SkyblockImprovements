@@ -110,19 +110,14 @@ public class PackSwapper extends Feature {
         //DEBUG_ADDREGION(sArea, sRegion);
         ResourcePackManager manager = MinecraftClient.getInstance().getResourcePackManager();
         Collection<ResourcePackProfile> packs = manager.getProfiles();
-        Collection<ResourcePackProfile> currentlyEnabledPacks = manager.getEnabledProfiles();
         List<String> packsToRemove = new ArrayList<>();
-        List<String> enabledPacks = new ArrayList<>();
         List<String> modifiedPacks = new ArrayList<>();
         for(ResourcePackProfile pack:packs){
-            //ignore all packs not directly relevant
-                if(currentlyEnabledPacks.contains(pack)){
-                    enabledPacks.add(pack.getId());
+                if(!pack.getDescription().getString().toLowerCase().contains("sbimp "))
                     continue;
-                }
 
             //if the pack is new, add it to the main pack map.
-            if(!packAreaRegionToggles.containsKey(pack.getId())&&pack.getDescription().getString().toLowerCase().contains("sbimp compatible")){
+            if(!packAreaRegionToggles.containsKey(pack.getId())&&pack.getDescription().getString().toLowerCase().contains("sbimp ")){
                 //only load the default packs if a new pack is needed
                 if(undefinedRegions){
                     defineDefaultRegions();
@@ -155,17 +150,14 @@ public class PackSwapper extends Feature {
         
         Collection<String> currentPacks = manager.getEnabledIds();
         boolean hasChanged = false;
-        manager.setEnabledProfiles(enabledPacks);
         for(String pack : modifiedPacks){
             if(!currentPacks.contains(pack)){
-                manager.enable(pack);
-                hasChanged = true;
+                hasChanged = manager.enable(pack) || hasChanged;
             }
         }
         for(String pack : packsToRemove){
             if(currentPacks.contains(pack)){
-                manager.disable(pack);
-                hasChanged = true;
+                hasChanged = manager.disable(pack) || hasChanged;
             }
         }
         //only make changes if the packs change. 
