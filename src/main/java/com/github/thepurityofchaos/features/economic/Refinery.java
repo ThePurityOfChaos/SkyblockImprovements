@@ -28,7 +28,7 @@ import net.minecraft.util.Pair;
 /**
  * DEPRECATED- REFINERY UPDATE MAKES THIS POINTLESS
  * 
- * <p> {@link #getMostProfitable()}: Returns the most profitable item, given what you have available.
+ * <p> {: Returns the most profitable item, given what you have available.
  * 
  * <p> {@link #interact(Screen)}: Draws the most profitable item.
  * 

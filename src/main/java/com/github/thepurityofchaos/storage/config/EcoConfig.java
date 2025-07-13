@@ -46,15 +46,15 @@ import net.minecraft.client.gui.widget.ButtonWidget;
  * 
  * <p> {@link #getColorCode()}: Standard color code char getter.
  * 
- * <p> {@link #isEnabled()}: Getter for the toggle for all economic features at once.
+ * <p> {}: Getter for the toggle for all economic features at once.
  * 
  * <p> {@link #setColorCode(char)}: Standard color code char setter.
  * 
- * <p> {@link #toggle()}: Flips the return value for {@link #isEnabled()}.
+ * <p> {}: Flips the return value for {}.
  * 
  * <p> {@link #toggleMath()}: Toggle for {@link #doMath()}.
  * 
- * <p> {@link #updateFeatureVisuals()}: Sets the message for each feature's visual component.
+ * <p> {}: Sets the message for each feature's visual component.
  * 
  * <p> This is a static file and does not have a constructor implemented.
  */
