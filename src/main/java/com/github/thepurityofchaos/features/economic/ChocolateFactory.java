@@ -35,7 +35,7 @@ import net.minecraft.util.Pair;
  * 
  * <p>{@link #getCPS()}: Returns the current chocolate per second.
  * 
- * <p> {@link #getColorCode()}: Returns the current color code. Currently does not change.
+ * <p> {@link #getColorCode()}: Returns the current color code. Currently, does not change.
  * 
  * <p> {@link #getRank()}: Returns the player's Rank.
  * 
@@ -47,13 +47,13 @@ import net.minecraft.util.Pair;
  */
 public class ChocolateFactory extends Feature implements ScreenInteractor {
     //INCLUDED IN: None
-    private Map<String,Long> factoryInfo = new HashMap<>();
+    private final Map<String,Long> factoryInfo = new HashMap<>();
     private int currentBaseProduction = 0;
     private double currentCPS = 0.0;
     private char colorCode = '6';
     private long mEuCost = 0;
 
-    private static ChocolateFactory instance = new ChocolateFactory();
+    private static final ChocolateFactory instance = new ChocolateFactory();
 
     public void processList(List<ItemStack> list){
         if(list==null) return;
@@ -63,8 +63,8 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
         factoryInfo.entrySet().removeIf(entry -> entry.getValue()==-1);
     }
     private void getDataFromItemStack(ItemStack item){
-        List<Text> lore = ComponentUtils.getLorefromItemStack(item);
-        Text name = ComponentUtils.getNamefromItemStack(item);
+        List<Text> lore = ComponentUtils.getLoreFromItemStack(item);
+        Text name = ComponentUtils.getNameFromItemStack(item);
         if(lore==null)
             return;
         boolean willBeCost = false;
@@ -80,14 +80,14 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
                     Scanner doubleScanner = new Scanner(Utils.removeCommas(text.getString()));
                     currentCPS = doubleScanner.nextDouble();
                     doubleScanner.close();
-                    }catch(Exception e){}
+                    }catch(Exception ignored){}
                 }
                 if(text.getString().contains("+")){
                     try{
                     Scanner intScanner = new Scanner(Utils.removeCommas(text.getString().replace("+","").strip()));
                     currentBaseProduction+=intScanner.nextInt();
                     intScanner.close();
-                    }catch(Exception e){}
+                    }catch(Exception ignored){}
                 }
             }
             return;
@@ -123,7 +123,7 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
                         intScanner.close();
                         factoryInfo.put("Chocolate this Prestige",chocolateCount);
                     }
-                }catch(Exception e){}
+                }catch(Exception ignored){}
             }
             return;
         }
@@ -132,7 +132,7 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
                 if(text.getString().contains("eggs")){
                     try{
                     factoryInfo.put("HitmanEggs",Long.parseLong(Utils.numbersOnly(text.getString())));
-                    }catch(Exception e){}
+                    }catch(Exception ignored){}
                 }
             }
         }
@@ -153,14 +153,14 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
                     willBeCost = true;
                     continue;
                 }
-                if(willBeCost == true){
+                if(willBeCost){
                     try{
                         Scanner longScanner = new Scanner(Utils.removeCommas(text.getString()));
                         long cost = longScanner.nextLong();
                         longScanner.close();
                         factoryInfo.put(processName(name),cost);
                         return;
-                    }catch(Exception e){}
+                    }catch(Exception ignored){}
                 }
                 if(s.contains("corporate ladder")||s.contains("max")||s.contains("already taught")){
                     factoryInfo.put(processName(name),-1L);
@@ -289,17 +289,17 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
         }
         //add buffers (each may require special production values, so do that manually here)
         try{
-            values[employees.size()] = (buffers.get(0).getValue()/(currentBaseProduction*0.1*3/24));
+            values[employees.size()] = buffers.getFirst().getValue()/(currentBaseProduction*0.1*3/24);
         }catch(Exception e){
             values[employees.size()] = -1;
         }
         try{
-            values[employees.size()+1] = (buffers.get(1).getValue()/(currentBaseProduction*0.01));
+            values[employees.size()+1] = buffers.get(1).getValue()/(currentBaseProduction*0.01);
         }catch(Exception e){
             values[employees.size()+1] = -1;
         }
         try{
-            values[employees.size()+2] = (buffers.get(2).getValue()/10);
+            values[employees.size()+2] = (double) buffers.get(2).getValue() /10;
         }catch(Exception e){
             values[employees.size()+2] = -1;
         }
@@ -359,9 +359,7 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
                 Pair<Integer,Integer> p = ScreenUtils.draw(drawContext, texts, texture, visual.getCenteredX(), visual.getY(),-1,-1,1000,-1,-1,-1, true);
                 visual.setDimensions(p.getLeft(), p.getRight()-3);
             });
-            ScreenEvents.remove(screen).register((currentScreen2)->{
-                EcoConfig.saveSettings();
-            });        
+            ScreenEvents.remove(screen).register((currentScreen2)-> EcoConfig.saveSettings());
     }
     public static ChocolateFactory getInstance() {
         return instance;

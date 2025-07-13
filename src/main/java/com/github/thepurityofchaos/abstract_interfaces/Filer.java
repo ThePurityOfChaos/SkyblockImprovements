@@ -10,7 +10,7 @@ package com.github.thepurityofchaos.abstract_interfaces;
  * 
  */
 public interface Filer {
-    public static void init(){}
-    public static void createFile(){}
-    public static void saveSettings(){}
+    static void init(){}
+    static void createFile(){}
+    static void saveSettings(){}
 }

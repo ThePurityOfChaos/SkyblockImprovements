@@ -1,12 +1,7 @@
 package com.github.thepurityofchaos.features.retexturer;
 
 
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import javax.imageio.ImageIO;
 
@@ -77,7 +72,7 @@ public class Retexturer {
         private int newColor = -16765017;
         private int k = 15;
         
-        private static Retexturer instance = new Retexturer();
+        private static final Retexturer instance = new Retexturer();
 
         public void retextureHelm(ItemStack helmet){
             if(!isEnabled){
@@ -97,7 +92,7 @@ public class Retexturer {
                     return;
                 }
             }else{
-                knownHelms.put(helmetID,new ArrayList<String>());
+                knownHelms.put(helmetID,new ArrayList<>());
             }
             //retexture here
             SkyblockImprovements.push("SBI_Retexturer_Helmet");
@@ -106,7 +101,10 @@ public class Retexturer {
                 //use indexes to minimize issues with animated helmets
                 int index = knownHelms.get(helmetID).indexOf(currentTextureURL);
                 //get texture from URL (high lag)
-                BufferedImage currentTexture = crop(downloadTexture(helmetID, currentTextureURL, index));
+                BufferedImage currentTexture = downloadTexture(helmetID, currentTextureURL, index);
+                if(currentTexture!=null)
+                    currentTexture = crop(currentTexture);
+                else throw new Exception();
                 storeCurrentTexture(helmetID, uncrop(retexture(helmetID,currentTexture, 0)), index);
             }catch(Exception e){
                 e.printStackTrace();
@@ -157,7 +155,6 @@ public class Retexturer {
                 ImageIO.write(currentTexture, "PNG", SkyblockImprovements.FILE_LOCATION.resolve("helms").resolve(helmetID+index+".png").toFile());
             }catch(Exception e){
                 e.printStackTrace();
-                return;
             }
         }
         //Texture Modifiers
@@ -357,8 +354,10 @@ public class Retexturer {
                 int x = screen.width/3+screen.width/12-screen.width/48;
                 int y = screen.height/3+screen.height/48;
                 GUIElement helmRefreshButton = new GUIElement(x, y, 16, 16, button ->{
-                    Retexturer.getInstance().refresh(InventoryProcessor.getHelmet());
-                    return;
+                    try {
+                        Retexturer.getInstance().refresh(InventoryProcessor.getHelmet());
+                        return;
+                    }catch(Exception ignored){}
                 });
                 MenuElement helmResetButton = new MenuElement(x-16, y, 16, 16, button ->{
                     try{
@@ -370,11 +369,11 @@ public class Retexturer {
                     String currentTextureURL = getURL(helmetTextureURL);
                     knownHelms.remove(helmetID);
                     RTRender.getKnownIdentifiers().remove(getURL(helmetTextureURL));
-                    Retexturer.getInstance().storeCurrentTexture(helmetID,uncrop(crop(downloadTexture(helmetID, currentTextureURL, 0))),0);
+                    Retexturer.getInstance().storeCurrentTexture(helmetID,uncrop(crop(Objects.requireNonNull(downloadTexture(helmetID, currentTextureURL, 0)))),0);
                     knownHelms.put(helmetID,new ArrayList<String>());
                     knownHelms.get(helmetID).add(currentTextureURL);
                     RTConfig.saveSettings();
-                    }catch(Exception e){}
+                    }catch(Exception ignored){}
                 });
                 TextFieldElement helmR = new TextFieldElement(x-56, y+16, 32, 16, null);
                 TextFieldElement helmG = new TextFieldElement(x-56, y+32, 32, 16, null);

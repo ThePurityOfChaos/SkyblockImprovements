@@ -43,8 +43,8 @@ public class Refinery extends ErrorableFeature implements ScreenInteractor{
         List<ItemStack> refinables = InventoryProcessor.processSlotsToList(handler);
         if(refinables==null){ return; }
         for(ItemStack item : refinables){
-            Text name = ComponentUtils.getNamefromItemStack(item);
-            List<Text> lore = ComponentUtils.getLorefromItemStack(item);
+            Text name = ComponentUtils.getNameFromItemStack(item);
+            List<Text> lore = ComponentUtils.getLoreFromItemStack(item);
             if(itemRequirements.containsKey(name)||lore==null||lore.isEmpty()||name.getString().contains("???")||Utils.ignorable(name.getString())) continue;
             boolean isItems = false;
             List<Pair<String,Integer>> subItems = new ArrayList<>();

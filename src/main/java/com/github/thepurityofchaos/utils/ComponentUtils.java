@@ -2,10 +2,10 @@ package com.github.thepurityofchaos.utils;
 
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import com.github.thepurityofchaos.utils.screen.GeneratorScreen;
-import com.google.gson.Gson;
 import com.mojang.authlib.properties.Property;
 
 import net.minecraft.component.DataComponentTypes;
@@ -18,16 +18,14 @@ import net.minecraft.util.Pair;
 
 public class ComponentUtils {
 
-    public static final Gson GSON = new Gson();
-
-    public static Text getNamefromItemStack(ItemStack stack){
+    public static Text getNameFromItemStack(ItemStack stack){
         Text name = stack.getCustomName();
         return name==null?Text.of(""):name;
     }
-    public static List<Text> getLorefromItemStack(ItemStack stack){
+    public static List<Text> getLoreFromItemStack(ItemStack stack){
         if(stack== null) return null;
         if(stack.get(DataComponentTypes.LORE)==null) return null;
-        return stack.get(DataComponentTypes.LORE).lines();
+        return Objects.requireNonNull(stack.get(DataComponentTypes.LORE)).lines();
     }
     public static String getTextureFromSkull(ItemStack stack){
         ProfileComponent data = stack.get(DataComponentTypes.PROFILE);
@@ -55,20 +53,20 @@ public class ComponentUtils {
         }
         //remove extraneous \n
         loreBuilder.append(convertTextToString(loreArray.get(loreArray.size()-2)));
-        if(parseLastElement) loreBuilder.append(convertTextToString(loreArray.get(loreArray.size()-1)));
+        if(parseLastElement) loreBuilder.append(convertTextToString(loreArray.getLast()));
 
         return loreBuilder.toString();
     }
     public static Pair<Integer,String> getRarityAndTypeFromLore(LoreComponent lore) {
         List<Text> lines = lore.lines();
         int rarity = 0;
-        String lastLine = (lines.get(lines.size()-1)).getString();
+        String lastLine = (lines.getLast()).getString();
         for(int i=0; i<GeneratorScreen.rarities.length; i++){
             if(lastLine.contains(GeneratorScreen.rarities[i])){
                 rarity = i;
             }
         }
-        String loreResult = convertTextToString(lines.get(lines.size()-1));
+        String loreResult = convertTextToString(lines.getLast());
         loreResult = loreResult.replace(GeneratorScreen.rarities[rarity],"");
         if(loreResult.contains("&k")){
             loreResult =loreResult.replace("&k","");
@@ -77,7 +75,7 @@ public class ComponentUtils {
         }
         loreResult = loreResult.replaceAll("&[A-F0-9a-z]","");
         
-        return new Pair<Integer,String>(rarity,loreResult);
+        return new Pair<>(rarity,loreResult);
     }
 
     public static String convertTextToString(Text text) {
@@ -115,24 +113,24 @@ public class ComponentUtils {
     }
 
     private static String getColorCode(String color) {
-        switch (color) {
-            case "black": return "&0";
-            case "dark_blue": return "&1";
-            case "dark_green": return "&2";
-            case "dark_aqua": return "&3";
-            case "dark_red": return "&4";
-            case "dark_purple": return "&5";
-            case "gold": return "&6";
-            case "gray": return "&7";
-            case "dark_gray": return "&8";
-            case "blue": return "&9";
-            case "green": return "&a";
-            case "aqua": return "&b";
-            case "red": return "&c";
-            case "light_purple": return "&d";
-            case "yellow": return "&e";
-            case "white": return "&f";
-            default: return "";
-        }
+        return switch (color) {
+            case "black" -> "&0";
+            case "dark_blue" -> "&1";
+            case "dark_green" -> "&2";
+            case "dark_aqua" -> "&3";
+            case "dark_red" -> "&4";
+            case "dark_purple" -> "&5";
+            case "gold" -> "&6";
+            case "gray" -> "&7";
+            case "dark_gray" -> "&8";
+            case "blue" -> "&9";
+            case "green" -> "&a";
+            case "aqua" -> "&b";
+            case "red" -> "&c";
+            case "light_purple" -> "&d";
+            case "yellow" -> "&e";
+            case "white" -> "&f";
+            default -> "";
+        };
     }
 }

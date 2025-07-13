@@ -3,7 +3,7 @@
 	"id": "sbimp",
 	"version": "${version}",
 	"name": "Skyblock Improvements",
-	"description": "A Quality-Of-Life Mod for Hypixel Skyblock 1.21",
+	"description": "A Quality-Of-Life Mod for Hypixel Skyblock 1.21.5",
 	"authors": ["ThePurityOfChaos"],
 	"contributors":["ActualAnthonino","CraftedFury","FyreDrakon"],
 	"contact": {
@@ -24,7 +24,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.15.0",
-		"minecraft": "1.21.4",
+		"minecraft": "1.21.5",
 		"java": ">=21",
 		"fabric-api": "*"
 	},

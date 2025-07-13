@@ -40,7 +40,7 @@ public class Bingo extends Feature implements MessageProcessor,ScreenInteractor{
     private boolean showCommunity = false;
     
     private static final String[] incorrectStrings = {"Row","Column", "Diagonal", "Item Transfer","Bingo Shop","Go Back","Close"}; 
-    private static Bingo instance = new Bingo();
+    private static final Bingo instance = new Bingo();
 
     public void init(){
         visual = new MenuElement(0, 0, 128, 32, null);
@@ -63,9 +63,9 @@ public class Bingo extends Feature implements MessageProcessor,ScreenInteractor{
         tasks = new ArrayList<>();
         for(ItemStack item : list){
             if(item==null) continue;
-            String name = ComponentUtils.getNamefromItemStack(item).getString();
+            String name = ComponentUtils.getNameFromItemStack(item).getString();
             if(Utils.containsAny(name, incorrectStrings)) continue;
-            List<Text> lore = ComponentUtils.getLorefromItemStack(item);
+            List<Text> lore = ComponentUtils.getLoreFromItemStack(item);
             if(lore==null||lore.size()==0||lore.get(lore.size()-1).getString().contains("GOAL REACHED")) continue;
             if(!showCommunity&&lore.get(0).getString().contains("Community")) continue;
             MutableText temp = MutableText.of(Text.of(Utils.getColorString(EcoConfig.getColorCode())+name+(lore.get(0).getString().contains("Community")?" ("+Utils.getColorString('8')+"Community"+Utils.getColorString(EcoConfig.getColorCode())+"):":":")).getContent());

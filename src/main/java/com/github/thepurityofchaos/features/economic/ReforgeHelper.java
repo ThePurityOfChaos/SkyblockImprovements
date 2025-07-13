@@ -50,8 +50,8 @@ public class ReforgeHelper extends Feature implements ScreenInteractor {
         visual = new GUIElement(128, 128, 0, 0, null);
     }
     private void getDataFromItemStack(ItemStack item){
-        Text name = ComponentUtils.getNamefromItemStack(item);
-        List<Text> lore = ComponentUtils.getLorefromItemStack(item);
+        Text name = ComponentUtils.getNameFromItemStack(item);
+        List<Text> lore = ComponentUtils.getLoreFromItemStack(item);
         //if the item is 'fake'
         if(lore==null || lore.size()==0){
             return;

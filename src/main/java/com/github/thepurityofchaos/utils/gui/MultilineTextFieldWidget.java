@@ -14,7 +14,7 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 
 public class MultilineTextFieldWidget extends TextFieldWidget {
-    private List<String> lines = new ArrayList<>();
+    private final List<String> lines = new ArrayList<>();
     
     private int lineHeight = 8;
     private int cursorPosition = 0;
@@ -33,16 +33,18 @@ public class MultilineTextFieldWidget extends TextFieldWidget {
         // Render each line of text
         int yOffset = 0;
         for (String line : lines) {
-            context.drawText(client.textRenderer, Utils.getColorString('f')+line, getX(), getY() + yOffset, 1, false);
+            context.drawText(client.textRenderer, Utils.getColorString('f') + line, getX(), getY() + yOffset, 1, false);
             yOffset += lineHeight;
         }
-
         // Render the cursor
         if (this.isFocused()) {
             int cursorX = getX() + client.textRenderer.getWidth(getTextUpToCursor());
             int cursorY = getY() + (this.getCursorLine() * lineHeight);
-            context.fill(cursorX, cursorY, cursorX + 1, cursorY + lineHeight, 0xFFFFFFFF);
+            //blink cursor every half second
+            if(System.currentTimeMillis() % 1000 < 500)
+                context.fill(cursorX, cursorY, cursorX + 1, cursorY + lineHeight, 0xFFFFFFFF);
         }
+
     }
     private int getCursorLine() {
         int position = cursorPosition;

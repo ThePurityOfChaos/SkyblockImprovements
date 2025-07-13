@@ -126,7 +126,7 @@ public class Sacks extends Toggleable implements Filer, ScreenInteractor{
             for(ItemStack item : list){
                 if(item!=null){
                     try{
-                        List<Text> itemLore = ComponentUtils.getLorefromItemStack(item);
+                        List<Text> itemLore = ComponentUtils.getLoreFromItemStack(item);
                         boolean isGem = false;
                         for(Text lore : itemLore){
                             String loreString = lore.getString();
@@ -136,7 +136,7 @@ public class Sacks extends Toggleable implements Filer, ScreenInteractor{
                                 Scanner intParser = new Scanner(Utils.removeCommas(loreString.replace("/"," ")));
                                 while(intParser.hasNext()){
                                     if(intParser.hasNextInt()){
-                                        put(ComponentUtils.getNamefromItemStack(item).getString(),intParser.nextInt());
+                                        put(ComponentUtils.getNameFromItemStack(item).getString(),intParser.nextInt());
                                         continue;
                                     }
                                     intParser.next();
@@ -151,7 +151,7 @@ public class Sacks extends Toggleable implements Filer, ScreenInteractor{
                                 Scanner intParser = new Scanner(Utils.removeCommas(Utils.removeText(loreString.replace(":","").replace("/"," "))));
                                 while(intParser.hasNext()){
                                     if(intParser.hasNextInt()){
-                                        String temp = ComponentUtils.getNamefromItemStack(item).getString();
+                                        String temp = ComponentUtils.getNameFromItemStack(item).getString();
                                         //Gemstones -> Gemstone
                                         put(loreString.split(":")[0].strip()+" "+(temp.endsWith("s")?temp.substring(0, temp.length()-1):temp),intParser.nextInt());
                                         continue;

@@ -53,6 +53,7 @@ public class GUIScreen extends Screen {
     public void close(){
         allElements.forEach((key,element)->{
             element.notDragging();
+            element.setFocused(false);
         });
         client.setScreen(this.parent);
     }

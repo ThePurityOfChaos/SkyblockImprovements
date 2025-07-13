@@ -1,19 +1,15 @@
 package com.github.thepurityofchaos.utils.processors;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.mixin.HandledScreenAccessor;
 import com.github.thepurityofchaos.utils.Utils;
 
-import java.util.AbstractMap;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.component.ComponentMap;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -38,11 +34,10 @@ public class InventoryProcessor {
         return null;
     }
 
-    public static List<ItemStack> getPlayerArmor(){
-        return getPlayerInventory().armor;
-    }
-    public static ItemStack getHelmet(){
-        return getPlayerArmor().get(3);
+
+    public static ItemStack getHelmet() throws NullPointerException{
+
+        return Objects.requireNonNull(getPlayerInventory()).getStack(39);
     }
 
     public static List<ItemStack> processSlotsToList(GenericContainerScreenHandler handler){

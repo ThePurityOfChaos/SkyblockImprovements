@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +27,7 @@ import net.minecraft.util.Identifier;
 
 /**
  * Rendering component for the Retexturer.
- * <p> {@link #getModifiedRenderLayer(net.minecraft.block.SkullBlock.SkullType, GameProfile)}: Returns the retextured RenderLayer, if applicable. Otherwise, returns what it would without this.
+ * <p> : Returns the retextured RenderLayer, if applicable. Otherwise, returns what it would without this.
  * 
  * <p> {@link #getKnownIdentifiers()}: Gets the list of known Identifiers.
  * 
@@ -69,9 +70,10 @@ public class RTRender {
     }
     public static Identifier loadTexture(Path path, String name){
         try{
+            Supplier<String> nameSupplier = () -> name;
             FileInputStream input = new FileInputStream(path.toFile());
             NativeImage img = NativeImage.read(input);
-            NativeImageBackedTexture texture = new NativeImageBackedTexture(img);
+            NativeImageBackedTexture texture = new NativeImageBackedTexture(nameSupplier,img);
             Identifier tId = Identifier.of("sbimp:"+name);
             MinecraftClient.getInstance().getTextureManager().registerTexture(tId, texture);
             return tId;

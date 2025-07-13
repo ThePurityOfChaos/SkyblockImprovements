@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.thepurityofchaos.abstract_interfaces.Filer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,7 @@ import com.google.gson.reflect.TypeToken;
  * 
  * <p> {@link #saveSettings()}: Writes back settings to rt.json.
  */
-public class RTConfig {
+public class RTConfig implements Filer {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
     public static void init() {
         createFile();

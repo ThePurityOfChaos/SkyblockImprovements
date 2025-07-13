@@ -59,7 +59,7 @@ public class SkyblockImprovements implements ClientModInitializer {
 	public void onInitializeClient() {
 		LOGGER.info("Entered SkyblockImprovements");
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
-		
+		System.out.println("Test");
 		ItemPickupLog.getInstance().init();
 		PackSwapper.getInstance().init();
 		ScreenListener.init();
@@ -68,7 +68,6 @@ public class SkyblockImprovements implements ClientModInitializer {
 		//this entrypoint is necessary for initializing features that require the player to be in a world
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client)->{
 			ChatColorProcessor.init();
-			Search.getInstance().init();
 			RTRender.setKnownIdentifiers();
 			GAME_PROFILER = Profilers.get();
 		});

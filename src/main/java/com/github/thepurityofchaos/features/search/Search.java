@@ -11,6 +11,7 @@ import net.minecraft.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,6 +55,7 @@ public class Search extends Feature {
             }
         }
     }
+
     private String getColor(String term){
         Matcher matcher = Pattern.compile("&[0-9a-fA-F]").matcher(term);
         if(matcher.find()){
@@ -61,11 +63,13 @@ public class Search extends Feature {
         }
         return "&a";
     }
+
     private String stripColor(String term){
         return term.replaceAll("&[0-9a-fA-F]","");
     }
+
     private boolean contains(ItemStack item, String query){
-        List<Text> lore = ComponentUtils.getLorefromItemStack(item);
+        List<Text> lore = ComponentUtils.getLoreFromItemStack(item);
         if(lore==null) return false;
         for(Text text: lore){
             if(text.getString().toLowerCase().contains(query)){
@@ -90,20 +94,19 @@ public class Search extends Feature {
         return instance;
     }
     public void interact(Screen screen){
-        Screens.getButtons(screen).add((TextFieldElement)Search.getInstance().getFeatureVisual());
+        Screens.getButtons(screen).add(Search.getInstance().getFeatureVisual());
         Search.getInstance().getFeatureVisual().setPosition(screen.width/2-64, screen.height/4);
         ScreenEvents.afterRender(screen).register((currentScreen, drawContext, mouseX, mouseY, delta) -> {
             String newQuery = ((TextFieldElement)Search.getInstance().getFeatureVisual()).getText();
             if(Search.getInstance().getFeatureVisual().isFocused()){screen.setFocused(Search.getInstance().getFeatureVisual());}else{screen.setFocused(null);}
             //refresh when a change occurs OR every second
-            if(currentQuery!=newQuery || curr>=refreshRate){
+            if(!Objects.equals(currentQuery, newQuery) || curr>=refreshRate){
                 highlightedItems.clear();
                 curr=0;
                 searchInventory(newQuery, ((GenericContainerScreen)screen).getScreenHandler().slots);
             }
             curr++;
             for(Pair<Slot,Character> item : highlightedItems){
-                //backgroundWidth/backgroundHeight 176 / 166 -> handledscreen, not sure how to get it directly currently. THIS IS TEMPORARY.
                 int x = item.getLeft().x + ((HandledScreenAccessor)screen).getX();
                 int y = item.getLeft().y + ((HandledScreenAccessor)screen).getY();
                 drawContext.fill(x, y, x + 16, y + 16, 1000, ColorUtils.getColorFromCode(item.getRight()));    

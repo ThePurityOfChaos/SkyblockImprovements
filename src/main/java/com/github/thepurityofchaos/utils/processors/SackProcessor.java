@@ -18,7 +18,7 @@ public class SackProcessor implements MessageProcessor{
     }
     private static void parseHoverEvent(HoverEvent e){
         if(e.getAction()==HoverEvent.Action.SHOW_TEXT){
-            Text tooltip = e.getValue(HoverEvent.Action.SHOW_TEXT);
+            Text tooltip = ((HoverEvent.ShowText)e).value();
             String temp = "";
             for(Text sibling : tooltip.getSiblings()){
                 temp+=sibling.getString();

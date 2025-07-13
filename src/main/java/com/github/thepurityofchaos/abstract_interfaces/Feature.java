@@ -7,10 +7,10 @@ import net.minecraft.text.Text;
 /**
  * 
  * Implementing this Interface means that the class is a feature with a visual element, and can also be toggled.
+ *
+ * <p> {@link #visual}: The GUIElement associated with this Feature.
  * 
- * <p> {@link #xVisual}: The GUIElement associated with this Feature.
- * 
- * <p> {@link #isEnabled}: Whether or not this Feature is enabled.
+ * <p> {@link #isEnabled}: Whether this Feature is or is not enabled.
  * 
  * <p> {@link #getFeatureVisual}: Returns visual component.
  */

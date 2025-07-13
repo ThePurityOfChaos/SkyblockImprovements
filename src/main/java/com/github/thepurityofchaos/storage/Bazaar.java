@@ -87,14 +87,14 @@ public class Bazaar implements Filer, ScreenInteractor {
             for(ItemStack item : list){
                 if(item!=null){
                     try{
-                        List<Text> itemLore = ComponentUtils.getLorefromItemStack(item);
+                        List<Text> itemLore = ComponentUtils.getLoreFromItemStack(item);
                         for(Text lore : itemLore){
                             String loreString = lore.getString();
                             if(loreString.contains("Buy price:")){
                                 Scanner doubleParser = new Scanner(Utils.removeCommas(loreString));
                                 while(doubleParser.hasNext()){
                                     if(doubleParser.hasNextDouble()){
-                                        putInBuy(Utils.stripSpecial(ComponentUtils.getNamefromItemStack(item).getString()).strip(),doubleParser.nextDouble());
+                                        putInBuy(Utils.stripSpecial(ComponentUtils.getNameFromItemStack(item).getString()).strip(),doubleParser.nextDouble());
                                         continue;
                                     }
                                     doubleParser.next();
@@ -107,7 +107,7 @@ public class Bazaar implements Filer, ScreenInteractor {
                                 Scanner doubleParser = new Scanner(Utils.removeCommas(loreString));
                                 while(doubleParser.hasNext()){
                                     if(doubleParser.hasNextDouble()){
-                                        putInSell(Utils.stripSpecial(ComponentUtils.getNamefromItemStack(item).getString()).strip(),doubleParser.nextDouble());
+                                        putInSell(Utils.stripSpecial(ComponentUtils.getNameFromItemStack(item).getString()).strip(),doubleParser.nextDouble());
                                         continue;
                                     }
                                     doubleParser.next();
@@ -119,7 +119,7 @@ public class Bazaar implements Filer, ScreenInteractor {
                                 Scanner doubleParser = new Scanner(Utils.removeCommas(loreString));
                                 while(doubleParser.hasNext()){
                                     if(doubleParser.hasNextDouble()){
-                                        putIn7dAvg(Utils.stripSpecial(ComponentUtils.getNamefromItemStack(item).getString()).strip(),doubleParser.nextDouble());
+                                        putIn7dAvg(Utils.stripSpecial(ComponentUtils.getNameFromItemStack(item).getString()).strip(),doubleParser.nextDouble());
                                         continue;
                                     }
                                     doubleParser.next();

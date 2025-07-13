@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.thepurityofchaos.features.search.Search;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,12 +74,14 @@ public class EcoConfig implements Filer {
         ChocolateFactory cf = ChocolateFactory.getInstance();
         ReforgeHelper rh = ReforgeHelper.getInstance();
         Refinery rf = Refinery.getInstance();
+        Search sc = Search.getInstance();
         bf.init();
         gp.init();
         bng.init();
         cf.init();
         rh.init();
         rf.init();
+        sc.init();
         try{
             //create parser based on the client
             BufferedReader reader = Files.newBufferedReader(SkyblockImprovements.FILE_LOCATION.resolve("eco.json"));

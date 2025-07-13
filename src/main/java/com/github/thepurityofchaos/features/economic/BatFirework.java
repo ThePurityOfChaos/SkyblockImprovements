@@ -26,7 +26,7 @@ public class BatFirework extends Feature implements MessageProcessor {
     //INCLUDED IN: None
     private double currentProfit = 0.0;
     
-    private static BatFirework instance = new BatFirework();
+    private static final BatFirework instance = new BatFirework();
 
     public void init(){
        visual = new MenuElement(64, 32, 128, 32, null);

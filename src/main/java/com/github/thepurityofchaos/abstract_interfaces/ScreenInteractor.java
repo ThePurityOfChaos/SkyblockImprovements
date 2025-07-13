@@ -7,5 +7,5 @@ import net.minecraft.client.gui.screen.Screen;
  * <p> {@link #interact(Screen screen)}: Interacts in some way with the inputted Screen, most commonly but not limited to displaying something.
  */
 public interface ScreenInteractor {
-    public static void interact(Screen screen){}
+    static void interact(Screen screen){}
 }
