@@ -19,7 +19,7 @@ import net.minecraft.text.Text;
  * <p> {@link #getElement(String)}: Gets the element with that name.
  * <p> {@link #init()}: Initializes the Screen with a close button.
  * <p> {@link #close()}: Closes the screen and opens its parent.
- * <p> {@link #mouseDragged(double, double, int, double, double)}: Allows for moving elements around.
+ * <p> {@link #mouseDragged(Click, double, double)}: Allows for moving elements around.
  * <p> {@link #getParent()}: Returns the Screen's parent.
  */
 @Environment(EnvType.CLIENT)

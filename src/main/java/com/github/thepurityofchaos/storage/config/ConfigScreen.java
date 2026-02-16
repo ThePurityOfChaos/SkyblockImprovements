@@ -21,7 +21,7 @@ import net.minecraft.text.Text;
 /**
  * The Config Screen allows the player to modify the display location of any feature added to this screen.
  * 
- * <p> {@link #init(Nullable Screen)}: Creates the screen with every included feature's visual component. 
+ * <p> {@link #init(Screen)}: Creates the screen with every included feature's visual component.
  * 
  * <p> {@link #modifyElementLocation(String element, int[] location)} : Sets the element's position to the first two integers in location. Expects an int array of size 2.
  */

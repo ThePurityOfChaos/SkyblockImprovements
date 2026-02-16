@@ -25,7 +25,7 @@ import net.minecraft.text.Text;
  * 
  * <p> {@link #useBuy()}: Whether or not to use the Instant Buy (usually higher) price or the Instant Sell price.
  * 
- * <p> {@link #toggleBuy()}: Toggles {@value #useBuy}.
+ * <p> {@link #toggleBuy()}: Toggles useBuy.
  * 
  * <p> {@link #getErrors()}: Returns the list of missing item values, which can be found in the Bazaar.
  * 
