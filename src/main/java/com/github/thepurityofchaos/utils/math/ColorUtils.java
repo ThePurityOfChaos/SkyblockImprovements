@@ -82,4 +82,13 @@ public class ColorUtils {
         }
 
     }
+
+    public static int getNegative(int color) {
+        int[] colors = intToRGBA(color);
+        int[] negative = {0,0,0,0};
+        for(int n=0; n<4; n++){
+            negative[n]=255-colors[n];
+        }
+        return rGBAToInt(negative[0],negative[1],negative[2],negative[3]);
+    }
 }

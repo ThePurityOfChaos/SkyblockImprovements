@@ -29,7 +29,7 @@ public class BatFirework extends Feature implements MessageProcessor {
     private static final BatFirework instance = new BatFirework();
 
     public void init(){
-       visual = new MenuElement(64, 32, 128, 32, null);
+       visual = new MenuElement(64, 32, 128, 32, null, null);
        visual.setMessage("Bat Firework Profit");
     }
 

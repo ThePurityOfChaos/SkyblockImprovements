@@ -1,15 +1,18 @@
 package com.github.thepurityofchaos.utils.gui;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 
 public class TextFieldElement extends GUIElement {
     protected TextFieldWidget textField = null;
     private PressAction onPress = null;
     public TextFieldElement(int defaultPosX, int defaultPosY, int sizeX, int sizeY, Text message) {
-        super(defaultPosX,defaultPosY,sizeX,sizeY,button->{});
+        super(defaultPosX,defaultPosY,sizeX,sizeY,button->{}, null);
         MinecraftClient client = MinecraftClient.getInstance();
         textField = new TextFieldWidget(client.textRenderer, sizeX, sizeY, message);
         textField.setPosition(defaultPosX,defaultPosY);
@@ -21,8 +24,8 @@ public class TextFieldElement extends GUIElement {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button){
-        if(this.textField.isMouseOver(mouseX, mouseY)){
+    public boolean mouseClicked(Click click, boolean doubled){
+        if(this.textField.isMouseOver(click.x(), click.y())){
             this.setFocused(true);
             this.textField.setFocused(true);
             if(this.onPress!=null){
@@ -38,12 +41,12 @@ public class TextFieldElement extends GUIElement {
         return false;
     }
     @Override
-    public boolean charTyped(char chr, int keyCode){
-        return this.textField.charTyped(chr, keyCode);
+    public boolean charTyped(CharInput input){
+        return this.textField.charTyped(input);
     }
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers){
-        return this.textField.keyPressed(keyCode, scanCode, modifiers);
+    public boolean keyPressed(KeyInput input){
+        return this.textField.keyPressed(input);
     }
     public String getText(){
         return this.textField.getText();

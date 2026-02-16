@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 
 public class MenuElement extends GUIElement {
     private boolean renderMenu = false;
@@ -13,13 +14,13 @@ public class MenuElement extends GUIElement {
     private boolean goUp = false;
     private List<GUIElement> subElements = null;
     private GUIElement toggleElement = null;
-    public MenuElement(int defaultPosX, int defaultPosY, int sizeX, int sizeY, PressAction action) {
-        super(defaultPosX, defaultPosY, sizeX, sizeY, action);
+    public MenuElement(int defaultPosX, int defaultPosY, int sizeX, int sizeY, PressAction leftClickAction, @Nullable PressAction rightClickAction) {
+        super(defaultPosX, defaultPosY, sizeX, sizeY, leftClickAction, rightClickAction);
         toggleElement = new GUIElement(defaultPosX+sizeX, defaultPosY, 12, 12, button -> {
                 renderMenu = !renderMenu;
                 toggleElement.setMessage(renderMenu?goUp?Text.of("▲"):Text.of("▼"):Text.of("▶"));
                 toggleElement.setTooltip(renderMenu?Text.of("Close Settings"):Text.of("Open Settings"));
-            }
+            }, null
         );
         toggleElement.setMessage(Text.of("▶"));
         this.subElements = new ArrayList<>();

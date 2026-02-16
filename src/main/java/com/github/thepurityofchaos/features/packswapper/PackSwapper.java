@@ -83,12 +83,12 @@ public class PackSwapper extends Feature {
     //INCLUDED IN: PSConfig -> allRegions
     private Map<String,Map<String,Map<String,Boolean>>> packAreaRegionToggles = null;
     
-    private static PackSwapper instance = new PackSwapper();
+    private static final PackSwapper instance = new PackSwapper();
     
     //defines ALL default regions
     private Map<String,List<String>> allDefaultRegions = new HashMap<>();
 
-    public void init(){visual = new MenuElement(64,96,128,32,null);}
+    public void init(){visual = new MenuElement(64,96,128,32,null, null);}
     
     public void manipulatePacks(String eArea, String eRegion){
         String sArea = Utils.clearArea(eArea);
@@ -97,9 +97,7 @@ public class PackSwapper extends Feature {
             if(needsUpdate){
                 defineDefaultRegions();
                 Map<String,Map<String,Map<String,Boolean>>> newMap = new HashMap<>();
-                getFullRegionMap().forEach((k,v)->{
-                    newMap.put(k,loadDefaultAreas(v));
-                });
+                getFullRegionMap().forEach((k,v)-> newMap.put(k,loadDefaultAreas(v)));
                 loadPackAreaRegionToggles(newMap);
                 PSConfig.saveSettings(); 
                 needsUpdate = false;
@@ -129,7 +127,7 @@ public class PackSwapper extends Feature {
 
             if(areaRegionToggles.containsKey(sArea)){
                 //full area check
-                if(areaRegionToggles.get(sArea).get("").booleanValue()){
+                if(areaRegionToggles.get(sArea).get("")){
                     modifiedPacks.add(pack.getId());
                     continue;
                 }
@@ -139,7 +137,7 @@ public class PackSwapper extends Feature {
                 }
                 //if not, go to specific regions
                 if(areaRegionToggles.get(sArea).containsKey(sRegion)){
-                    if(areaRegionToggles.get(sArea).get(sRegion).booleanValue()){
+                    if(areaRegionToggles.get(sArea).get(sRegion)){
                         modifiedPacks.add(pack.getId());
                     }else{
                         packsToRemove.add(pack.getId());
@@ -165,6 +163,7 @@ public class PackSwapper extends Feature {
         if(hasChanged){
             if(sendDebugInfo){
                 MinecraftClient client = MinecraftClient.getInstance();
+                assert client.player != null;
                 client.player.sendMessage(Text.of("§"+PackSwapper.getInstance().getRegionColor()+"[§7SkyblockImprovements§"+PackSwapper.getInstance().getRegionColor()+"]"+" §7Region change detected."),false);
             }
             MinecraftClient.getInstance().reloadResources();
@@ -182,7 +181,7 @@ public class PackSwapper extends Feature {
         if(!sArea.equals("NoAreaFound!")&&(!sArea.equals(previousArea)||!sRegion.equals(previousRegion))){
             try{
                 manipulatePacks(sArea,sRegion);
-            }catch(Exception e){}
+            }catch(Exception ignored){}
         }
         previousArea = sArea;
         previousRegion = sRegion;
@@ -205,7 +204,7 @@ public class PackSwapper extends Feature {
      */
     public void toggleRegion(String pack, String area, String region){
         Map<String,Boolean> areaMap = packAreaRegionToggles.get(pack).get(area);
-        areaMap.put(region,(Boolean)!areaMap.get(region).booleanValue());
+        areaMap.put(region, !areaMap.get(region));
     }
     public void loadPackAreaRegionToggles(Map<String,Map<String,Map<String,Boolean>>> map){
         packAreaRegionToggles = map;
@@ -214,7 +213,7 @@ public class PackSwapper extends Feature {
     public Map<String,Map<String,Boolean>> loadDefaultAreas(Map<String,Map<String,Boolean>> areasForThisPack){
         allDefaultRegions.forEach((k,v) -> {
             if(!areasForThisPack.containsKey(k))
-                areasForThisPack.put(k,loadDefaultRegions(k,new HashMap<String,Boolean>()));
+                areasForThisPack.put(k,loadDefaultRegions(k, new HashMap<>()));
             else{
                 areasForThisPack.put(k,loadDefaultRegions(k,areasForThisPack.get(k)));
             }
@@ -235,9 +234,7 @@ public class PackSwapper extends Feature {
         ResourcePackManager manager = MinecraftClient.getInstance().getResourcePackManager();
         Collection<ResourcePackProfile> packs = manager.getProfiles();
         List<String> names = new ArrayList<>();
-        packs.forEach(pack ->{
-            names.add(pack.getId());
-        });
+        packs.forEach(pack -> names.add(pack.getId()));
         Map<String,Map<String,Map<String,Boolean>>> newMap = new HashMap<>();
         packAreaRegionToggles.forEach((pack,map) ->{
             if(names.contains(pack))
@@ -248,7 +245,7 @@ public class PackSwapper extends Feature {
 
     public Map<String,Map<String,Map<String,Boolean>>> getFullRegionMap(){
         //prevents issues when unloaded
-        if(MinecraftClient.getInstance().getResourcePackManager().getProfiles().size()!=0)
+        if(!MinecraftClient.getInstance().getResourcePackManager().getProfiles().isEmpty())
             removeMissing();
         return packAreaRegionToggles;
 
@@ -284,7 +281,7 @@ public class PackSwapper extends Feature {
         return instance;
     }
 
-    /*
+
     public void DEBUG_ADDREGION(String area, String region){
         if(!area.equals("§cNoAreaFound!")){
             if(!allDefaultRegions.containsKey(area)){
@@ -297,5 +294,5 @@ public class PackSwapper extends Feature {
     }
     public Map<String,List<String>> DEBUG_GETALLREGIONS(){
         return allDefaultRegions;
-    }*/
+    }
 }

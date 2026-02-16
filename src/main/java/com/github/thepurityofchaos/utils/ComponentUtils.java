@@ -31,7 +31,7 @@ public class ComponentUtils {
         ProfileComponent data = stack.get(DataComponentTypes.PROFILE);
         if(data==null) return "";
         try{
-        Property p = data.properties().get("textures").iterator().next();
+        Property p = data.getGameProfile().properties().get("textures").iterator().next();
         return p.value();
         }catch(Exception e){
         return "";
@@ -40,7 +40,7 @@ public class ComponentUtils {
     public static UUID getUUIDFromSkull(ItemStack stack){
         ProfileComponent data = stack.get(DataComponentTypes.PROFILE);
         if(data==null) return null;
-        return data.gameProfile().getId();
+        return data.getGameProfile().id();
     }
     
     public static String getStringFromLore(LoreComponent lore, boolean parseLastElement) {

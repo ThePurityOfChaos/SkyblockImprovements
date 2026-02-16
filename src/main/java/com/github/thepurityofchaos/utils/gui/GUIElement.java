@@ -1,17 +1,25 @@
 package com.github.thepurityofchaos.utils.gui;
 
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.widget.*;
+import net.minecraft.client.input.AbstractInput;
 
+import net.minecraft.client.input.MouseInput;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
+
+import java.awt.*;
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * One of the main elements for the system.
- * <p> {@link #GUIElement(int, int, int, int, PressAction)}: Creates a new GUIElement with a default position x,y, a size x,y, and a PressAction. If PressAction is null, pressing will drag the button.
- * <p> {@link #onPress()}: Performs the press action.
- * <p> {@link #onRelease(double, double)}: Stops dragging.
+ * <p> {@link #GUIElement(int, int, int, int, PressAction, PressAction)}: Creates a new GUIElement with a default position x,y, a size x,y, and a PressAction. If PressAction is null, pressing will drag the button.
+ * <p> {@link #onPress(AbstractInput)}: Performs the press action.
+ * <p> {@link #mouseReleased(Click)}: Stops dragging.
  * <p> {@link #getCenteredX()}: Returns the x position of the center of the button.
  * <p> {@link #getCenteredY()}: Returns the y position of the center of the button.
  * <p> {@link #setTooltip(Text)}: Sets the current tooltip to the text.
@@ -20,37 +28,31 @@ import net.minecraft.text.Text;
  * <p> {@link #notDragging()}: isDragging = false.
  */
 public class GUIElement extends ButtonWidget {
-    private int defaultPosX;
-    private int defaultPosY;
-    private boolean isDragging = false;
-    private boolean defaultBehavior = false;
+
+    private final int defaultPosX, defaultPosY;
+    private boolean isDragging, defaultBehavior = false;
+    private final AtomicReference<PressAction> leftClickAction = new AtomicReference<>(b -> {});
     private final PressAction rightClickAction;
 
-    public GUIElement(int defaultPosX, int defaultPosY, int sizeX, int sizeY, ButtonWidget.PressAction onPress){
-        super(defaultPosX, defaultPosY, sizeX, sizeY, Text.of(""), onPress==null?button -> {}:onPress, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
+    public GUIElement(int defaultPosX, int defaultPosY, int sizeX, int sizeY, ButtonWidget.PressAction leftClickAction, @Nullable ButtonWidget.PressAction rightClickAction){
+        super(defaultPosX, defaultPosY, sizeX, sizeY, Text.of(""), button -> {
+            GUIElement me = (GUIElement) button;
+            if(me.defaultBehavior) me.isDragging = !me.isDragging;
+            me.leftClickAction.get().onPress(me);
+        }, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
         this.defaultPosX = defaultPosX;
         this.defaultPosY = defaultPosY;
-        if(onPress == null){
-            defaultBehavior = true;
-        }
-        rightClickAction = null;
-    }
-    public GUIElement(int defaultPosX, int defaultPosY, int sizeX, int sizeY, ButtonWidget.PressAction onPress, ButtonWidget.PressAction rightClickAction){
-        super(defaultPosX, defaultPosY, sizeX, sizeY, Text.of(""), onPress==null?button -> {}:onPress, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
-        this.defaultPosX = defaultPosX;
-        this.defaultPosY = defaultPosY;
-        if(onPress == null){
-            defaultBehavior = true;
-        }
+        defaultBehavior = (leftClickAction==null);
+        if(leftClickAction!=null) this.leftClickAction.set(leftClickAction);
         this.rightClickAction = rightClickAction;
     }
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (this.isValidClickButton(button) && this.isMouseOver(mouseX, mouseY)) {
+    public boolean mouseClicked(Click click, boolean doubled) {
+        if (this.isValidClickButton(click.buttonInfo()) && this.isMouseOver(click.x(), click.y())) {
             if (this.active) {
-                if (button == 0) { // Left click
-                    this.onPress();
-                } else if (button == 1) { // Right click
+                if (click.button() == 0) { // Left click
+                    this.onPress(click);
+                } else if (click.button() == 1) { // Right click
                     this.onRightClick();
                 }
                 return true;
@@ -59,31 +61,24 @@ public class GUIElement extends ButtonWidget {
         return false;
     }
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button){
-        if (this.isValidClickButton(button)) {
+    public boolean mouseReleased(Click click){
+        if (this.isValidClickButton(click.buttonInfo())) {
             this.isDragging = false;
-            this.onRelease(mouseX, mouseY);
+            this.onRelease(click);
             return true;
          } else {
             return false;
          }
     }
     @Override
-    protected boolean isValidClickButton(int button){
-        return button == 0 || button == 1;
+    protected boolean isValidClickButton(MouseInput input){
+        return input.button() == 0 || input.button() == 1;
     }
 
     protected void onRightClick() {
         if (this.rightClickAction != null) {
             this.rightClickAction.onPress(this);
-        }else{ onPress(); }
-    }
-    @Override
-    public void onPress(){
-        if(defaultBehavior){
-            this.isDragging = !this.isDragging;
-        }
-        super.onPress();
+        }else{ onPress(null); }
     }
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta){
         if(this.isDragging){
@@ -115,5 +110,11 @@ public class GUIElement extends ButtonWidget {
     }
     public void setMessage(String s){
         this.setMessage(Text.of(s));
+    }
+    public void setOnPress(PressAction action) {
+        leftClickAction.set(action!=null ? action : button -> {});
+    }
+    public void changeDefaultBehavior(boolean newBehavior){
+        defaultBehavior = newBehavior;
     }
 }

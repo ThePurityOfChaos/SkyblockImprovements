@@ -47,7 +47,7 @@ public class ReforgeHelper extends Feature implements ScreenInteractor {
         }
     }
     public void init() {
-        visual = new GUIElement(128, 128, 0, 0, null);
+        visual = new GUIElement(128, 128, 0, 0, null, null);
     }
     private void getDataFromItemStack(ItemStack item){
         Text name = ComponentUtils.getNameFromItemStack(item);

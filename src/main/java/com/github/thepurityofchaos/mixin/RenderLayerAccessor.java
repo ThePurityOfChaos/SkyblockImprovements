@@ -11,8 +11,8 @@ import net.minecraft.util.Identifier;
 @Mixin(RenderLayer.class)
 public interface RenderLayerAccessor {
     
-    @Accessor("GUI_TEXTURED")
+    @Accessor("ENTITY_CUTOUT")
     static Function<Identifier,RenderLayer> getGuiTexturedFunction(){
-        throw new AssertionError("GUI_TEXTURED not found, or something. -SBIMP");
+        throw new AssertionError("Texture not found, or something. -SBIMP");
     }
 }

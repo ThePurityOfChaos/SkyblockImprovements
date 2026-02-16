@@ -55,7 +55,7 @@ public class ScoreboardProcessor {
             timer--;
             if(timer>0) return;
             MinecraftClient client = MinecraftClient.getInstance();
-            Scoreboard scoreboard = client.player.getScoreboard();
+            Scoreboard scoreboard = client.world.getScoreboard();
             List<Text> newScoreboard = new ArrayList<>();
             //we're only looking for objectives in the sidebar
             ScoreboardObjective sidebar = scoreboard.getObjectiveForSlot(ScoreboardDisplaySlot.SIDEBAR);

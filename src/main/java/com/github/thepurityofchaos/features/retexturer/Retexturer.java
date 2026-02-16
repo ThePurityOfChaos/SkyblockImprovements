@@ -358,7 +358,7 @@ public class Retexturer {
                         Retexturer.getInstance().refresh(InventoryProcessor.getHelmet());
                         return;
                     }catch(Exception ignored){}
-                });
+                }, null);
                 MenuElement helmResetButton = new MenuElement(x-16, y, 16, 16, button ->{
                     try{
                     ItemStack helmet = InventoryProcessor.getHelmet();
@@ -374,7 +374,7 @@ public class Retexturer {
                     knownHelms.get(helmetID).add(currentTextureURL);
                     RTConfig.saveSettings();
                     }catch(Exception ignored){}
-                });
+                }, null);
                 TextFieldElement helmR = new TextFieldElement(x-56, y+16, 32, 16, null);
                 TextFieldElement helmG = new TextFieldElement(x-56, y+32, 32, 16, null);
                 TextFieldElement helmB = new TextFieldElement(x-56, y+48, 32, 16, null);

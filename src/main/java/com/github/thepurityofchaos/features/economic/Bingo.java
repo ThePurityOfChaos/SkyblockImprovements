@@ -43,7 +43,7 @@ public class Bingo extends Feature implements MessageProcessor,ScreenInteractor{
     private static final Bingo instance = new Bingo();
 
     public void init(){
-        visual = new MenuElement(0, 0, 128, 32, null);
+        visual = new MenuElement(0, 0, 128, 32, null, null);
         visual.setMessage("Bingo Tasks");
     }
 

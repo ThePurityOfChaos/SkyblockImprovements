@@ -1,19 +1,23 @@
 {
-	"required": true,
-	"package": "com.github.thepurityofchaos.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"CommandsMetaMixin",
-		"TickandRender",
-		"ChatListenerMixin",
-		"SkullRendererMixin",
-		"HandledScreenMixin",
-		"ChatScreenAccessor",
-		"TabListAccessor",
-		"HandledScreenAccessor",
-		"RenderLayerAccessor"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	}
+  "required": true,
+  "package": "com.github.thepurityofchaos.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ChatListenerMixin",
+    "ChatScreenAccessor",
+    "CommandsMetaMixin",
+    "HandledScreenAccessor",
+    "HandledScreenMixin",
+    "HeadFeatureRendererAccessor",
+    "RenderLayerAccessor",
+    "PlayerSkinCacheMixin",
+    "TabListAccessor",
+    "TickAndRender"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "PlayerSkinCacheMixin"
+  ]
 }

@@ -2,6 +2,7 @@ package com.github.thepurityofchaos.features.search;
 
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.item.ItemStack;
@@ -109,7 +110,7 @@ public class Search extends Feature {
             for(Pair<Slot,Character> item : highlightedItems){
                 int x = item.getLeft().x + ((HandledScreenAccessor)screen).getX();
                 int y = item.getLeft().y + ((HandledScreenAccessor)screen).getY();
-                drawContext.fill(x, y, x + 16, y + 16, 1000, ColorUtils.getColorFromCode(item.getRight()));    
+                drawContext.fill(RenderPipelines.GUI, x, y, x + 16, y + 16, ColorUtils.getColorFromCode(item.getRight()));
             }
             currentQuery = newQuery;
         });

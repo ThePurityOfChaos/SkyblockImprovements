@@ -21,7 +21,7 @@ public class SBIButton implements ScreenInteractor  {
                 configScreen.init(currentScreen);
                 MinecraftClient client = MinecraftClient.getInstance();
                 client.setScreen(configScreen);
-            });
+            }, null);
             ConfigButton.setMessage(Text.of(Utils.getColorString('f')+"Open Config"));
             ConfigButton.setTooltip(Text.of(Utils.getColorString('f')+"§fOpen the Skyblock Improvements Config. \n§6/sbi§f does this too!"));
             Screens.getButtons(currentScreen).add(ConfigButton);

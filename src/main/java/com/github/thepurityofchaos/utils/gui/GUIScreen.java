@@ -4,6 +4,7 @@ package com.github.thepurityofchaos.utils.gui;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraft.client.gui.Click;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -42,7 +43,7 @@ public class GUIScreen extends Screen {
     @Override
     public void init(){
         //Close Button
-        this.addElement("CloseButton",new GUIElement(this.width/4,this.height-32,80,32,button ->{this.close();}));
+        this.addElement("CloseButton",new GUIElement(this.width/4,this.height-32,80,32,button ->{this.close();}, null));
         this.getElement("CloseButton").setMessage(Text.of("Go Back"));
         allElements.forEach((key,element)->{
             addDrawableChild(element);
@@ -58,13 +59,13 @@ public class GUIScreen extends Screen {
         client.setScreen(this.parent);
     }
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY){
+    public boolean mouseDragged(Click click, double offsetX, double offsetY){
         allElements.forEach((key,element) -> {
             if(element.isDragging()){
-                element.setPosition((int)(mouseX - element.getWidth()/2), (int)(mouseY - element.getHeight()/2));
+                element.setPosition((int)(click.x() - element.getWidth()/2), (int)(click.y() - element.getHeight()/2));
             }
         });
-        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        return super.mouseDragged(click, offsetX, offsetY);
     }
     public Screen getParent(){
         return parent;

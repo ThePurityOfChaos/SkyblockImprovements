@@ -11,6 +11,7 @@ import net.minecraft.client.gui.Selectable;
 public class MenuScreen extends GUIScreen {
     protected Map<String,MenuElement> menuElements = new HashMap<String,MenuElement>();
     private boolean centerMenus = false;
+    protected boolean initialized = false;
     protected <T extends Element & Drawable & Selectable> void addDrawableChildren(T drawableElement){
         if(drawableElement instanceof MenuElement){
             MenuElement mElement = (MenuElement) drawableElement;

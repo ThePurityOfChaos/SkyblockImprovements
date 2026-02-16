@@ -151,6 +151,6 @@ public class Refinery extends ErrorableFeature implements ScreenInteractor{
 
     @Override
     public void init() {
-        visual = new MenuElement(128,128,96,32,null);
+        visual = new MenuElement(128,128,96,32,null, null);
     }
 }

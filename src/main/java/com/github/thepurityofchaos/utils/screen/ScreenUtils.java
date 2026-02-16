@@ -2,6 +2,8 @@ package com.github.thepurityofchaos.utils.screen;
 
 import java.util.List;
 
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import net.minecraft.client.gl.RenderPipelines;
 import org.jetbrains.annotations.Nullable;
 import com.github.thepurityofchaos.mixin.RenderLayerAccessor;
 import com.github.thepurityofchaos.utils.math.ColorUtils;
@@ -89,11 +91,11 @@ public class ScreenUtils {
         if(lineEndColor == -1){
             lineEndColor = ColorUtils.rGBAToInt(40,0,127,80);
         }
-        drawHorizontalLine(context, i, j - 1, k, z, baseColor);
-        drawHorizontalLine(context, i, j + l, k, z, baseColor);
+        drawHorizontalLine(context, i, j - 1, k, baseColor);
+        drawHorizontalLine(context, i, j + l, k, baseColor);
         if(texture!=null){
             
-            context.drawTexture(RenderLayerAccessor.getGuiTexturedFunction(), texture,
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, texture,
             //x,y
             i,j,
             //u,v
@@ -103,12 +105,12 @@ public class ScreenUtils {
             //texture width,height
             k,l);
         }else{
-            drawRectangle(context, i, j, k, l, z, baseColor);
+            drawRectangle(context, i, j, k, l, baseColor);
         }
         
         drawVerticalLine(context, i - 1, j, l, z, baseColor);
         drawVerticalLine(context, i + k, j, l, z, baseColor);
-        drawBorder(context, i, j + 1, k, l, z, lineStartColor, lineEndColor, inverted);
+        drawBorder(context, i, j + 1, k, l, lineStartColor, lineEndColor, inverted);
         if(texts!=null){
             MinecraftClient client = MinecraftClient.getInstance();
             int nulls = 0;
@@ -118,18 +120,17 @@ public class ScreenUtils {
                         nulls++;
                         continue;
                     } 
-                    context.getMatrices().push();
-                    context.getMatrices().translate(0, 0, z+1);
+                    context.getMatrices().pushMatrix();
                     int y0 = y;
                     if(n!=0){
                         y0+=firstLineOffset;
                     }
                 
                     if(centered)
-                        context.drawCenteredTextWithShadow(client.textRenderer,texts.get(n),x,y0+(n-nulls)*textDistance,1);
+                        context.drawCenteredTextWithShadow(client.textRenderer,texts.get(n),x,y0+(n-nulls)*textDistance,0xFFFFFFFF);
                     else
-                        context.drawTextWithShadow(client.textRenderer, texts.get(n), i+3, y0+(n-nulls)*textDistance, 1);
-                    context.getMatrices().pop();
+                        context.drawTextWithShadow(client.textRenderer, texts.get(n), i+3, y0+(n-nulls)*textDistance, 0xFFFFFFFF);
+                    context.getMatrices().popMatrix();
                 }catch(NullPointerException e){
                     nulls++;
                 }
@@ -138,34 +139,34 @@ public class ScreenUtils {
         return new Pair<>(k,l);
     }
 
-    public static void drawBorder(DrawContext context, int x, int y, int width, int height, int z, int startColor, int endColor, boolean inverted) {
+    public static void drawBorder(DrawContext context, int x, int y, int width, int height, int startColor, int endColor, boolean inverted) {
         //context.fill() requires a positive width/height to be valid.
         if(inverted){
-            drawVerticalLine(context, x, y+height, -height - 2, z+1, startColor, endColor);
-            drawVerticalLine(context, x + width - 1, y+height, -height - 2, z+1, startColor, endColor);
-            drawHorizontalLine(context, x, y - 1, width, z, endColor);
-            drawHorizontalLine(context, x, y - 1 + height - 1, width, z, startColor);
+            drawVerticalLine(context, x, y+height, -height - 2, startColor, endColor);
+            drawVerticalLine(context, x + width - 1, y+height, -height - 2, startColor, endColor);
+            drawHorizontalLine(context, x, y - 1, width, endColor);
+            drawHorizontalLine(context, x, y - 1 + height - 1, width, startColor);
         }else{
-            drawVerticalLine(context, x, y, height - 2, z, startColor, endColor);
-            drawVerticalLine(context, x + width - 1, y, height - 2, z, startColor, endColor);
-            drawHorizontalLine(context, x, y - 1, width, z, startColor);
-            drawHorizontalLine(context, x, y - 1 + height - 1, width, z, endColor);
+            drawVerticalLine(context, x, y, height - 2, startColor, endColor);
+            drawVerticalLine(context, x + width - 1, y, height - 2, startColor, endColor);
+            drawHorizontalLine(context, x, y - 1, width, startColor);
+            drawHorizontalLine(context, x, y - 1 + height - 1, width, endColor);
         }
     }
       
-    public static void drawVerticalLine(DrawContext context, int x, int y, int height, int z, int color) {
-        context.fill(x, y, x + 1, y + height, z, color);
+    public static void drawVerticalLine(DrawContext context, int x, int y, int height, int color) {
+        context.fill(RenderPipelines.GUI, x, y, x + 1, y + height, color);
     }
       
-    public static void drawVerticalLine(DrawContext context, int x, int y, int height, int z, int startColor, int endColor) {
-        context.fillGradient(x, y, x + 1, y + height, z, startColor, endColor);
+    public static void drawVerticalLine(DrawContext context, int x, int y, int height, int startColor, int endColor) {
+        context.fillGradient( x, y, x + 1, y + height, startColor, endColor);
     }
       
-    public static void drawHorizontalLine(DrawContext context, int x, int y, int width, int z, int color) {
-        context.fill(x, y, x + width, y + 1, z, color);
+    public static void drawHorizontalLine(DrawContext context, int x, int y, int width, int color) {
+        context.fill(RenderPipelines.GUI, x, y, x + width, y + 1, color);
     }
       
-    public static void drawRectangle(DrawContext context, int x, int y, int width, int height, int z, int color) {
-        context.fill(x, y, x + width, y + height, z, color);
+    public static void drawRectangle(DrawContext context, int x, int y, int width, int height, int color) {
+        context.fill(RenderPipelines.GUI, x, y, x + width, y + height, color);
     }
 }

@@ -25,8 +25,7 @@ import net.minecraft.text.Text;
  * 
  * <p> {@link #modifyElementLocation(String element, int[] location)} : Sets the element's position to the first two integers in location. Expects an int array of size 2.
  */
-public class ConfigScreen extends MenuScreen {
-    private static boolean initialized = false;  
+public class  ConfigScreen extends MenuScreen {
     public void init(@Nullable Screen parent){
         defineElements();
         center(true);
@@ -73,16 +72,16 @@ public class ConfigScreen extends MenuScreen {
             //define elements
             GUIElement iplSackElement = new GUIElement(0, 0, 96, 32, button ->{
                 Sacks.getInstance().toggle();
-            });
+            }, null);
             GUIElement iplMessageElement = new GUIElement(0, 0, 96, 32, button ->{
                 IPLConfig.toggleRemoval();
-            });
+            }, null);
             GUIElement iplToggleElement = new GUIElement(0, 0, 96, 32, button ->{
                 ItemPickupLog.getInstance().toggle();
-            });
+            }, null);
             GUIElement iplAnnihilElement = new GUIElement(0, 0, 96, 32, button ->{
                 ItemPickupLog.getInstance().shouldAnnihilate(!ItemPickupLog.getInstance().shouldAnnihilate());
-            });
+            }, null);
             TextFieldElement iplColorCodeElement = new TextFieldElement(0, 0, 64, 32,Text.of(ChangeInstance.getColorCode()+""));
             iplColorCodeElement.setPressAction(button->{
                 try{
@@ -130,18 +129,18 @@ public class ConfigScreen extends MenuScreen {
             //define elements
             GUIElement psToggle = new GUIElement(0, 0, 96, 32, button ->{
                 PackSwapper.getInstance().toggleRenderComponent();
-            });
+            }, null);
             GUIElement psRPHelper = new GUIElement(0, 0, 96, 32, button ->{
                 PackSwapper.getInstance().togglePackHelper();
-            });
+            }, null);
             GUIElement psDebugInfo = new GUIElement(0, 0, 96, 32, button ->{
                 PackSwapper.getInstance().toggleDebugInfo();
-            });
+            }, null);
             GUIElement psConfig = new GUIElement(0, 0, 96, 32, button ->{
                 PackScreen screen = new PackScreen();
                 screen.initAsPackMap(this,PackSwapper.getInstance().getFullRegionMap());
                 client.setScreen(screen);
-            });
+            }, null);
             TextFieldElement psColorCode = new TextFieldElement(0, 0, 96, 32, Text.of(PackSwapper.getInstance().getRegionColor()+""));
             psColorCode.setPressAction(button->{
                 try{
@@ -174,13 +173,13 @@ public class ConfigScreen extends MenuScreen {
             //define elements
             GUIElement gpToggle = new GUIElement(0, 0, 96, 32, button ->{
                 GenericProfit.getInstance().toggle();
-            });
+            }, null);
             GUIElement gpReset = new GUIElement(0, 0, 96, 32, button ->{
                 GenericProfit.getInstance().resetProfit();
-            });
+            }, null);
             GUIElement ecoMathToggle = new GUIElement(0, 0, 96, 32, button ->{
                 EcoConfig.toggleMath();
-            });
+            }, null);
             TextFieldElement ecoColorCode = new TextFieldElement(0, 0, 96, 32,Text.of(EcoConfig.getColorCode()+""));
             ecoColorCode.setPressAction(button->{
                 try{
@@ -211,10 +210,10 @@ public class ConfigScreen extends MenuScreen {
             //define elements
             GUIElement bngToggle = new GUIElement(0, 0, 96, 32, button ->{
                 Bingo.getInstance().toggle();
-            });
+            }, null);
             GUIElement bngCommunity = new GUIElement(0, 0, 96, 32, button ->{
                 Bingo.getInstance().toggleCommunity();
-            });
+            }, null);
             //messages
             bngToggle.setMessage(Text.of("Toggle Feature"));
             bngCommunity.setMessage(Text.of("Toggle Community Goals"));
@@ -230,10 +229,10 @@ public class ConfigScreen extends MenuScreen {
             //define elements
             GUIElement bfToggle = new GUIElement(0, 0, 96, 32, button ->{
                 BatFirework.getInstance().toggle();
-            });
+            }, null);
             GUIElement bfReset = new GUIElement(0, 0, 96, 32, button ->{
                 BatFirework.getInstance().resetProfit();
-            });
+            }, null);
             //messages
             bfToggle.setMessage(Text.of("Toggle Feature"));
             bfReset.setMessage(Text.of("Reset Profit"));

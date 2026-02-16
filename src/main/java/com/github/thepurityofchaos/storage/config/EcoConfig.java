@@ -66,6 +66,10 @@ public class EcoConfig implements Filer {
     /**
      * 
      */
+    public static void specialInit(){
+        Search sc = Search.getInstance();
+        sc.init();
+    }
     public static void init(){
         //init all subsystems
         BatFirework bf = BatFirework.getInstance();
@@ -74,14 +78,14 @@ public class EcoConfig implements Filer {
         ChocolateFactory cf = ChocolateFactory.getInstance();
         ReforgeHelper rh = ReforgeHelper.getInstance();
         Refinery rf = Refinery.getInstance();
-        Search sc = Search.getInstance();
+
         bf.init();
         gp.init();
         bng.init();
         cf.init();
         rh.init();
         rf.init();
-        sc.init();
+
         try{
             //create parser based on the client
             BufferedReader reader = Files.newBufferedReader(SkyblockImprovements.FILE_LOCATION.resolve("eco.json"));

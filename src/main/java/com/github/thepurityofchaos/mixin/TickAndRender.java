@@ -1,7 +1,6 @@
 package com.github.thepurityofchaos.mixin;
 
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.util.Identifier;
@@ -27,17 +26,17 @@ import com.github.thepurityofchaos.utils.processors.TabListProcessor;
  * MIXIN: Injects into the HudRenderCallback to piggyback off of the Scheduler.
  */
 @Mixin(SkyblockImprovements.class)
-public class TickandRender {
+public class TickAndRender {
     
     //Inject into the mod's initializer. If this isn't done, causes an EXCEPTION_ACCESS_VIOLATION.
     @Inject(at = @At("TAIL"), method = "onInitializeClient", remap = false)
     private void onInitializeClient(CallbackInfo info){
         //Render all
-        HudLayerRegistrationCallback.EVENT.register(layeredDrawer -> layeredDrawer.attachLayerBefore(IdentifiedLayer.MISC_OVERLAYS, Identifier.of("sbimp","default-sbimp-layer"), TickandRender::render));
+        HudElementRegistry.addFirst(Identifier.of("sbimp","default-sbimp-layer"), TickAndRender::render);
     }
     private static void render(DrawContext context, RenderTickCounter counter){
         //Process Scoreboard & Tab List for this Tick 
-            //(Used for multiple events- piggybacking on HudLayerRegistrationCallback 
+            //(Used for multiple events - piggybacking on HudLayerRegistrationCallback
             //makes it so that creating a new ticking system is not necessary)
             ScoreboardProcessor.processScoreboard();
             TabListProcessor.processTabList();

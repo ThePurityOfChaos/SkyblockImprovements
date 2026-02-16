@@ -330,7 +330,7 @@ public class ChocolateFactory extends Feature implements ScreenInteractor {
         return null;
     }
     public void init(){
-        visual = new GUIElement(64,64,128,32, null);
+        visual = new GUIElement(64,64,128,32, null, null);
     }
     public void setColorCode(char c){
         colorCode = c;

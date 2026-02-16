@@ -2,6 +2,10 @@ package com.github.thepurityofchaos;
 
 import java.nio.file.Path;
 
+import com.github.thepurityofchaos.storage.config.EcoConfig;
+import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.render.entity.feature.HeadFeatureRenderer;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +55,7 @@ public class SkyblockImprovements implements ClientModInitializer {
 	public static final Path RESOURCE_PACK_LOCATION = FabricLoader.getInstance().getGameDir().resolve("resourcepacks");
 	public static final String VERSION = FabricLoader.getInstance().getModContainer("sbimp")
 	.map(modInfo -> modInfo.getMetadata().getVersion().getFriendlyString()).orElse("null");
+	private static final KeyBinding.Category SBIMP = KeyBinding.Category.create(Identifier.of("sbimp", "main"));
 	private static Profiler GAME_PROFILER = null;
 	private static boolean DEBUG = false;
 	private static KeyBinding openItemGen;
@@ -68,6 +73,7 @@ public class SkyblockImprovements implements ClientModInitializer {
 		//this entrypoint is necessary for initializing features that require the player to be in a world
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client)->{
 			ChatColorProcessor.init();
+			EcoConfig.specialInit();
 			RTRender.setKnownIdentifiers();
 			GAME_PROFILER = Profilers.get();
 		});
@@ -80,15 +86,15 @@ public class SkyblockImprovements implements ClientModInitializer {
         	"key.sbimp.openItemGen", // Translation key
             InputUtil.Type.KEYSYM, // Key type
             GLFW.GLFW_KEY_RIGHT_CONTROL, // Default key
-            "category.sbimp.general" // Category
+            SBIMP // Category
         ));
 
 		//call this last, since it changes the settings from defaults.
 		Config.init();
 	}
-	public static boolean onScreenKeyPressed(HandledScreen<?> screen, int keyCode, int scanCode, int modifiers) {
+	public static boolean onScreenKeyPressed(HandledScreen<?> screen, KeyInput input) {
 		MinecraftClient client = MinecraftClient.getInstance();
-		if (openItemGen.matchesKey(keyCode, scanCode)) {
+		if (openItemGen.matchesKey(input)) {
 			GeneratorScreen.parseItemToGenerator(InventoryProcessor.getHoveredItem(client));
 			GeneratorScreen newScreen = GeneratorScreen.getInstance();
 			newScreen.init(screen);

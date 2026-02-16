@@ -55,7 +55,7 @@ public class ItemPickupLog extends Feature {
     private static ItemPickupLog instance = new ItemPickupLog();
 
     public void init(){
-        visual = new MenuElement(64,64,128,32, null);
+        visual = new MenuElement(64,64,128,32, null, null);
         visual.setMessage(Text.of("Item Pickup Log"));
         visual.setTooltip(Text.of(Utils.getStringFromBoolean(isEnabled)));
     }

@@ -3,6 +3,10 @@ package com.github.thepurityofchaos.utils.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.thepurityofchaos.utils.math.ColorUtils;
+import net.minecraft.client.gui.Click;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import org.lwjgl.glfw.GLFW;
 
 import com.github.thepurityofchaos.utils.Utils;
@@ -18,6 +22,7 @@ public class MultilineTextFieldWidget extends TextFieldWidget {
     
     private int lineHeight = 8;
     private int cursorPosition = 0;
+    private int color = 0xFF000000;
 
     public MultilineTextFieldWidget(TextRenderer textRenderer, int x, int y, int width, int height, Text text){
         super(textRenderer,x,y,width,height,text);
@@ -28,12 +33,13 @@ public class MultilineTextFieldWidget extends TextFieldWidget {
     @Override
     public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         // Render background
-        context.fill(getX(), getY(), getX() + width, getY() + height, 0xFF000000);
+        context.fill(getX(),getY(),getX()+width,getY()+height,this.isFocused()?0xFFFFFFFF:0xFF888888);
+        context.fill(getX()+1, getY()+1, getX() + width - 1, getY() + height - 1, color);
         MinecraftClient client = MinecraftClient.getInstance();
         // Render each line of text
         int yOffset = 0;
         for (String line : lines) {
-            context.drawText(client.textRenderer, Utils.getColorString('f') + line, getX(), getY() + yOffset, 1, false);
+            context.drawText(client.textRenderer, Utils.getColorString('f') + line, getX(), getY() + yOffset, 0xFFFFFFFF, false);
             yOffset += lineHeight;
         }
         // Render the cursor
@@ -75,16 +81,16 @@ public class MultilineTextFieldWidget extends TextFieldWidget {
     }
 
     @Override
-    public boolean charTyped(char chr, int keyCode) {
+    public boolean charTyped(CharInput input) {
         // Handle character typing, add to the correct line
-        if (Character.isISOControl(chr)) {
+        if (Character.isISOControl(input.asString().charAt(0))) {
             return false;
         }
         String currentText = this.getText();
         try{
-        this.setText(currentText.substring(0, cursorPosition) + chr + currentText.substring(cursorPosition));
+        this.setText(currentText.substring(0, cursorPosition) + input.asString() + currentText.substring(cursorPosition));
         }catch(Exception e){
-            this.setText(currentText+chr);
+            this.setText(currentText+input.asString());
         }
         cursorPosition++;
         this.updateLines();
@@ -92,9 +98,9 @@ public class MultilineTextFieldWidget extends TextFieldWidget {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyInput input) {
         // Handle key press for navigation and deletion
-        if (keyCode == GLFW.GLFW_KEY_BACKSPACE && cursorPosition > 0) {
+        if (input.getKeycode() == GLFW.GLFW_KEY_BACKSPACE && cursorPosition > 0) {
             String currentText = this.getText();
             try{
             this.setText(currentText.substring(0, cursorPosition - 1) + currentText.substring(cursorPosition));
@@ -106,36 +112,36 @@ public class MultilineTextFieldWidget extends TextFieldWidget {
             cursorPosition--;
             this.updateLines();
             return true;
-        } else if (keyCode == GLFW.GLFW_KEY_LEFT && cursorPosition > 0) {
+        } else if (input.getKeycode() == GLFW.GLFW_KEY_LEFT && cursorPosition > 0) {
             cursorPosition--;
             return true;
-        } else if (keyCode == GLFW.GLFW_KEY_RIGHT && cursorPosition < this.getText().length()) {
+        } else if (input.getKeycode() == GLFW.GLFW_KEY_RIGHT && cursorPosition < this.getText().length()) {
             cursorPosition++;
             return true;
-        } else if (keyCode == GLFW.GLFW_KEY_UP) {
+        } else if (input.getKeycode() == GLFW.GLFW_KEY_UP) {
             moveCursorUp();
             return true;
-        } else if (keyCode == GLFW.GLFW_KEY_DOWN) {
+        } else if (input.getKeycode() == GLFW.GLFW_KEY_DOWN) {
             moveCursorDown();
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(input);
     }
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (this.isVisible() && this.isMouseOver(mouseX, mouseY) && lines.size()>0) {
+    public boolean mouseClicked(Click click, boolean doubled) {
+        if (this.isVisible() && this.isMouseOver(click.x(), click.y()) && !lines.isEmpty()) {
             this.setFocused(true);
-            int clickedLine = (int) ((mouseY - this.getY()) / this.lineHeight);
+            int clickedLine = (int) ((click.y() - this.getY()) / this.lineHeight);
             int lineStart = 0;
             for (int i = 0; i < clickedLine && i < lines.size(); i++) {
                 lineStart += lines.get(i).length();
             }
             String line = lines.get(clickedLine < lines.size() ? clickedLine : lines.size() - 1);
-            int charPos = this.getTextRenderer().trimToWidth(line, (int) (mouseX - this.getX())).length();
+            int charPos = this.getTextRenderer().trimToWidth(line, (int) (click.x() - this.getX())).length();
             cursorPosition = lineStart + charPos;
             return true;
         } 
-        else if(this.isVisible() && this.isMouseOver(mouseX, mouseY) && lines.size()==0){
+        else if(this.isVisible() && this.isMouseOver(click.x(), click.y()) && lines.isEmpty()){
             this.setFocused(true);
             cursorPosition = 0;
             return true;

@@ -9,20 +9,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
 
-import org.jetbrains.annotations.Nullable;
+
 
 import com.github.thepurityofchaos.SkyblockImprovements;
 import com.github.thepurityofchaos.utils.processors.InventoryProcessor;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 
-import net.minecraft.block.SkullBlock;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.block.entity.SkullBlockEntityRenderer;
+
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.component.type.ProfileComponent;
+
 import net.minecraft.util.Identifier;
 
 /**
@@ -39,12 +39,12 @@ import net.minecraft.util.Identifier;
  */
 public class RTRender {
     private static Map<String, Identifier> knownIdentifiers = new HashMap<>();
-    public static RenderLayer getModifiedRenderLayer(SkullBlock.SkullType type, @Nullable ProfileComponent profile){
+    public static RenderLayer getModifiedRenderLayer(GameProfile profile) {
         try{
-            //if texture contained in the list of textures and festure is enabled
+            //if texture contained in the list of textures and feature is enabled
             Retexturer rt = Retexturer.getInstance();
-            if(rt.getFeatureEnabled()&&profile!=null&&rt.getKnownHelms().size()!=0){
-                Map<String,Collection<Property>> profileProperties = profile.gameProfile().getProperties().asMap();
+            if(rt.getFeatureEnabled()&&profile!=null&& !rt.getKnownHelms().isEmpty()){
+                Map<String,Collection<Property>> profileProperties = profile.properties().asMap();
                 Object[] textureProperties = profileProperties.get("textures").toArray();
                 String textureURL = rt.getURL(((Property)textureProperties[0]).value());
                 if(knownIdentifiers.containsKey(textureURL)){
@@ -53,17 +53,15 @@ public class RTRender {
                 for(Entry<String,List<String>> entry : rt.getKnownHelms().entrySet()){
                         int index = entry.getValue().indexOf(textureURL);
                         if(index!=-1){
-                            String name = entry.getKey().toString()+index+".png";
+                            String name = entry.getKey() +index+".png";
                             Identifier ident = loadTexture(SkyblockImprovements.FILE_LOCATION.resolve("helms").resolve(name),name);
                             knownIdentifiers.put(textureURL,ident);
                             return RenderLayer.getEntityTranslucent(ident);
                         }
                     }
                 }
-            return SkullBlockEntityRenderer.getRenderLayer(type, profile);
-        }catch(Exception e){
-            return SkullBlockEntityRenderer.getRenderLayer(type, profile);
-        }
+        }catch(Exception ignored){}
+        return null;
     }
     public static Map<String,Identifier> getKnownIdentifiers(){
         return knownIdentifiers;

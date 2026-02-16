@@ -1,6 +1,7 @@
 package com.github.thepurityofchaos.utils.gui;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.text.Text;
 
 public class MultilineTextFieldElement extends TextFieldElement {
@@ -16,8 +17,8 @@ public class MultilineTextFieldElement extends TextFieldElement {
         ((MultilineTextFieldWidget) textField).updateLines();
     }
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button){
-        return ((MultilineTextFieldWidget)textField).mouseClicked(mouseX, mouseY, button);
+    public boolean mouseClicked(Click click, boolean doubled){
+        return ((MultilineTextFieldWidget)textField).mouseClicked(click, doubled);
     }
     
 }

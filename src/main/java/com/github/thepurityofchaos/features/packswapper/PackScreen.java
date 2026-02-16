@@ -37,7 +37,7 @@ public class PackScreen extends GUIScreen {
                     PackScreen s = (PackScreen)new PackScreen().initAsAreaMap(this,entry.getValue());
                     client.setScreen(s);
                     
-                });
+                }, null);
                 element.setMessage(Text.of(Utils.getColorString(ps.getRegionColor())+entry.getKey().replace("file/_","").replace(".zip","")));
                 addElement(entry.getKey(),element);
             }
@@ -56,7 +56,7 @@ public class PackScreen extends GUIScreen {
                 GUIElement element = new GUIElement((index/verticalPerHorizontal)*buttonWidth+buttonOffset, (index%verticalPerHorizontal)*buttonHeight+buttonOffset, buttonWidth, buttonHeight, button ->{
                     PackScreen s = (PackScreen)new PackScreen().initAsRegionMap(this,entry.getValue());
                     client.setScreen(s);
-                });
+                }, null);
                 element.setMessage(Text.of(Utils.getColorString(ps.getRegionColor())+entry.getKey()));
                 addElement(entry.getKey(),element);
             }
@@ -75,7 +75,7 @@ public class PackScreen extends GUIScreen {
                 GUIElement element = new GUIElement((index/verticalPerHorizontal)*buttonWidth+buttonOffset,(index%verticalPerHorizontal)*buttonHeight+buttonOffset,buttonWidth,buttonHeight,button->{
                     map.put(entry.getKey(),!map.get(entry.getKey()));
                     getElement(entry.getKey()).setMessage(Text.of(Utils.getColorString(ps.getRegionColor())+(entry.getKey().equals("")?"All Regions":entry.getKey())+Utils.getStringFromBoolean(entry.getValue())));
-                });
+                }, null);
             element.setMessage(Text.of(Utils.getColorString(ps.getRegionColor())+(entry.getKey().equals("")?"All Regions":entry.getKey())+Utils.getStringFromBoolean(entry.getValue())));
             addElement(entry.getKey(),element);
             }

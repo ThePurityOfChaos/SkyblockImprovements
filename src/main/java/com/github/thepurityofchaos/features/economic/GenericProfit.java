@@ -44,7 +44,7 @@ public class GenericProfit extends ErrorableFeature {
     private static GenericProfit instance = new GenericProfit();
 
     public void init(){
-        visual = new MenuElement(64, 0, 128, 32, null);
+        visual = new MenuElement(64, 0, 128, 32, null, null);
         visual.setMessage(Text.of("Generic Profit"));
     }
 
